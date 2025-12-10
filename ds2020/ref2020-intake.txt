@@ -1,0 +1,1141 @@
+name	sex	period_class	reriods	reriode	EAR	RDA	AI	UL	unit	DG_min	DG_max	DG_unit
+PROTV	0	m	0	5			10		g/day			
+PROTV	0	m	6	8			15		g/day			
+PROTV	0	m	9	11			25		g/day			
+PROTV	0	y	1	2	15	20			g/day	13	20	%E
+PROTV	0	y	3	5	20	25			g/day	13	20	%E
+PROTV	0	y	6	7	25	30			g/day	13	20	%E
+PROTV	0	y	8	9	30	40			g/day	13	20	%E
+PROTV	0	y	10	11	40	45			g/day	13	20	%E
+PROTV	0	y	12	14	50	60			g/day	13	20	%E
+PROTV	0	y	15	17	50	65			g/day	13	20	%E
+PROTV	0	y	18	29	50	65			g/day	13	20	%E
+PROTV	0	y	30	49	50	65			g/day	13	20	%E
+PROTV	0	y	50	64	50	65			g/day	14	20	%E
+PROTV	0	y	65	74	50	60			g/day	15	20	%E
+PROTV	0	y	75	999	50	60			g/day	15	20	%E
+PROTV	1	m	0	5			10		g/day			
+PROTV	1	m	6	8			15		g/day			
+PROTV	1	m	9	11			25		g/day			
+PROTV	1	y	1	2	15	20			g/day	13	20	%E
+PROTV	1	y	3	5	20	25			g/day	13	20	%E
+PROTV	1	y	6	7	25	30			g/day	13	20	%E
+PROTV	1	y	8	9	30	40			g/day	13	20	%E
+PROTV	1	y	10	11	40	50			g/day	13	20	%E
+PROTV	1	y	12	14	45	55			g/day	13	20	%E
+PROTV	1	y	15	17	45	55			g/day	13	20	%E
+PROTV	1	y	18	29	40	50			g/day	13	20	%E
+PROTV	1	y	30	49	40	50			g/day	13	20	%E
+PROTV	1	y	50	64	40	50			g/day	14	20	%E
+PROTV	1	y	65	74	40	50			g/day	15	20	%E
+PROTV	1	y	75	999	40	50			g/day	15	20	%E
+PROTV	1	p	0	15					g/day	13	20	%E
+PROTV	1	p	16	27	+5	+5			g/day	13	20	%E
+PROTV	1	p	28	99	+25	+25			g/day	13	20	%E
+PROTV	1	l			+15	+20			g/day	15	20	%E
+FATV	0	m	0	5			50		g/day			
+FATV	0	m	6	11			40		g/day			
+FATV	0	y	1	2					g/day	20	30	%E
+FATV	0	y	3	5					g/day	20	30	%E
+FATV	0	y	6	7					g/day	20	30	%E
+FATV	0	y	8	9					g/day	20	30	%E
+FATV	0	y	10	11					g/day	20	30	%E
+FATV	0	y	12	14					g/day	20	30	%E
+FATV	0	y	15	17					g/day	20	30	%E
+FATV	0	y	18	29					g/day	20	30	%E
+FATV	0	y	30	49					g/day	20	30	%E
+FATV	0	y	50	64					g/day	20	30	%E
+FATV	0	y	65	74					g/day	20	30	%E
+FATV	0	y	75	999					g/day	20	30	%E
+FATV	1	m	0	5			50		g/day			
+FATV	1	m	6	11			40		g/day			
+FATV	1	y	1	2					g/day	20	30	%E
+FATV	1	y	3	5					g/day	20	30	%E
+FATV	1	y	6	7					g/day	20	30	%E
+FATV	1	y	8	9					g/day	20	30	%E
+FATV	1	y	10	11					g/day	20	30	%E
+FATV	1	y	12	14					g/day	20	30	%E
+FATV	1	y	15	17					g/day	20	30	%E
+FATV	1	y	18	29					g/day	20	30	%E
+FATV	1	y	30	49					g/day	20	30	%E
+FATV	1	y	50	64					g/day	20	30	%E
+FATV	1	y	65	74					g/day	20	30	%E
+FATV	1	y	75	999					g/day	20	30	%E
+FATV	1	p	0	15					g/day	20	30	%E
+FATV	1	p	16	27					g/day	20	30	%E
+FATV	1	p	28	99					g/day	20	30	%E
+FATV	1	l							g/day	20	30	%E
+FASAT	0	m	0	5					g/day			
+FASAT	0	m	6	11					g/day			
+FASAT	0	y	1	2					g/day			
+FASAT	0	y	3	5					g/day		10	%E
+FASAT	0	y	6	7					g/day		10	%E
+FASAT	0	y	8	9					g/day		10	%E
+FASAT	0	y	10	11					g/day		10	%E
+FASAT	0	y	12	14					g/day		10	%E
+FASAT	0	y	15	17					g/day		8	%E
+FASAT	0	y	18	29					g/day		7	%E
+FASAT	0	y	30	49					g/day		7	%E
+FASAT	0	y	50	64					g/day		7	%E
+FASAT	0	y	65	74					g/day		7	%E
+FASAT	0	y	75	999					g/day		7	%E
+FASAT	1	m	0	5					g/day			
+FASAT	1	m	6	11					g/day			
+FASAT	1	y	1	2					g/day			
+FASAT	1	y	3	5					g/day		10	%E
+FASAT	1	y	6	7					g/day		10	%E
+FASAT	1	y	8	9					g/day		10	%E
+FASAT	1	y	10	11					g/day		10	%E
+FASAT	1	y	12	14					g/day		10	%E
+FASAT	1	y	15	17					g/day		8	%E
+FASAT	1	y	18	29					g/day		7	%E
+FASAT	1	y	30	49					g/day		7	%E
+FASAT	1	y	50	64					g/day		7	%E
+FASAT	1	y	65	74					g/day		7	%E
+FASAT	1	y	75	999					g/day		7	%E
+FASAT	1	p	0	15					g/day		7	%E
+FASAT	1	p	16	27					g/day		7	%E
+FASAT	1	p	28	99					g/day		7	%E
+FASAT	1	l							g/day		7	%E
+FAPUN6	0	m	0	5			4		g/day			
+FAPUN6	0	m	6	11			4		g/day			
+FAPUN6	0	y	1	2			4		g/day			
+FAPUN6	0	y	3	5			6		g/day			
+FAPUN6	0	y	6	7			8		g/day			
+FAPUN6	0	y	8	9			8		g/day			
+FAPUN6	0	y	10	11			10		g/day			
+FAPUN6	0	y	12	14			11		g/day			
+FAPUN6	0	y	15	17			13		g/day			
+FAPUN6	0	y	18	29			11		g/day			
+FAPUN6	0	y	30	49			10		g/day			
+FAPUN6	0	y	50	64			10		g/day			
+FAPUN6	0	y	65	74			9		g/day			
+FAPUN6	0	y	75	999			8		g/day			
+FAPUN6	1	m	0	5			4		g/day			
+FAPUN6	1	m	6	11			4		g/day			
+FAPUN6	1	y	1	2			4		g/day			
+FAPUN6	1	y	3	5			6		g/day			
+FAPUN6	1	y	6	7			7		g/day			
+FAPUN6	1	y	8	9			7		g/day			
+FAPUN6	1	y	10	11			8		g/day			
+FAPUN6	1	y	12	14			9		g/day			
+FAPUN6	1	y	15	17			9		g/day			
+FAPUN6	1	y	18	29			8		g/day			
+FAPUN6	1	y	30	49			8		g/day			
+FAPUN6	1	y	50	64			8		g/day			
+FAPUN6	1	y	65	74			8		g/day			
+FAPUN6	1	y	75	999			7		g/day			
+FAPUN6	1	p	0	15			9		g/day			
+FAPUN6	1	p	16	27			9		g/day			
+FAPUN6	1	p	28	99			9		g/day			
+FAPUN6	1	l					10		g/day			
+FAPUN3	0	m	0	5			0.9		g/day			
+FAPUN3	0	m	6	11			0.8		g/day			
+FAPUN3	0	y	1	2			0.7		g/day			
+FAPUN3	0	y	3	5			1.1		g/day			
+FAPUN3	0	y	6	7			1.5		g/day			
+FAPUN3	0	y	8	9			1.5		g/day			
+FAPUN3	0	y	10	11			1.6		g/day			
+FAPUN3	0	y	12	14			1.9		g/day			
+FAPUN3	0	y	15	17			2.1		g/day			
+FAPUN3	0	y	18	29			2.0		g/day			
+FAPUN3	0	y	30	49			2.0		g/day			
+FAPUN3	0	y	50	64			2.2		g/day			
+FAPUN3	0	y	65	74			2.2		g/day			
+FAPUN3	0	y	75	999			2.1		g/day			
+FAPUN3	1	m	0	5			0.9		g/day			
+FAPUN3	1	m	6	11			0.8		g/day			
+FAPUN3	1	y	1	2			0.8		g/day			
+FAPUN3	1	y	3	5			1.0		g/day			
+FAPUN3	1	y	6	7			1.3		g/day			
+FAPUN3	1	y	8	9			1.3		g/day			
+FAPUN3	1	y	10	11			1.6		g/day			
+FAPUN3	1	y	12	14			1.6		g/day			
+FAPUN3	1	y	15	17			1.6		g/day			
+FAPUN3	1	y	18	29			1.6		g/day			
+FAPUN3	1	y	30	49			1.6		g/day			
+FAPUN3	1	y	50	64			1.9		g/day			
+FAPUN3	1	y	65	74			2.0		g/day			
+FAPUN3	1	y	75	999			1.8		g/day			
+FAPUN3	1	p	0	15			1.6		g/day			
+FAPUN3	1	p	16	27			1.6		g/day			
+FAPUN3	1	p	28	99			1.6		g/day			
+FAPUN3	1	l					1.8		g/day			
+CHOV	0	m	0	5					g/day			
+CHOV	0	m	6	11					g/day			
+CHOV	0	y	1	2					g/day	50	65	%E
+CHOV	0	y	3	5					g/day	50	65	%E
+CHOV	0	y	6	7					g/day	50	65	%E
+CHOV	0	y	8	9					g/day	50	65	%E
+CHOV	0	y	10	11					g/day	50	65	%E
+CHOV	0	y	12	14					g/day	50	65	%E
+CHOV	0	y	15	17					g/day	50	65	%E
+CHOV	0	y	18	29					g/day	50	65	%E
+CHOV	0	y	30	49					g/day	50	65	%E
+CHOV	0	y	50	64					g/day	50	65	%E
+CHOV	0	y	65	74					g/day	50	65	%E
+CHOV	0	y	75	999					g/day	50	65	%E
+CHOV	1	m	0	5					g/day			
+CHOV	1	m	6	11					g/day			
+CHOV	1	y	1	2					g/day	50	65	%E
+CHOV	1	y	3	5					g/day	50	65	%E
+CHOV	1	y	6	7					g/day	50	65	%E
+CHOV	1	y	8	9					g/day	50	65	%E
+CHOV	1	y	10	11					g/day	50	65	%E
+CHOV	1	y	12	14					g/day	50	65	%E
+CHOV	1	y	15	17					g/day	50	65	%E
+CHOV	1	y	18	29					g/day	50	65	%E
+CHOV	1	y	30	49					g/day	50	65	%E
+CHOV	1	y	50	64					g/day	50	65	%E
+CHOV	1	y	65	74					g/day	50	65	%E
+CHOV	1	y	75	999					g/day	50	65	%E
+CHOV	1	p	0	15					g/day	50	65	%E
+CHOV	1	p	16	27					g/day	50	65	%E
+CHOV	1	p	28	99					g/day	50	65	%E
+CHOV	1	l							g/day	50	65	%E
+FIB	0	m	0	5					g/day			
+FIB	0	m	6	11					g/day			
+FIB	0	y	1	2					g/day			
+FIB	0	y	3	5					g/day	8		g/day
+FIB	0	y	6	7					g/day	10		g/day
+FIB	0	y	8	9					g/day	11		g/day
+FIB	0	y	10	11					g/day	13		g/day
+FIB	0	y	12	14					g/day	17		g/day
+FIB	0	y	15	17					g/day	19		g/day
+FIB	0	y	18	29					g/day	21		g/day
+FIB	0	y	30	49					g/day	21		g/day
+FIB	0	y	50	64					g/day	21		g/day
+FIB	0	y	65	74					g/day	20		g/day
+FIB	0	y	75	999					g/day	20		g/day
+FIB	1	m	0	5					g/day			
+FIB	1	m	6	11					g/day			
+FIB	1	y	1	2					g/day			
+FIB	1	y	3	5					g/day	8		g/day
+FIB	1	y	6	7					g/day	10		g/day
+FIB	1	y	8	9					g/day	11		g/day
+FIB	1	y	10	11					g/day	13		g/day
+FIB	1	y	12	14					g/day	17		g/day
+FIB	1	y	15	17					g/day	18		g/day
+FIB	1	y	18	29					g/day	18		g/day
+FIB	1	y	30	49					g/day	18		g/day
+FIB	1	y	50	64					g/day	18		g/day
+FIB	1	y	65	74					g/day	17		g/day
+FIB	1	y	75	999					g/day	17		g/day
+FIB	1	p	0	15					g/day	18		g/day
+FIB	1	p	16	27					g/day	18		g/day
+FIB	1	p	28	99					g/day	18		g/day
+FIB	1	l							g/day	18		g/day
+VITA_RAE	0	m	0	5			300	600	ugRAE/day			
+VITA_RAE	0	m	6	11			400	600	ugRAE/day			
+VITA_RAE	0	y	1	2	300	400		600	ugRAE/day			
+VITA_RAE	0	y	3	5	350	450		700	ugRAE/day			
+VITA_RAE	0	y	6	7	300	400		950	ugRAE/day			
+VITA_RAE	0	y	8	9	350	500		1200	ugRAE/day			
+VITA_RAE	0	y	10	11	450	600		1500	ugRAE/day			
+VITA_RAE	0	y	12	14	550	800		2100	ugRAE/day			
+VITA_RAE	0	y	15	17	650	900		2500	ugRAE/day			
+VITA_RAE	0	y	18	29	600	850		2700	ugRAE/day			
+VITA_RAE	0	y	30	49	650	900		2700	ugRAE/day			
+VITA_RAE	0	y	50	64	650	900		2700	ugRAE/day			
+VITA_RAE	0	y	65	74	600	850		2700	ugRAE/day			
+VITA_RAE	0	y	75	999	550	800		2700	ugRAE/day			
+VITA_RAE	1	m	0	5			300		ugRAE/day			
+VITA_RAE	1	m	6	11			400		ugRAE/day			
+VITA_RAE	1	y	1	2	250	350			ugRAE/day			
+VITA_RAE	1	y	3	5	350	500			ugRAE/day			
+VITA_RAE	1	y	6	7	300	400			ugRAE/day			
+VITA_RAE	1	y	8	9	350	500			ugRAE/day			
+VITA_RAE	1	y	10	11	400	600			ugRAE/day			
+VITA_RAE	1	y	12	14	500	700			ugRAE/day			
+VITA_RAE	1	y	15	17	500	650			ugRAE/day			
+VITA_RAE	1	y	18	29	450	650			ugRAE/day			
+VITA_RAE	1	y	30	49	500	700			ugRAE/day			
+VITA_RAE	1	y	50	64	500	700			ugRAE/day			
+VITA_RAE	1	y	65	74	500	700			ugRAE/day			
+VITA_RAE	1	y	75	999	450	650			ugRAE/day			
+VITA_RAE	1	p	0	15					ugRAE/day			
+VITA_RAE	1	p	16	27					ugRAE/day			
+VITA_RAE	1	p	28	99	+60	+80			ugRAE/day			
+VITA_RAE	1	l			+300	+450			ugRAE/day			
+VITD	0	m	0	5			5.0	25	ug/day			
+VITD	0	m	6	11			5.0	25	ug/day			
+VITD	0	y	1	2			3.0	20	ug/day			
+VITD	0	y	3	5			3.5	30	ug/day			
+VITD	0	y	6	7			4.5	30	ug/day			
+VITD	0	y	8	9			5.0	40	ug/day			
+VITD	0	y	10	11			6.5	60	ug/day			
+VITD	0	y	12	14			8.0	80	ug/day			
+VITD	0	y	15	17			9.0	90	ug/day			
+VITD	0	y	18	29			8.5	100	ug/day			
+VITD	0	y	30	49			8.5	100	ug/day			
+VITD	0	y	50	64			8.5	100	ug/day			
+VITD	0	y	65	74			8.5	100	ug/day			
+VITD	0	y	75	999			8.5	100	ug/day			
+VITD	1	m	0	5			5.0	25	ug/day			
+VITD	1	m	6	11			5.0	25	ug/day			
+VITD	1	y	1	2			3.5	20	ug/day			
+VITD	1	y	3	5			4.0	30	ug/day			
+VITD	1	y	6	7			5.0	30	ug/day			
+VITD	1	y	8	9			6.0	40	ug/day			
+VITD	1	y	10	11			8.0	60	ug/day			
+VITD	1	y	12	14			9.5	80	ug/day			
+VITD	1	y	15	17			8.5	90	ug/day			
+VITD	1	y	18	29			8.5	100	ug/day			
+VITD	1	y	30	49			8.5	100	ug/day			
+VITD	1	y	50	64			8.5	100	ug/day			
+VITD	1	y	65	74			8.5	100	ug/day			
+VITD	1	y	75	999			8.5	100	ug/day			
+VITD	1	p	0	15			8.5		ug/day			
+VITD	1	p	16	27			8.5		ug/day			
+VITD	1	p	28	99			8.5		ug/day			
+VITD	1	l					8.5		ug/day			
+TOCPHA	0	m	0	5			3.0		mg/day			
+TOCPHA	0	m	6	11			4.0		mg/day			
+TOCPHA	0	y	1	2			3.0	150	mg/day			
+TOCPHA	0	y	3	5			4.0	200	mg/day			
+TOCPHA	0	y	6	7			5.0	300	mg/day			
+TOCPHA	0	y	8	9			5.0	350	mg/day			
+TOCPHA	0	y	10	11			5.5	450	mg/day			
+TOCPHA	0	y	12	14			6.5	650	mg/day			
+TOCPHA	0	y	15	17			7.0	750	mg/day			
+TOCPHA	0	y	18	29			6.0	850	mg/day			
+TOCPHA	0	y	30	49			6.0	900	mg/day			
+TOCPHA	0	y	50	64			7.0	850	mg/day			
+TOCPHA	0	y	65	74			7.0	850	mg/day			
+TOCPHA	0	y	75	999			6.5	750	mg/day			
+TOCPHA	1	m	0	5			3.0		mg/day			
+TOCPHA	1	m	6	11			4.0		mg/day			
+TOCPHA	1	y	1	2			3.0	150	mg/day			
+TOCPHA	1	y	3	5			4.0	200	mg/day			
+TOCPHA	1	y	6	7			5.0	300	mg/day			
+TOCPHA	1	y	8	9			5.0	350	mg/day			
+TOCPHA	1	y	10	11			5.5	450	mg/day			
+TOCPHA	1	y	12	14			6.0	600	mg/day			
+TOCPHA	1	y	15	17			5.5	650	mg/day			
+TOCPHA	1	y	18	29			5.0	650	mg/day			
+TOCPHA	1	y	30	49			5.5	700	mg/day			
+TOCPHA	1	y	50	64			6.0	700	mg/day			
+TOCPHA	1	y	65	74			6.5	650	mg/day			
+TOCPHA	1	y	75	999			6.5	650	mg/day			
+TOCPHA	1	p	0	15			6.5		mg/day			
+TOCPHA	1	p	16	27			6.5		mg/day			
+TOCPHA	1	p	28	99			6.5		mg/day			
+TOCPHA	1	l					7.0		mg/day			
+VITK	0	m	0	5			4		ug/day			
+VITK	0	m	6	11			7		ug/day			
+VITK	0	y	1	2			50		ug/day			
+VITK	0	y	3	5			60		ug/day			
+VITK	0	y	6	7			80		ug/day			
+VITK	0	y	8	9			90		ug/day			
+VITK	0	y	10	11			110		ug/day			
+VITK	0	y	12	14			140		ug/day			
+VITK	0	y	15	17			160		ug/day			
+VITK	0	y	18	29			150		ug/day			
+VITK	0	y	30	49			150		ug/day			
+VITK	0	y	50	64			150		ug/day			
+VITK	0	y	65	74			150		ug/day			
+VITK	0	y	75	999			150		ug/day			
+VITK	1	m	0	5			4		ug/day			
+VITK	1	m	6	11			7		ug/day			
+VITK	1	y	1	2			60		ug/day			
+VITK	1	y	3	5			70		ug/day			
+VITK	1	y	6	7			90		ug/day			
+VITK	1	y	8	9			110		ug/day			
+VITK	1	y	10	11			140		ug/day			
+VITK	1	y	12	14			170		ug/day			
+VITK	1	y	15	17			150		ug/day			
+VITK	1	y	18	29			150		ug/day			
+VITK	1	y	30	49			150		ug/day			
+VITK	1	y	50	64			150		ug/day			
+VITK	1	y	65	74			150		ug/day			
+VITK	1	y	75	999			150		ug/day			
+VITK	1	p	0	15			150		ug/day			
+VITK	1	p	16	27			150		ug/day			
+VITK	1	p	28	99			150		ug/day			
+VITK	1	l					150		ug/day			
+THIA	0	m	0	5			0.1		mg/day			
+THIA	0	m	6	11			0.2		mg/day			
+THIA	0	y	1	2	0.4	0.5			mg/day			
+THIA	0	y	3	5	0.6	0.7			mg/day			
+THIA	0	y	6	7	0.7	0.8			mg/day			
+THIA	0	y	8	9	0.8	1.0			mg/day			
+THIA	0	y	10	11	1.0	1.2			mg/day			
+THIA	0	y	12	14	1.2	1.4			mg/day			
+THIA	0	y	15	17	1.3	1.5			mg/day			
+THIA	0	y	18	29	1.2	1.4			mg/day			
+THIA	0	y	30	49	1.2	1.4			mg/day			
+THIA	0	y	50	64	1.1	1.3			mg/day			
+THIA	0	y	65	74	1.1	1.3			mg/day			
+THIA	0	y	75	999	1.0	1.2			mg/day			
+THIA	1	m	0	5			0.1		mg/day			
+THIA	1	m	6	11			0.2		mg/day			
+THIA	1	y	1	2	0.4	0.5			mg/day			
+THIA	1	y	3	5	0.6	0.7			mg/day			
+THIA	1	y	6	7	0.7	0.8			mg/day			
+THIA	1	y	8	9	0.8	0.9			mg/day			
+THIA	1	y	10	11	0.9	1.1			mg/day			
+THIA	1	y	12	14	1.1	1.3			mg/day			
+THIA	1	y	15	17	1.0	1.2			mg/day			
+THIA	1	y	18	29	0.9	1.1			mg/day			
+THIA	1	y	30	49	0.9	1.1			mg/day			
+THIA	1	y	50	64	0.9	1.1			mg/day			
+THIA	1	y	65	74	0.9	1.1			mg/day			
+THIA	1	y	75	999	0.8	1.1			mg/day			
+THIA	1	p	0	15	+0.2	+0.2			mg/day			
+THIA	1	p	16	27	+0.2	+0.2			mg/day			
+THIA	1	p	28	99	+0.2	+0.2			mg/day			
+THIA	1	l			+0.2	+0.2			mg/day			
+RIBF	0	m	0	5			0.3		mg/day			
+RIBF	0	m	6	11			0.4		mg/day			
+RIBF	0	y	1	2	0.5	0.6			mg/day			
+RIBF	0	y	3	5	0.7	0.8			mg/day			
+RIBF	0	y	6	7	0.8	0.9			mg/day			
+RIBF	0	y	8	9	0.9	1.1			mg/day			
+RIBF	0	y	10	11	1.1	1.4			mg/day			
+RIBF	0	y	12	14	1.3	1.6			mg/day			
+RIBF	0	y	15	17	1.4	1.7			mg/day			
+RIBF	0	y	18	29	1.3	1.6			mg/day			
+RIBF	0	y	30	49	1.3	1.6			mg/day			
+RIBF	0	y	50	64	1.2	1.5			mg/day			
+RIBF	0	y	65	74	1.2	1.5			mg/day			
+RIBF	0	y	75	999	1.1	1.3			mg/day			
+RIBF	1	m	0	5			0.3		mg/day			
+RIBF	1	m	6	11			0.4		mg/day			
+RIBF	1	y	1	2	0.5	0.5			mg/day			
+RIBF	1	y	3	5	0.6	0.8			mg/day			
+RIBF	1	y	6	7	0.7	0.9			mg/day			
+RIBF	1	y	8	9	0.9	1.0			mg/day			
+RIBF	1	y	10	11	1.0	1.3			mg/day			
+RIBF	1	y	12	14	1.2	1.4			mg/day			
+RIBF	1	y	15	17	1.2	1.4			mg/day			
+RIBF	1	y	18	29	1.0	1.2			mg/day			
+RIBF	1	y	30	49	1.0	1.2			mg/day			
+RIBF	1	y	50	64	1.0	1.2			mg/day			
+RIBF	1	y	65	74	1.0	1.2			mg/day			
+RIBF	1	y	75	999	0.9	1.0			mg/day			
+RIBF	1	p	0	15	+0.2	+0.3			mg/day			
+RIBF	1	p	16	27	+0.2	+0.3			mg/day			
+RIBF	1	p	28	99	+0.2	+0.3			mg/day			
+RIBF	1	l			+0.5	+0.6			mg/day			
+NE	0	m	0	5			2		mgNE/day			
+NE	0	m	6	11			3		mgNE/day			
+NE	0	y	1	2	5	6		60	mgNE/day			
+NE	0	y	3	5	6	8		80	mgNE/day			
+NE	0	y	6	7	7	9		100	mgNE/day			
+NE	0	y	8	9	9	11		150	mgNE/day			
+NE	0	y	10	11	11	13		200	mgNE/day			
+NE	0	y	12	14	12	15		250	mgNE/day			
+NE	0	y	15	17	14	17		300	mgNE/day			
+NE	0	y	18	29	13	15		300	mgNE/day			
+NE	0	y	30	49	13	15		350	mgNE/day			
+NE	0	y	50	64	12	14		350	mgNE/day			
+NE	0	y	65	74	12	14		300	mgNE/day			
+NE	0	y	75	999	11	13		300	mgNE/day			
+NE	1	m	0	5			2		mgNE/day			
+NE	1	m	6	11			3		mgNE/day			
+NE	1	y	1	2	4	5		60	mgNE/day			
+NE	1	y	3	5	6	7		80	mgNE/day			
+NE	1	y	6	7	7	8		100	mgNE/day			
+NE	1	y	8	9	8	10		150	mgNE/day			
+NE	1	y	10	11	10	10		150	mgNE/day			
+NE	1	y	12	14	12	14		250	mgNE/day			
+NE	1	y	15	17	11	13		250	mgNE/day			
+NE	1	y	18	29	9	11		250	mgNE/day			
+NE	1	y	30	49	10	12		250	mgNE/day			
+NE	1	y	50	64	9	11		250	mgNE/day			
+NE	1	y	65	74	9	11		250	mgNE/day			
+NE	1	y	75	999	9	10		250	mgNE/day			
+NE	1	p	0	15					mgNE/day			
+NE	1	p	16	27					mgNE/day			
+NE	1	p	28	99					mgNE/day			
+NE	1	l			+3	+3			mgNE/day			
+NE_NA	0	m	0	5			2		mgNE/day			
+NE_NA	0	m	6	11			3		mgNE/day			
+NE_NA	0	y	1	2	5	6		15	mgNE/day			
+NE_NA	0	y	3	5	6	8		20	mgNE/day			
+NE_NA	0	y	6	7	7	9		30	mgNE/day			
+NE_NA	0	y	8	9	9	11		35	mgNE/day			
+NE_NA	0	y	10	11	11	13		45	mgNE/day			
+NE_NA	0	y	12	14	12	15		60	mgNE/day			
+NE_NA	0	y	15	17	14	17		70	mgNE/day			
+NE_NA	0	y	18	29	13	15		80	mgNE/day			
+NE_NA	0	y	30	49	13	15		85	mgNE/day			
+NE_NA	0	y	50	64	12	14		85	mgNE/day			
+NE_NA	0	y	65	74	12	14		80	mgNE/day			
+NE_NA	0	y	75	999	11	13		75	mgNE/day			
+NE_NA	1	m	0	5			2		mgNE/day			
+NE_NA	1	m	6	11			3		mgNE/day			
+NE_NA	1	y	1	2	4	5		15	mgNE/day			
+NE_NA	1	y	3	5	6	7		20	mgNE/day			
+NE_NA	1	y	6	7	7	8		30	mgNE/day			
+NE_NA	1	y	8	9	8	10		35	mgNE/day			
+NE_NA	1	y	10	11	10	10		45	mgNE/day			
+NE_NA	1	y	12	14	12	14		60	mgNE/day			
+NE_NA	1	y	15	17	11	13		65	mgNE/day			
+NE_NA	1	y	18	29	9	11		65	mgNE/day			
+NE_NA	1	y	30	49	10	12		65	mgNE/day			
+NE_NA	1	y	50	64	9	11		65	mgNE/day			
+NE_NA	1	y	65	74	9	11		65	mgNE/day			
+NE_NA	1	y	75	999	9	10		60	mgNE/day			
+NE_NA	1	p	0	15					mgNE/day			
+NE_NA	1	p	16	27					mgNE/day			
+NE_NA	1	p	28	99					mgNE/day			
+NE_NA	1	l			+3	+3			mgNE/day			
+VITB6A	0	m	0	5			0.2		mg/day			
+VITB6A	0	m	6	11			0.3		mg/day			
+VITB6A	0	y	1	2	0.4	0.5		10	mg/day			
+VITB6A	0	y	3	5	0.5	0.6		15	mg/day			
+VITB6A	0	y	6	7	0.7	0.8		20	mg/day			
+VITB6A	0	y	8	9	0.8	0.9		25	mg/day			
+VITB6A	0	y	10	11	1.0	1.1		30	mg/day			
+VITB6A	0	y	12	14	1.2	1.4		40	mg/day			
+VITB6A	0	y	15	17	1.2	1.5		50	mg/day			
+VITB6A	0	y	18	29	1.1	1.4		55	mg/day			
+VITB6A	0	y	30	49	1.1	1.4		60	mg/day			
+VITB6A	0	y	50	64	1.1	1.4		55	mg/day			
+VITB6A	0	y	65	74	1.1	1.4		50	mg/day			
+VITB6A	0	y	75	999	1.1	1.4		50	mg/day			
+VITB6A	1	m	0	5			0.2		mg/day			
+VITB6A	1	m	6	11			0.3		mg/day			
+VITB6A	1	y	1	2	0.4	0.5		10	mg/day			
+VITB6A	1	y	3	5	0.5	0.6		15	mg/day			
+VITB6A	1	y	6	7	0.6	0.7		20	mg/day			
+VITB6A	1	y	8	9	0.8	0.9		25	mg/day			
+VITB6A	1	y	10	11	1.0	1.1		30	mg/day			
+VITB6A	1	y	12	14	1.0	1.3		40	mg/day			
+VITB6A	1	y	15	17	1.0	1.3		45	mg/day			
+VITB6A	1	y	18	29	1.0	1.1		45	mg/day			
+VITB6A	1	y	30	49	1.0	1.1		45	mg/day			
+VITB6A	1	y	50	64	1.0	1.1		45	mg/day			
+VITB6A	1	y	65	74	1.0	1.1		40	mg/day			
+VITB6A	1	y	75	999	1.0	1.1		40	mg/day			
+VITB6A	1	p	0	15	+0.2	+0.2			mg/day			
+VITB6A	1	p	16	27	+0.2	+0.2			mg/day			
+VITB6A	1	p	28	99	+0.2	+0.2			mg/day			
+VITB6A	1	l			+0.3	+0.3			mg/day			
+VITB12	0	m	0	5			0.4		ug/day			
+VITB12	0	m	6	11			0.5		ug/day			
+VITB12	0	y	1	2	0.8	0.9			ug/day			
+VITB12	0	y	3	5	0.9	1.1			ug/day			
+VITB12	0	y	6	7	1.1	1.3			ug/day			
+VITB12	0	y	8	9	1.3	1.6			ug/day			
+VITB12	0	y	10	11	1.6	1.9			ug/day			
+VITB12	0	y	12	14	2.0	2.4			ug/day			
+VITB12	0	y	15	17	2.0	2.4			ug/day			
+VITB12	0	y	18	29	2.0	2.4			ug/day			
+VITB12	0	y	30	49	2.0	2.4			ug/day			
+VITB12	0	y	50	64	2.0	2.4			ug/day			
+VITB12	0	y	65	74	2.0	2.4			ug/day			
+VITB12	0	y	75	999	2.0	2.4			ug/day			
+VITB12	1	m	0	5			0.4		ug/day			
+VITB12	1	m	6	11			0.5		ug/day			
+VITB12	1	y	1	2	0.8	0.9			ug/day			
+VITB12	1	y	3	5	0.9	1.1			ug/day			
+VITB12	1	y	6	7	1.1	1.3			ug/day			
+VITB12	1	y	8	9	1.3	1.6			ug/day			
+VITB12	1	y	10	11	1.6	1.9			ug/day			
+VITB12	1	y	12	14	2.0	2.4			ug/day			
+VITB12	1	y	15	17	2.0	2.4			ug/day			
+VITB12	1	y	18	29	2.0	2.4			ug/day			
+VITB12	1	y	30	49	2.0	2.4			ug/day			
+VITB12	1	y	50	64	2.0	2.4			ug/day			
+VITB12	1	y	65	74	2.0	2.4			ug/day			
+VITB12	1	y	75	999	2.0	2.4			ug/day			
+VITB12	1	p	0	15	+0.3	+0.4			ug/day			
+VITB12	1	p	16	27	+0.3	+0.4			ug/day			
+VITB12	1	p	28	99	+0.3	+0.4			ug/day			
+VITB12	1	l			+0.7	+0.8			ug/day			
+FOL	0	m	0	5			40		ug/day			
+FOL	0	m	6	11			60		ug/day			
+FOL	0	y	1	2	80	90		200	ug/day			
+FOL	0	y	3	5	90	110		300	ug/day			
+FOL	0	y	6	7	110	140		400	ug/day			
+FOL	0	y	8	9	130	160		500	ug/day			
+FOL	0	y	10	11	160	190		700	ug/day			
+FOL	0	y	12	14	200	240		900	ug/day			
+FOL	0	y	15	17	220	240		900	ug/day			
+FOL	0	y	18	29	200	240		900	ug/day			
+FOL	0	y	30	49	200	240		1000	ug/day			
+FOL	0	y	50	64	200	240		1000	ug/day			
+FOL	0	y	65	74	200	240		900	ug/day			
+FOL	0	y	75	999	200	240		900	ug/day			
+FOL	1	m	0	5			40		ug/day			
+FOL	1	m	6	11			60		ug/day			
+FOL	1	y	1	2	90	90		200	ug/day			
+FOL	1	y	3	5	90	110		300	ug/day			
+FOL	1	y	6	7	110	140		400	ug/day			
+FOL	1	y	8	9	130	160		500	ug/day			
+FOL	1	y	10	11	160	190		700	ug/day			
+FOL	1	y	12	14	200	240		900	ug/day			
+FOL	1	y	15	17	200	240		900	ug/day			
+FOL	1	y	18	29	200	240		900	ug/day			
+FOL	1	y	30	49	200	240		1000	ug/day			
+FOL	1	y	50	64	200	240		1000	ug/day			
+FOL	1	y	65	74	200	240		900	ug/day			
+FOL	1	y	75	999	200	240		900	ug/day			
+FOL	1	p	0	15					ug/day			
+FOL	1	p	16	27	+200	+240			ug/day			
+FOL	1	p	28	99	+200	+240			ug/day			
+FOL	1	l			+80	+100			ug/day			
+PANTAC	0	m	0	5			4		mg/day			
+PANTAC	0	m	6	11			5		mg/day			
+PANTAC	0	y	1	2			3		mg/day			
+PANTAC	0	y	3	5			4		mg/day			
+PANTAC	0	y	6	7			5		mg/day			
+PANTAC	0	y	8	9			6		mg/day			
+PANTAC	0	y	10	11			6		mg/day			
+PANTAC	0	y	12	14			7		mg/day			
+PANTAC	0	y	15	17			7		mg/day			
+PANTAC	0	y	18	29			5		mg/day			
+PANTAC	0	y	30	49			5		mg/day			
+PANTAC	0	y	50	64			6		mg/day			
+PANTAC	0	y	65	74			6		mg/day			
+PANTAC	0	y	75	999			6		mg/day			
+PANTAC	1	m	0	5			4		mg/day			
+PANTAC	1	m	6	11			5		mg/day			
+PANTAC	1	y	1	2			4		mg/day			
+PANTAC	1	y	3	5			4		mg/day			
+PANTAC	1	y	6	7			5		mg/day			
+PANTAC	1	y	8	9			5		mg/day			
+PANTAC	1	y	10	11			6		mg/day			
+PANTAC	1	y	12	14			6		mg/day			
+PANTAC	1	y	15	17			6		mg/day			
+PANTAC	1	y	18	29			5		mg/day			
+PANTAC	1	y	30	49			5		mg/day			
+PANTAC	1	y	50	64			5		mg/day			
+PANTAC	1	y	65	74			5		mg/day			
+PANTAC	1	y	75	999			5		mg/day			
+PANTAC	1	p	0	15			5		mg/day			
+PANTAC	1	p	16	27			5		mg/day			
+PANTAC	1	p	28	99			5		mg/day			
+PANTAC	1	l					6		mg/day			
+BIOT	0	m	0	5			4		ug/day			
+BIOT	0	m	6	11			5		ug/day			
+BIOT	0	y	1	2			20		ug/day			
+BIOT	0	y	3	5			20		ug/day			
+BIOT	0	y	6	7			30		ug/day			
+BIOT	0	y	8	9			30		ug/day			
+BIOT	0	y	10	11			40		ug/day			
+BIOT	0	y	12	14			50		ug/day			
+BIOT	0	y	15	17			50		ug/day			
+BIOT	0	y	18	29			50		ug/day			
+BIOT	0	y	30	49			50		ug/day			
+BIOT	0	y	50	64			50		ug/day			
+BIOT	0	y	65	74			50		ug/day			
+BIOT	0	y	75	999			50		ug/day			
+BIOT	1	m	0	5			4		ug/day			
+BIOT	1	m	6	11			5		ug/day			
+BIOT	1	y	1	2			20		ug/day			
+BIOT	1	y	3	5			20		ug/day			
+BIOT	1	y	6	7			30		ug/day			
+BIOT	1	y	8	9			30		ug/day			
+BIOT	1	y	10	11			40		ug/day			
+BIOT	1	y	12	14			50		ug/day			
+BIOT	1	y	15	17			50		ug/day			
+BIOT	1	y	18	29			50		ug/day			
+BIOT	1	y	30	49			50		ug/day			
+BIOT	1	y	50	64			50		ug/day			
+BIOT	1	y	65	74			50		ug/day			
+BIOT	1	y	75	999			50		ug/day			
+BIOT	1	p	0	15			50		ug/day			
+BIOT	1	p	16	27			50		ug/day			
+BIOT	1	p	28	99			50		ug/day			
+BIOT	1	l					50		ug/day			
+VITC	0	m	0	5			40		mg/day			
+VITC	0	m	6	11			40		mg/day			
+VITC	0	y	1	2	35	40			mg/day			
+VITC	0	y	3	5	40	50			mg/day			
+VITC	0	y	6	7	50	60			mg/day			
+VITC	0	y	8	9	60	70			mg/day			
+VITC	0	y	10	11	70	85			mg/day			
+VITC	0	y	12	14	85	100			mg/day			
+VITC	0	y	15	17	85	100			mg/day			
+VITC	0	y	18	29	85	100			mg/day			
+VITC	0	y	30	49	85	100			mg/day			
+VITC	0	y	50	64	85	100			mg/day			
+VITC	0	y	65	74	80	100			mg/day			
+VITC	0	y	75	999	80	100			mg/day			
+VITC	1	m	0	5			40		mg/day			
+VITC	1	m	6	11			40		mg/day			
+VITC	1	y	1	2	35	40			mg/day			
+VITC	1	y	3	5	40	50			mg/day			
+VITC	1	y	6	7	50	60			mg/day			
+VITC	1	y	8	9	60	70			mg/day			
+VITC	1	y	10	11	70	85			mg/day			
+VITC	1	y	12	14	85	100			mg/day			
+VITC	1	y	15	17	85	100			mg/day			
+VITC	1	y	18	29	85	100			mg/day			
+VITC	1	y	30	49	85	100			mg/day			
+VITC	1	y	50	64	85	100			mg/day			
+VITC	1	y	65	74	80	100			mg/day			
+VITC	1	y	75	999	80	100			mg/day			
+VITC	1	p	0	15	+10	+10			mg/day			
+VITC	1	p	16	27	+10	+10			mg/day			
+VITC	1	p	28	99	+10	+10			mg/day			
+VITC	1	l			+40	+45			mg/day			
+NA	0	m	0	5			100		mg/day			
+NA	0	m	6	11			600		mg/day			
+NA	0	y	1	2					mg/day			
+NA	0	y	3	5					mg/day			
+NA	0	y	6	7					mg/day			
+NA	0	y	8	9					mg/day			
+NA	0	y	10	11					mg/day			
+NA	0	y	12	14					mg/day			
+NA	0	y	15	17					mg/day			
+NA	0	y	18	29	600				mg/day			
+NA	0	y	30	49	600				mg/day			
+NA	0	y	50	64	600				mg/day			
+NA	0	y	65	74	600				mg/day			
+NA	0	y	75	999	600				mg/day			
+NA	1	m	0	5			100		mg/day			
+NA	1	m	6	11			600		mg/day			
+NA	1	y	1	2					mg/day			
+NA	1	y	3	5					mg/day			
+NA	1	y	6	7					mg/day			
+NA	1	y	8	9					mg/day			
+NA	1	y	10	11					mg/day			
+NA	1	y	12	14					mg/day			
+NA	1	y	15	17					mg/day			
+NA	1	y	18	29	600				mg/day			
+NA	1	y	30	49	600				mg/day			
+NA	1	y	50	64	600				mg/day			
+NA	1	y	65	74	600				mg/day			
+NA	1	y	75	999	600				mg/day			
+NA	1	p	0	15	600				mg/day			
+NA	1	p	16	27	600				mg/day			
+NA	1	p	28	99	600				mg/day			
+NA	1	l			600				mg/day			
+NACL_EQ	0	m	0	5			0.3		g/day			
+NACL_EQ	0	m	6	11			1.5		g/day			
+NACL_EQ	0	y	1	2					g/day		3.0	g/day
+NACL_EQ	0	y	3	5					g/day		3.5	g/day
+NACL_EQ	0	y	6	7					g/day		4.5	g/day
+NACL_EQ	0	y	8	9					g/day		5.0	g/day
+NACL_EQ	0	y	10	11					g/day		6.0	g/day
+NACL_EQ	0	y	12	14					g/day		7.0	g/day
+NACL_EQ	0	y	15	17					g/day		7.5	g/day
+NACL_EQ	0	y	18	29	1.5				g/day		7.5	g/day
+NACL_EQ	0	y	30	49	1.5				g/day		7.5	g/day
+NACL_EQ	0	y	50	64	1.5				g/day		7.5	g/day
+NACL_EQ	0	y	65	74	1.5				g/day		7.5	g/day
+NACL_EQ	0	y	75	999	1.5				g/day		7.5	g/day
+NACL_EQ	1	m	0	5			0.3		g/day			
+NACL_EQ	1	m	6	11			1.5		g/day			
+NACL_EQ	1	y	1	2					g/day		3.0	g/day
+NACL_EQ	1	y	3	5					g/day		3.5	g/day
+NACL_EQ	1	y	6	7					g/day		4.5	g/day
+NACL_EQ	1	y	8	9					g/day		5.0	g/day
+NACL_EQ	1	y	10	11					g/day		6.0	g/day
+NACL_EQ	1	y	12	14					g/day		6.5	g/day
+NACL_EQ	1	y	15	17					g/day		6.5	g/day
+NACL_EQ	1	y	18	29	1.5				g/day		6.5	g/day
+NACL_EQ	1	y	30	49	1.5				g/day		6.5	g/day
+NACL_EQ	1	y	50	64	1.5				g/day		6.5	g/day
+NACL_EQ	1	y	65	74	1.5				g/day		6.5	g/day
+NACL_EQ	1	y	75	999	1.5				g/day		6.5	g/day
+NACL_EQ	1	p	0	15	1.5				g/day		6.5	g/day
+NACL_EQ	1	p	16	27	1.5				g/day		6.5	g/day
+NACL_EQ	1	p	28	99	1.5				g/day		6.5	g/day
+NACL_EQ	1	l			1.5				g/day		6.5	g/day
+K	0	m	0	5			400		mg/day			
+K	0	m	6	11			700		mg/day			
+K	0	y	1	2			900		mg/day			
+K	0	y	3	5			1000		mg/day	1400		mg/day
+K	0	y	6	7			1300		mg/day	1800		mg/day
+K	0	y	8	9			1500		mg/day	2000		mg/day
+K	0	y	10	11			1800		mg/day	2200		mg/day
+K	0	y	12	14			2300		mg/day	2400		mg/day
+K	0	y	15	17			2700		mg/day	3000		mg/day
+K	0	y	18	29			2500		mg/day	3000		mg/day
+K	0	y	30	49			2500		mg/day	3000		mg/day
+K	0	y	50	64			2500		mg/day	3000		mg/day
+K	0	y	65	74			2500		mg/day	3000		mg/day
+K	0	y	75	999			2500		mg/day	3000		
+K	1	m	0	5			400		mg/day			
+K	1	m	6	11			700		mg/day			
+K	1	y	1	2			900		mg/day			
+K	1	y	3	5			1000		mg/day	1400		mg/day
+K	1	y	6	7			1200		mg/day	1800		mg/day
+K	1	y	8	9			1500		mg/day	2000		mg/day
+K	1	y	10	11			1800		mg/day	2000		mg/day
+K	1	y	12	14			1900		mg/day	2400		mg/day
+K	1	y	15	17			2000		mg/day	2600		mg/day
+K	1	y	18	29			2000		mg/day	2600		mg/day
+K	1	y	30	49			2000		mg/day	2600		mg/day
+K	1	y	50	64			2000		mg/day	2600		mg/day
+K	1	y	65	74			2000		mg/day	2600		mg/day
+K	1	y	75	999			2000		mg/day	2600		mg/day
+K	1	p	0	15			2000		mg/day	2600		mg/day
+K	1	p	16				2000		mg/day	2600		mg/day
+K	1	p	28	99			2000		mg/day	2600		mg/day
+K	1	l					2200		mg/day	2600		mg/day
+CA	0	m	0	5			200		mg/day			
+CA	0	m	6	11			250		mg/day			
+CA	0	y	1	2	350	450			mg/day			
+CA	0	y	3	5	500	600			mg/day			
+CA	0	y	6	7	500	600			mg/day			
+CA	0	y	8	9	550	650			mg/day			
+CA	0	y	10	11	600	700			mg/day			
+CA	0	y	12	14	850	1000			mg/day			
+CA	0	y	15	17	650	800			mg/day			
+CA	0	y	18	29	650	800		2500	mg/day			
+CA	0	y	30	49	600	750		2500	mg/day			
+CA	0	y	50	64	600	750		2500	mg/day			
+CA	0	y	65	74	600	750		2500	mg/day			
+CA	0	y	75	999	600	750		2500	mg/day			
+CA	1	m	0	5			200		mg/day			
+CA	1	m	6	11			250		mg/day			
+CA	1	y	1	2	350	400			mg/day			
+CA	1	y	3	5	450	550			mg/day			
+CA	1	y	6	7	450	550			mg/day			
+CA	1	y	8	9	600	750			mg/day			
+CA	1	y	10	11	600	750			mg/day			
+CA	1	y	12	14	700	800			mg/day			
+CA	1	y	15	17	550	650			mg/day			
+CA	1	y	18	29	550	650		2500	mg/day			
+CA	1	y	30	49	550	650		2500	mg/day			
+CA	1	y	50	64	550	650		2500	mg/day			
+CA	1	y	65	74	550	650		2500	mg/day			
+CA	1	y	75	999	500	600		2500	mg/day			
+CA	1	p	0	15					mg/day			
+CA	1	p	16	27					mg/day			
+CA	1	p	28	99					mg/day			
+CA	1	l							mg/day			
+MG	0	m	0	5			20		mg/day			
+MG	0	m	6	11			60		mg/day			
+MG	0	y	1	2	60	70			mg/day			
+MG	0	y	3	5	80	100			mg/day			
+MG	0	y	6	7	110	130			mg/day			
+MG	0	y	8	9	140	170			mg/day			
+MG	0	y	10	11	180	210			mg/day			
+MG	0	y	12	14	250	290			mg/day			
+MG	0	y	15	17	300	360			mg/day			
+MG	0	y	18	29	280	340			mg/day			
+MG	0	y	30	49	310	370			mg/day			
+MG	0	y	50	64	310	370			mg/day			
+MG	0	y	65	74	290	350			mg/day			
+MG	0	y	75	999	270	320			mg/day			
+MG	1	m	0	5			20		mg/day			
+MG	1	m	6	11			60		mg/day			
+MG	1	y	1	2	60	70			mg/day			
+MG	1	y	3	5	80	100			mg/day			
+MG	1	y	6	7	110	130			mg/day			
+MG	1	y	8	9	140	160			mg/day			
+MG	1	y	10	11	180	220			mg/day			
+MG	1	y	12	14	240	290			mg/day			
+MG	1	y	15	17	260	310			mg/day			
+MG	1	y	18	29	230	270			mg/day			
+MG	1	y	30	49	240	290			mg/day			
+MG	1	y	50	64	240	290			mg/day			
+MG	1	y	65	74	230	280			mg/day			
+MG	1	y	75	999	220	260			mg/day			
+MG	1	p	0	15	+30	+40			mg/day			
+MG	1	p	16	27	+30	+40			mg/day			
+MG	1	p	28	99	+30	+40			mg/day			
+MG	1	l							mg/day			
+P	0	m	0	5			120		mg/day			
+P	0	m	6	11			260		mg/day			
+P	0	y	1	2			500		mg/day			
+P	0	y	3	5			700		mg/day			
+P	0	y	6	7			900		mg/day			
+P	0	y	8	9			1000		mg/day			
+P	0	y	10	11			1100		mg/day			
+P	0	y	12	14			1200		mg/day			
+P	0	y	15	17			1200		mg/day			
+P	0	y	18	29			1000	3000	mg/day			
+P	0	y	30	49			1000	3000	mg/day			
+P	0	y	50	64			1000	3000	mg/day			
+P	0	y	65	74			1000	3000	mg/day			
+P	0	y	75	999			1000	3000	mg/day			
+P	1	m	0	5			120		mg/day			
+P	1	m	6	11			260		mg/day			
+P	1	y	1	2			500		mg/day			
+P	1	y	3	5			700		mg/day			
+P	1	y	6	7			800		mg/day			
+P	1	y	8	9			1000		mg/day			
+P	1	y	10	11			1000		mg/day			
+P	1	y	12	14			1000		mg/day			
+P	1	y	15	17			900		mg/day			
+P	1	y	18	29			800		mg/day			
+P	1	y	30	49			800		mg/day			
+P	1	y	50	64			800		mg/day			
+P	1	y	65	74			800		mg/day			
+P	1	y	75	999			800		mg/day			
+P	1	p	0	15			800		mg/day			
+P	1	p	16	27			800		mg/day			
+P	1	p	28	99			800		mg/day			
+P	1	l					800		mg/day			
+FE	0	m	0	5			0.5		mg/day			
+FE	0	m	6	11	3.5	5.0			mg/day			
+FE	0	y	1	2	3.0	4.5		25	mg/day			
+FE	0	y	3	5	4.0	5.5		25	mg/day			
+FE	0	y	6	7	5.0	5.5		30	mg/day			
+FE	0	y	8	9	6.0	7.0		35	mg/day			
+FE	0	y	10	11	7.0	8.5		35	mg/day			
+FE	0	y	12	14	8.0	10.0		40	mg/day			
+FE	0	y	15	17	8.0	10.0		50	mg/day			
+FE	0	y	18	29	6.5	7.5		50	mg/day			
+FE	0	y	30	49	6.5	7.5		50	mg/day			
+FE	0	y	50	64	6.5	7.5		50	mg/day			
+FE	0	y	65	74	6.0	7.5		50	mg/day			
+FE	0	y	75	999	6.0	7.0		50	mg/day			
+FE	1	m	0	5			0.5		mg/day			
+FE	1	m	6	11	3.5	4.5			mg/day			
+FE	1	y	1	2	3.0	4.5		20	mg/day			
+FE	1	y	3	5	4.0	5.5		25	mg/day			
+FE	1	y	6	7	4.5	5.5		30	mg/day			
+FE	1	y	8	9	6.0	7.5		35	mg/day			
+FE	1	y	10	11	7.0	8.5		35	mg/day			
+FE	1	y	12	14	7.0	8.5		40	mg/day			
+FE	1	y	15	17	5.5	7.0		40	mg/day			
+FE	1	y	18	29	5.5	6.5		40	mg/day			
+FE	1	y	30	49	5.5	6.5		40	mg/day			
+FE	1	y	50	64	5.5	6.5		40	mg/day			
+FE	1	y	65	74	5.0	6.0		40	mg/day			
+FE	1	y	75	999	5.0	6.0		40	mg/day			
+FE	1	p	0	15	+2.0	+2.5			mg/day			
+FE	1	p	16	27	+8.0	+9.5			mg/day			
+FE	1	p	28	99	+8.0	+9.5			mg/day			
+FE	1	l			+2.0	+2.5			mg/day			
+FE_M	1	m	0	5			0.5		mg/day			
+FE_M	1	m	6	11					mg/day			
+FE_M	1	y	1	2				20	mg/day			
+FE_M	1	y	3	5				25	mg/day			
+FE_M	1	y	6	7				30	mg/day			
+FE_M	1	y	8	9				35	mg/day			
+FE_M	1	y	10	11	10.0	12.0		35	mg/day			
+FE_M	1	y	12	14	10.0	12.0		40	mg/day			
+FE_M	1	y	15	17	8.5	10.5		40	mg/day			
+FE_M	1	y	18	29	8.5	10.5		40	mg/day			
+FE_M	1	y	30	49	9.0	10.5		40	mg/day			
+FE_M	1	y	50	64	9.0	11.0		40	mg/day			
+FE_M	1	y	65	74				40	mg/day			
+FE_M	1	y	75	999				40	mg/day			
+FE_M	1	p	0	15					mg/day			
+FE_M	1	p	16	27					mg/day			
+FE_M	1	p	28	99					mg/day			
+FE_M	1	l							mg/day			
+ZN	0	m	0	5			2		mg/day			
+ZN	0	m	6	11			3		mg/day			
+ZN	0	y	1	2	3	3			mg/day			
+ZN	0	y	3	5	3	4			mg/day			
+ZN	0	y	6	7	4	5			mg/day			
+ZN	0	y	8	9	5	6			mg/day			
+ZN	0	y	10	11	6	7			mg/day			
+ZN	0	y	12	14	9	10			mg/day			
+ZN	0	y	15	17	10	12			mg/day			
+ZN	0	y	18	29	9	11		40	mg/day			
+ZN	0	y	30	49	9	11		45	mg/day			
+ZN	0	y	50	64	9	11		45	mg/day			
+ZN	0	y	65	74	9	11		40	mg/day			
+ZN	0	y	75	999	9	10		40	mg/day			
+ZN	1	m	0	5			2		mg/day			
+ZN	1	m	6	11			3		mg/day			
+ZN	1	y	1	2	2	3			mg/day			
+ZN	1	y	3	5	3	3			mg/day			
+ZN	1	y	6	7	3	4			mg/day			
+ZN	1	y	8	9	4	5			mg/day			
+ZN	1	y	10	11	5	6			mg/day			
+ZN	1	y	12	14	7	8			mg/day			
+ZN	1	y	15	17	7	8			mg/day			
+ZN	1	y	18	29	7	8		35	mg/day			
+ZN	1	y	30	49	7	8		35	mg/day			
+ZN	1	y	50	64	7	8		35	mg/day			
+ZN	1	y	65	74	7	8		35	mg/day			
+ZN	1	y	75	999	6	8		30	mg/day			
+ZN	1	p	0	15	+1	+2			mg/day			
+ZN	1	p	16	27	+1	+2			mg/day			
+ZN	1	p	28	99	+1	+2			mg/day			
+ZN	1	l			+3	+4			mg/day			
+CU	0	m	0	5			0.3		mg/day			
+CU	0	m	6	11			0.3		mg/day			
+CU	0	y	1	2	0.3	0.3			mg/day			
+CU	0	y	3	5	0.3	0.4			mg/day			
+CU	0	y	6	7	0.4	0.4			mg/day			
+CU	0	y	8	9	0.4	0.5			mg/day			
+CU	0	y	10	11	0.5	0.6			mg/day			
+CU	0	y	12	14	0.7	0.8			mg/day			
+CU	0	y	15	17	0.8	0.9			mg/day			
+CU	0	y	18	29	0.7	0.9		7	mg/day			
+CU	0	y	30	49	0.7	0.9		7	mg/day			
+CU	0	y	50	64	0.7	0.9		7	mg/day			
+CU	0	y	65	74	0.7	0.9		7	mg/day			
+CU	0	y	75	999	0.7	0.8		7	mg/day			
+CU	1	m	0	5			0.3		mg/day			
+CU	1	m	6	11			0.3		mg/day			
+CU	1	y	1	2	0.2	0.3			mg/day			
+CU	1	y	3	5	0.3	0.3			mg/day			
+CU	1	y	6	7	0.4	0.4			mg/day			
+CU	1	y	8	9	0.4	0.5			mg/day			
+CU	1	y	10	11	0.5	0.6			mg/day			
+CU	1	y	12	14	0.6	0.8			mg/day			
+CU	1	y	15	17	0.6	0.7			mg/day			
+CU	1	y	18	29	0.6	0.7		7	mg/day			
+CU	1	y	30	49	0.6	0.7		7	mg/day			
+CU	1	y	50	64	0.6	0.7		7	mg/day			
+CU	1	y	65	74	0.6	0.7		7	mg/day			
+CU	1	y	75	999	0.6	0.7		7	mg/day			
+CU	1	p	0	15	+0.1	+0.1			mg/day			
+CU	1	p	16	27	+0.1	+0.1			mg/day			
+CU	1	p	28	99	+0.1	+0.1			mg/day			
+CU	1	l			+0.5	+0.6			mg/day			
+MN	0	m	0	5			0.01		mg/day			
+MN	0	m	6	11			0.5		mg/day			
+MN	0	y	1	2			1.5		mg/day			
+MN	0	y	3	5			1.5		mg/day			
+MN	0	y	6	7			2.0		mg/day			
+MN	0	y	8	9			2.5		mg/day			
+MN	0	y	10	11			3.0		mg/day			
+MN	0	y	12	14			4.0		mg/day			
+MN	0	y	15	17			4.5		mg/day			
+MN	0	y	18	29			4.0	11	mg/day			
+MN	0	y	30	49			4.0	11	mg/day			
+MN	0	y	50	64			4.0	11	mg/day			
+MN	0	y	65	74			4.0	11	mg/day			
+MN	0	y	75	999			4.0	11	mg/day			
+MN	1	m	0	5			0.01		mg/day			
+MN	1	m	6	11			0.5		mg/day			
+MN	1	y	1	2			1.5		mg/day			
+MN	1	y	3	5			1.5		mg/day			
+MN	1	y	6	7			2.0		mg/day			
+MN	1	y	8	9			2.5		mg/day			
+MN	1	y	10	11			3.0		mg/day			
+MN	1	y	12	14			4.0		mg/day			
+MN	1	y	15	17			3.5		mg/day			
+MN	1	y	18	29			3.5	11	mg/day			
+MN	1	y	30	49			3.5	11	mg/day			
+MN	1	y	50	64			3.5	11	mg/day			
+MN	1	y	65	74			3.5	11	mg/day			
+MN	1	y	75	999			3.5	11	mg/day			
+MN	1	p	0	15			3.5		mg/day			
+MN	1	p	16	27			3.5		mg/day			
+MN	1	p	28	99			3.5		mg/day			
+MN	1	l					3.5		mg/day			
+ID	0	m	0	5			100	250	ug/day			
+ID	0	m	6	11			130	250	ug/day			
+ID	0	y	1	2	35	50		300	ug/day			
+ID	0	y	3	5	45	60		400	ug/day			
+ID	0	y	6	7	55	75		550	ug/day			
+ID	0	y	8	9	65	90		700	ug/day			
+ID	0	y	10	11	80	110		900	ug/day			
+ID	0	y	12	14	95	140		2000	ug/day			
+ID	0	y	15	17	100	140		3000	ug/day			
+ID	0	y	18	29	95	130		3000	ug/day			
+ID	0	y	30	49	95	130		3000	ug/day			
+ID	0	y	50	64	95	130		3000	ug/day			
+ID	0	y	65	74	95	130		3000	ug/day			
+ID	0	y	75	999	95	130		3000	ug/day			
+ID	1	m	0	5			100	250	ug/day			
+ID	1	m	6	11			130	250	ug/day			
+ID	1	y	1	2	35	50		300	ug/day			
+ID	1	y	3	5	45	60		400	ug/day			
+ID	1	y	6	7	55	75		550	ug/day			
+ID	1	y	8	9	65	90		700	ug/day			
+ID	1	y	10	11	80	110		900	ug/day			
+ID	1	y	12	14	95	140		2000	ug/day			
+ID	1	y	15	17	100	140		3000	ug/day			
+ID	1	y	18	29	95	130		3000	ug/day			
+ID	1	y	30	49	95	130		3000	ug/day			
+ID	1	y	50	64	95	130		3000	ug/day			
+ID	1	y	65	74	95	130		3000	ug/day			
+ID	1	y	75	999	95	130		3000	ug/day			
+ID	1	p	0	15	+75	+110		2000	ug/day			
+ID	1	p	16	27	+75	+110		2000	ug/day			
+ID	1	p	28	99	+75	+110		2000	ug/day			
+ID	1	l			+100	+140		2000	ug/day			
+SE	0	m	0	5			15		ug/day			
+SE	0	m	6	11			15		ug/day			
+SE	0	y	1	2	10	10		100	ug/day			
+SE	0	y	3	5	10	15		100	ug/day			
+SE	0	y	6	7	15	15		150	ug/day			
+SE	0	y	8	9	15	20		200	ug/day			
+SE	0	y	10	11	20	25		250	ug/day			
+SE	0	y	12	14	25	30		350	ug/day			
+SE	0	y	15	17	30	35		400	ug/day			
+SE	0	y	18	29	25	30		450	ug/day			
+SE	0	y	30	49	25	30		450	ug/day			
+SE	0	y	50	64	25	30		450	ug/day			
+SE	0	y	65	74	25	30		450	ug/day			
+SE	0	y	75	999	25	30		400	ug/day			
+SE	1	m	0	5			15		ug/day			
+SE	1	m	6	11			15		ug/day			
+SE	1	y	1	2	10	10		100	ug/day			
+SE	1	y	3	5	10	10		100	ug/day			
+SE	1	y	6	7	15	15		150	ug/day			
+SE	1	y	8	9	15	20		200	ug/day			
+SE	1	y	10	11	20	25		250	ug/day			
+SE	1	y	12	14	25	30		300	ug/day			
+SE	1	y	15	17	20	25		350	ug/day			
+SE	1	y	18	29	20	25		350	ug/day			
+SE	1	y	30	49	20	25		350	ug/day			
+SE	1	y	50	64	20	25		350	ug/day			
+SE	1	y	65	74	20	25		350	ug/day			
+SE	1	y	75	999	20	25		350	ug/day			
+SE	1	p	0	15	+5	+5			ug/day			
+SE	1	p	16	27	+5	+5			ug/day			
+SE	1	p	28	99	+5	+5			ug/day			
+SE	1	l			+15	+20			ug/day			
+CR	0	m	0	5			0.8		ug/day			
+CR	0	m	6	11			1.0		ug/day			
+CR	0	y	1	2					ug/day			
+CR	0	y	3	5					ug/day			
+CR	0	y	6	7					ug/day			
+CR	0	y	8	9					ug/day			
+CR	0	y	10	11					ug/day			
+CR	0	y	12	14					ug/day			
+CR	0	y	15	17					ug/day			
+CR	0	y	18	29			10	500	ug/day			
+CR	0	y	30	49			10	500	ug/day			
+CR	0	y	50	64			10	500	ug/day			
+CR	0	y	65	74			10	500	ug/day			
+CR	0	y	75	999			10	500	ug/day			
+CR	1	m	0	5			0.8		ug/day			
+CR	1	m	6	11			1.0		ug/day			
+CR	1	y	1	2					ug/day			
+CR	1	y	3	5					ug/day			
+CR	1	y	6	7					ug/day			
+CR	1	y	8	9					ug/day			
+CR	1	y	10	11					ug/day			
+CR	1	y	12	14					ug/day			
+CR	1	y	15	17					ug/day			
+CR	1	y	18	29			10	500	ug/day			
+CR	1	y	30	49			10	500	ug/day			
+CR	1	y	50	64			10	500	ug/day			
+CR	1	y	65	74			10	500	ug/day			
+CR	1	y	75	999			10	500	ug/day			
+CR	1	p	0	15			10		ug/day			
+CR	1	p	16	27			10		ug/day			
+CR	1	p	28	99			10		ug/day			
+CR	1	l					10		ug/day			
+MO	0	m	0	5			2		ug/day			
+MO	0	m	6	11			5		ug/day			
+MO	0	y	1	2	10	10			ug/day			
+MO	0	y	3	5	10	10			ug/day			
+MO	0	y	6	7	10	15			ug/day			
+MO	0	y	8	9	15	20			ug/day			
+MO	0	y	10	11	15	20			ug/day			
+MO	0	y	12	14	20	25			ug/day			
+MO	0	y	15	17	25	30			ug/day			
+MO	0	y	18	29	20	30		600	ug/day			
+MO	0	y	30	49	25	30		600	ug/day			
+MO	0	y	50	64	25	30		600	ug/day			
+MO	0	y	65	74	20	30		600	ug/day			
+MO	0	y	75	999	20	25		600	ug/day			
+MO	1	m	0	5			2		ug/day			
+MO	1	m	6	11			5		ug/day			
+MO	1	y	1	2	10	10			ug/day			
+MO	1	y	3	5	10	10			ug/day			
+MO	1	y	6	7	10	15			ug/day			
+MO	1	y	8	9	15	15			ug/day			
+MO	1	y	10	11	15	20			ug/day			
+MO	1	y	12	14	20	25			ug/day			
+MO	1	y	15	17	20	25			ug/day			
+MO	1	y	18	29	20	25		500	ug/day			
+MO	1	y	30	49	20	25		500	ug/day			
+MO	1	y	50	64	20	25		500	ug/day			
+MO	1	y	65	74	20	25		500	ug/day			
+MO	1	y	75	999	20	25		500	ug/day			
+MO	1	p	0	15					ug/day			
+MO	1	p	16	27					ug/day			
+MO	1	p	28	99					ug/day			
+MO	1	l			+3	+3			ug/day			
