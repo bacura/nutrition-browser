@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.0 (2025/08/11)
+#nb2020-dbi.rb 0.8.1 (2025/12/11)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -276,7 +276,7 @@ def tag_init( source_file )
 		puts 'tag table already exists.'
 		update_flag = true
 	else
-		query = 'CREATE TABLE tag (FG VARCHAR(2), FN VARCHAR(6), SID VARCHAR(8), SN SMALLINT, user VARCHAR(32), name VARCHAR(64),class1 VARCHAR(64),class2 VARCHAR(64),class3 VARCHAR(64),tag1 VARCHAR(64),tag2 VARCHAR(64),tag3 VARCHAR(64),tag4 VARCHAR(64),tag5 VARCHAR(64), public TINYINT;'
+		query = 'CREATE TABLE tag (FG VARCHAR(2),FN VARCHAR(6),SID VARCHAR(8),SN SMALLINT,user VARCHAR(32),name VARCHAR(64),class1 VARCHAR(64),class2 VARCHAR(64),class3 VARCHAR(64),tag1 VARCHAR(64),tag2 VARCHAR(64),tag3 VARCHAR(64),tag4 VARCHAR(64),tag5 VARCHAR(64), status TINYINT);'
 		$DB.query( query )
 	end
 
@@ -350,13 +350,13 @@ def tag_init( source_file )
 		res = $DB.query( query ) 
 		if res.first
 			sql_query_tag = "UPDATE #{$MYSQL_TB_TAG} SET"
-			sql_query_tag << " SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',public='9' WHERE FN='#{items[1]}';"
+			sql_query_tag << " SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',status='9' WHERE FN='#{items[1]}';"
 
 			$DB.query( sql_query_tag ) unless label
 			label = false
 		else
 			sql_query_tag = "INSERT INTO #{$MYSQL_TB_TAG} SET"
-			sql_query_tag << " FG='#{items[0]}',FN='#{items[1]}',SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',public='9';"
+			sql_query_tag << " FG='#{items[0]}',FN='#{items[1]}',SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',status='9';"
 
 			$DB.query( sql_query_tag ) unless label
 			label = false
@@ -665,7 +665,7 @@ def user_init()
 	if res.first
 		puts 'user table already exists.'
 	else
-		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, pass VARCHAR(32), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32);'
+		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, pass VARCHAR(32), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
 		$DB.query( query )
 		puts 'user in ext has been created.'
 
@@ -1014,7 +1014,7 @@ def note_init()
 	if res.first
 		puts 'note already exists.'
 	else
-		query = 'CREATE TABLE note ( code VARCHAR(64) NOT NULL PRIMARY KEY, media VARCHAR(64), user VARCHAR(32), aliasm VARCHAR(64), note VARCHAR(512), datetime DATETIME), TINYINT(1);'
+		query = 'CREATE TABLE note ( code VARCHAR(64) NOT NULL PRIMARY KEY, media VARCHAR(64), user VARCHAR(32), aliasm VARCHAR(64), note VARCHAR(512), datetime DATETIME, status TINYINT(1));'
 		$DB.query( query )
 
 		puts 'note table has been created.'
@@ -1237,23 +1237,24 @@ end
 
 
 #==============================================================================
-base_file 	= '20230428-mxt_kagsei-mext_00001_012_clean.txt'
-aa_file 	= '20230428-mxt_kagsei-mext_00001_AA_clean.txt'
-fa_file 	= '20230428-mxt_kagsei-mext_00001_FA_clean.txt'
-fib_file 	= '20230428-mxt_kagsei-mext_00001_FIB_clean.txt'
-sug_file 	= '20230428-mxt_kagsei-mext_00001_SUG_clean.txt'
-oa_file 	= '20230428-mxt_kagsei-mext_00001_OA_clean.txt'
+data_path = 'ds2020'
+base_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_012_clean.txt"
+aa_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_AA_clean.txt"
+fa_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_FA_clean.txt"
+fib_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_FIB_clean.txt"
+sug_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_SUG_clean.txt"
+oa_file 	= "#{data_path}/20230428-mxt_kagsei-mext_00001_OA_clean.txt"
 sub_files = [aa_file, fa_file, fib_file, sug_file, oa_file]
 plus_fct = %w( FASAT FAMS FAPU FAPUN3 FAPUN6 FIBSOL FIBINS FIBTG FIBSDFS FIBSDFP FIBIDF STARES FIBTDF )
-gycv_file = 'nb2020-gycv.txt'
-shun_file = 'nb2020-shun.txt'
-unit_file = 'nb2020-unit.txt'
-mets_file = 'nb2020-mets.txt'
-ref_bmi = 'ref2020-bmi.txt'
-ref_phys = 'ref2020-phys.txt'
-ref_eer = 'ref2020-eer.txt'
-ref_intake = 'ref2020-intake.txt'
-ref_parallel = 'ref2020-parallel.txt'
+gycv_file = "#{data_path}/nb2020-gycv.txt"
+shun_file = "#{data_path}/nb2020-shun.txt"
+unit_file = "#{data_path}/nb2020-unit.txt"
+mets_file = "#{data_path}/nb2020-mets.txt"
+ref_bmi = "#{data_path}/ref2020-bmi.txt"
+ref_phys = "#{data_path}/ref2020-phys.txt"
+ref_eer = "#{data_path}/ref2020-eer.txt"
+ref_intake = "#{data_path}/ref2020-intake.txt"
+ref_parallel = "#{data_path}/ref2020-parallel.txt"
 
 #==============================================================================
 print 'DB Administrator name？'
