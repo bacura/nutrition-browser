@@ -24,7 +24,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'title' 	=> "こよみ食品構成計算",\
 		'signpost'	=> "<img src='bootstrap-dist/icons/signpost.svg' style='height:2em; width:2em;'>",\
 		'fromto'	=> "　～　",\
@@ -101,7 +101,7 @@ end
 
 
 puts 'LOAD config<br>' if @debug
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 		koyomi = JSON.parse( r.first['koyomi'] )
@@ -117,7 +117,7 @@ end
 puts "Multi calc process<br>" if @debug
 day_list = []
 koyomi_box = [ Hash.new, Hash.new, Hash.new, Hash.new ]
-r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND tdiv != 4 AND date BETWEEN '#{yyyymmdds}' AND '#{yyyymmdde}';", false )
+r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND tdiv != 4 AND date BETWEEN '#{yyyymmdds}' AND '#{yyyymmdde}';", false )
 r.each do |e|
 	koyomi_box[e['tdiv'].to_i][e['date'].to_s] = e['koyomi']
 	day_list << e['date'].to_s
@@ -226,7 +226,7 @@ fct_total.fns.size.times do |c|
 	when '00'
 	when '06'
 		puts "GYV<br>" if @debug
-		r = db.query( "SELECT gycv FROM #{$MYSQL_TB_EXT} WHERE FN='#{fct_total.fns[c]}';", false )
+		r = db.query( "SELECT gycv FROM #{$TB_EXT} WHERE FN='#{fct_total.fns[c]}';", false )
 		if r.first['gycv'] == 1
 			gycv += fct_total.weights[c]
 		else
@@ -441,5 +441,5 @@ puts html
 if command == 'compo'
 		koyomi[script] = { 'yyyymmdds' => yyyymmdds, 'yyyymmdde' => yyyymmdde, 'ew_mode' => ew_mode }
 		koyomi_ = JSON.generate( koyomi )
-	db.query( "UPDATE #{$MYSQL_TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
+	db.query( "UPDATE #{$TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
 end

@@ -1,12 +1,13 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutritoin browser history 0.2.7.AI (2025/02/02)
+#Nutritoin browser history 0.2.8 (2025/12/18)
 
 #==============================================================================
 # STATIC
 #==============================================================================
 @debug = false
-script = File.basename( $0, '.cgi' )
+myself = File.basename( __FILE__ )
+
 $ALL_LIMIT = 100
 
 #==============================================================================
@@ -23,39 +24,39 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
-		:history	=> "履歴",\
-		:all	 	=> "全部",\
-		:special	=> "特殊",\
-		:login		=> "ログインしてください",\
-		:recipe		=> "レシピ",\
-		:fno		=> "食品番号",\
-		:wvegi		=> "野菜類（白色）",\
-		:gyvegi		=> "野菜類（緑黄色）",\
-		:sg1		=> "穀",\
-		:sg2		=> "芋",\
-		:sg3		=> "甘",\
-		:sg4		=> "豆",\
-		:sg5		=> "種",\
-		:sg6		=> "菜",\
-		:sg7		=> "果",\
-		:sg8		=> "茸",\
-		:sg9		=> "藻",\
-		:sg10		=> "魚",\
-		:sg11		=> "肉",\
-		:sg12		=> "卵",\
-		:sg13		=> "乳",\
-		:sg14		=> "油",\
-		:sg15		=> "菓",\
-		:sg16		=> "飲",\
-		:sg17		=> "調",\
-		:sg18		=> "流",\
-		:sg0		=> "特",\
-		:sgr		=> "レ",\
-		:cboard		=> "<img src='bootstrap-dist/icons/card-text.svg' style='height:1.2em; width:1.2em;'>",\
-		:printer	=> "<img src='bootstrap-dist/icons/printer.svg' style='height:1.2em; width:1.2em;'>",\
-		:cp2words	=> "<img src='bootstrap-dist/icons/eyedropper.svg' style='height:1.2em; width:1.2em;'>",\
-		:calendar	=> "<img src='bootstrap-dist/icons/calendar-plus.svg' style='height:1.2em; width:1.2em;'>"
+	l['ja'] = {
+		history:	"履歴",
+		all:	 "全部",
+		special:	"特殊",
+		login:	"ログインしてください",
+		recipe:	"レシピ",
+		fno:	"食品番号",
+		wvegi:	"野菜類（白色）",
+		gyvegi:	"野菜類（緑黄色）",
+		sg1:	"穀",
+		sg2:	"芋",
+		sg3:	"甘",
+		sg4:	"豆",
+		sg5:	"種",
+		sg6:	"菜",
+		sg7:	"果",
+		sg8:	"茸",
+		sg9:	"藻",
+		sg10:	"魚",
+		sg11:	"肉",
+		sg12:	"卵",
+		sg13:	"乳",
+		sg14:	"油",
+		sg15:	"菓",
+		sg16:	"飲",
+		sg17:	"調",
+		sg18:	"流",
+		sg0:	"特",
+		sgr:	"レ",
+		cboard:	"<img src='bootstrap-dist/icons/card-text.svg' style='height:1.2em; width:1.2em;'>",
+		printer:	"<img src='bootstrap-dist/icons/printer.svg' style='height:1.2em; width:1.2em;'>",
+		cp2words:	"<img src='bootstrap-dist/icons/eyedropper.svg' style='height:1.2em; width:1.2em;'>",
+		calendar:	"<img src='bootstrap-dist/icons/calendar-plus.svg' style='height:1.2em; width:1.2em;'>"
 	}
 
 	return l[language]
@@ -65,8 +66,8 @@ end
 def get_histry( db, l, sub_fg )
 	history = []
 	sgh = Hash.new
-	res = db.query( "SELECT his FROM #{$MYSQL_TB_HIS} WHERE user='#{db.user.name}';", false )
-	t = res.first['his'].split( "\t" )
+	res = db.query( "SELECT his FROM #{$TB_HIS} WHERE user=?", false, [db.user.name] )&.first
+	t = res['his'].split( "\t" )
 
 	gycv = sub_fg == '6_'
 	sub_fg = '6' if gycv
@@ -79,7 +80,7 @@ def get_histry( db, l, sub_fg )
 	else
 
 		t.each do |entry|
-			next unless ( /U|P/ =~ entry && entry[1..2].to_i == sub_fg.to_i ) || entry[0..1].to_i == sub_fg.to_i || entry.include?( '-r-' )
+			next unless ( /[UPC]/ =~ entry && entry[1..2].to_i == sub_fg.to_i ) || entry[0..1].to_i == sub_fg.to_i || entry.include?( '-r-' )
 			sgh[entry] = entry.include?( '-r-' ) ? 'r' : 'f'
 			history << entry
 		end
@@ -88,31 +89,30 @@ def get_histry( db, l, sub_fg )
 	html = ''
 	history.each do |entry|
 		if sgh[entry] == 'f' && sub_fg != 'R'
-			r_tag = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{entry}';", false )
-			next unless r_tag.first
+			res_tag = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [entry] )&.first
+			next unless res_tag
 
 			if sub_fg == '6'
-				res2 = db.query( "SELECT gycv FROM #{$MYSQL_TB_EXT} WHERE FN='#{entry}';", false )
-				next if res2.first && ( res2.first['gycv'] == 1 && !gycv ) || ( res2.first['gycv'] != 1 && gycv )
+				res2 = db.query( "SELECT gycv FROM #{$TB_EXT} WHERE FN=?", false, [entry] )&.first
+				next if res2 && ( res2['gycv'] == 1 && !gycv ) || ( res2['gycv'] != 1 && gycv )
 			end
-
-			food_name = r_tag.first['name']
-			tags = bind_tags( r_tag )
+			food_name = res_tag['name']
+			tags = tagnames( res_tag )
 
 			add_button = "<span onclick=\"addingCB( '#{entry}', '', '#{food_name}' )\">#{l[:cboard]}</span>" if db.user.name
 			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 2
 
 			html += "<tr class='fct_value'><td class='link_cursor' onclick=\"detailView_his( '#{entry}' )\">#{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}</td></tr>\n"
 		elsif sgh[entry] == 'r' && ( sub_fg == 'R' || sub_fg == 'all' )
-			recipe_result = db.query( "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code='#{entry}';", false )
-			next unless recipe_result.first
+			recipe_res = db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code=?", false, [entry] )&.first
+			next unless recipe_res
 
-			recipe_name = recipe_result.first['name']
+			recipe_name = recipe_res['name']
 			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 2
 			print_button = "<span onclick=\"print_templateSelect( '#{entry}' )\">#{l[:printer]}</span>"
 			cp2w_button = "<span onclick=\"cp2words( '#{entry}', '' )\">#{l[:cp2words]}</span>"
 
-			html += "<tr class='fct_value'><td class='link_cursor' onclick=\"initCB( 'load', '#{entry}', '#{recipe_result.first['user']}' )\">#{recipe_name}</td><td>#{add_button}&nbsp;#{koyomi_button}&nbsp;#{print_button}&nbsp;#{cp2w_button}</td></tr>\n"
+			html += "<tr class='fct_value'><td class='link_cursor' onclick=\"initCB( 'load', '#{entry}', '#{recipe_res['user']}' )\">#{recipe_name}</td><td>#{add_button}&nbsp;#{koyomi_button}&nbsp;#{print_button}&nbsp;#{cp2w_button}</td></tr>\n"
 		end
 	end
 
@@ -178,12 +178,11 @@ when 'sub'
 
 when 'modal_body'
 	code = @cgi['code']
-
-	table_content = if /\-r\-/ =~ code
-		"<td align='center' onclick=\"addKoyomi( '#{recipe.code}' )\">#{l[:calendar]}<br><br>#{l[:koyomi]}</td>
-		 <td align='center' onclick=\"cp2words( '#{recipe.code}', '' )\">#{l[:cp2words]}<br><br>#{l[:pick]}</td>"
+	if /\-r\-/ =~ code
+		table_content = "<td align='center' onclick=\"addKoyomi( '#{recipe.code}' )\">#{l[:calendar]}<br><br>#{l[:koyomi]}</td>"
+		table_content << "<td align='center' onclick=\"cp2words( '#{recipe.code}', '' )\">#{l[:cp2words]}<br><br>#{l[:pick]}</td>"
 	else
-		"<td align='center' onclick=\"addKoyomi( '#{recipe.code}' )\">#{l[:calendar]}<br><br>#{l[:koyomi]}</td>"
+		table_content = "<td align='center' onclick=\"addKoyomi( '#{recipe.code}' )\">#{l[:calendar]}<br><br>#{l[:koyomi]}</td>"
 	end
 	puts "<table class='table table-borderless'><tr>#{table_content}</tr></table>"
 
@@ -198,11 +197,12 @@ else
 	puts "LOAD config<br>" if @debug
 
 	sub_fg = 1
-	r = db.query( "SELECT history FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
-
-	if r.first && r.first['history'].to_s != ''
-		history = JSON.parse( r.first['history'] )
-		sub_fg = history['sub_fg'] if history['sub_fg']
+	res = db.query( "SELECT history FROM #{$TB_CFG} WHERE user='#{user.name}';", false )&.first
+	if res
+		unless res['history'].to_s.empty?
+			history = JSON.parse( res['history'] )
+			sub_fg = history['sub_fg'] if history['sub_fg']
+		end
 	end
 end
 
@@ -226,7 +226,7 @@ food_html_sg = get_histry( db, l, sub_fg )
 
 
 puts 'HTML<br>' if @debug
-html = <<-"HTML"
+html = <<~"HTML"
 <div class='container-fluid'>
 	<div class="row">
 		<div class="col">
@@ -252,38 +252,26 @@ puts html
 #==============================================================================
 #Update config
 history['sub_fg'] = sub_fg
-history_ = JSON.generate( history )
-db.query( "UPDATE #{$MYSQL_TB_CFG} SET history='#{history_}' WHERE user='#{user.name}';", false ) unless user.status == 7
+unless history['sub_fg'].to_s.empty?
+	history_ = JSON.generate( history )
+	db.query( "UPDATE #{$TB_CFG} SET history=? WHERE user=?", false, [history_, user.name] ) unless user.status == $ASTRAL
+end
 
 #==============================================================================
 # FRONT SCRIPT START
 #==============================================================================
 if command == 'init'
-	js = <<-"JS"
+
+	js = <<~JS
 <script type='text/javascript'>
-
-var historySub = ( sub_fg ) => {
-
-	$.post( "#{script}.cgi", { command:'sub', sub_fg:sub_fg }, function( data ){ $( "#L1" ).html( data );});
-};
-
-
-// Modal Tip for fcz list
-//var modalTip = function( code ){
-//	$.post( "#{script}.cgi", { command:'modal_body', code:code }, function( data ){
-//		$( "#modal_tip_body" ).html( data );
-//		$.post( "#{script}.cgi", { command:'modal_label', code:code }, function( data ){
-//			$( "#modal_tip_label" ).html( data );
-//			$( '#modal_tip' ).modal( 'show' );
-//		});
-//	});
-//}
-
+	var historySub = ( sub_fg ) => {
+		postLayer( '#{myself}', 'sub', true, 'L1', {sub_fg});
+	};
 </script>
-
 JS
 
 	puts js
+
 end
 
 puts '(^q^)' if @debug

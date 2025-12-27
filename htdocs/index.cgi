@@ -23,7 +23,7 @@ def language_pack( language )
   l = Hash.new
 
   #Japanese
-  l['jp'] = {
+  l['ja'] = {
     nb: '栄養ブラウザ',
     login: 'ログイン',
     logout: 'ログアウト',
@@ -188,22 +188,22 @@ def html_nav( user, l, db )
   mt_num = '-'
   # まな板カウンター
   if user.name
-    res = db.query( "SELECT sum from #{$MYSQL_TB_SUM} WHERE user=?", false, [user.name] )&.first
+    res = db.query( "SELECT sum from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
     if res
       t = res['sum']&.split( "\t" ) || []
       cb_num = t.size
     else
-      db.query( "INSERT INTO #{$MYSQL_TB_SUM} SET user=?", false, [user.name] )
+      db.query( "INSERT INTO #{$TB_SUM} SET user=?", false, [user.name] )
       cb_num = 0
     end
     # 献立カウンター
 
-    res = db.query( "SELECT meal from #{$MYSQL_TB_MEAL} WHERE user=?", false, [user.name] )&.first
+    res = db.query( "SELECT meal from #{$TB_MEAL} WHERE user=?", false, [user.name] )&.first
     if res
       t = res['meal']&.split( "\t" ) || []
       mt_num = t.size
     else
-      db.query( "INSERT INTO #{$MYSQL_TB_MEAL} SET user=?", false, [user.name] )
+      db.query( "INSERT INTO #{$TB_MEAL} SET user=?", false, [user.name] )
       mt_num = 0
     end
   end
@@ -372,6 +372,11 @@ user = User.new( @cgi )
 user.status = 0 unless user.name
 user.debug if @debug
 l = language_pack( user.language )
+
+unless l
+  puts '(Ux_xL)' 
+  exit
+end
 db = Db.new( user, @debug, false )
 
 res = db.query( "SELECT ifix FROM cfg WHERE user=?", false, [user.name] )&.first

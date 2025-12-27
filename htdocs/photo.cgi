@@ -1,13 +1,14 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 recipe photo 0.6.1 (2025/03/15)
+#Nutrition browser 2020 recipe photo 0.6.1 (2025/12/26)
 
 #==============================================================================
 # STATIC
 #==============================================================================
 @debug = false
 tmp_delete = false
-#script = File.basename( $0, '.cgi' )
+myself = File.basename( __FILE__ )
+
 
 #==============================================================================
 #LIBRARY
@@ -24,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		camera:		"<img src='bootstrap-dist/icons/camera.svg' style='height:1.2em; width:1.2em;'>",\
 		trash:		"<img src='bootstrap-dist/icons/trash-fill.svg' style='height:1.2em; width:1.2em;'>",\
 		left_ca:	"<img src='bootstrap-dist/icons/arrow-left-circle.svg' style='height:1.2em; width:1.2em;'>",\
@@ -32,38 +33,6 @@ def language_pack( language )
 	}
 
 	return l[language]
-end
-
-
-def view_series( media, l, size )
-	puts "view_series:#{},#{}" if @debug
-	media.get_series()
-	protect = true
-
-	recipe = Recipe.new( media.user )
-	recipe.load_db( media.origin, true ) if /\-r\-/ =~ media.origin
-
-	if media.series.size > 0
-		puts "<div class='row'>"
-		media.series.each.with_index( 0 ) do |e, i|
-			puts "<div class='col'>"
-			if recipe.protect != 1 && media.muser == media.user.name
-				puts "<span onclick=\"photoMove( '#{media.origin}', '#{e}', #{i - 1} )\">#{l[:left_ca]}</span>" if i != 0
-				puts "&nbsp;&nbsp;<span onclick=\"photoMove( '#{media.origin}', '#{e}', #{i + 1} )\">#{l[:right_ca]}</span>" if i != media.series.size - 1
-			end
-			puts '<br>'
-
-
- 			puts "<img src='#{$PHOTO}/#{e}-tn.jpg' width='#{size}px' class='img-thumbnail' id='iid_#{e}' onclick=\"modalPhoto( '#{e}' )\"><br>"
-
-
-			puts "<span onclick=\"photoDel( '#{media.origin}', '#{e}', '#{media.base}' )\">#{l[:trash]}</span>" if recipe.protect != 1 && media.muser == media.user.name
-			puts "</div>"
-		end
-		puts "</div>"
-	else
-		puts 'No photo'
-	end
 end
 
 
@@ -95,8 +64,6 @@ if iso == 'Q'
 		end
 	else
 
-
-
 	end
 	exit
 else
@@ -127,17 +94,15 @@ end
 
 puts 'base origin<br>' if @debug
 if origin == ''
-	query = ''
 	case base
 	when 'menu'
-		query = "SELECT code FROM #{$MYSQL_TB_MEAL} WHERE user='#{user.name}';"
+		res = db.query( "SELECT code FROM #{$TB_MEAL} WHERE user=?", false, [user.name] )&.first
 	when 'recipe'
-		query = "SELECT code FROM #{$MYSQL_TB_SUM} WHERE user='#{user.name}';"
+		res = db.query( "SELECT code FROM #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
+	else
+		res = nil
 	end
-	if query != ''
-		r = db.query( query, false )
-		origin = r.first['code']
-	end
+	origin = res['code'] if res
 end
 
 media.origin = origin
@@ -146,85 +111,18 @@ media.base = base
 case command
 when 'upload'
 	puts 'Upload<br>' if @debug
-	if user.status != 7
+	unless user.barrier
 		media.code = code
 		media.alt = alt
 		media.type = 'jpg'
 		media.date = @datetime
-
-		tmp_file = @cgi['photo'].original_filename
-		photo_type = @cgi['photo'].content_type
-		photo_body = @cgi['photo'].read
-		photo_size = photo_body.size.to_i
-		if @debug
-			puts "#{tmp_file}<br>"
-			puts "#{photo_type}<br>"
-			puts "#{photo_size}<br>"
-			puts "<hr>"
-		end
-
-		if photo_size < $SIZE_MAX && ( photo_type == 'image/jpeg' || photo_type == 'image/jpg' )
-			puts 'Image magick<br>' if @debug
-			require 'nkf'
-			require 'rmagick'
-
-			puts "temporary file<br>" if @debug
-			f = open( "#{$TMP_PATH}/#{tmp_file}", 'w' )
-			f.puts photo_body
-			f.close
-			media.code = generate_code( user.name, 'p' )
-			photo = Magick::ImageList.new( "#{$TMP_PATH}/#{tmp_file}" )
-
-			puts "Resize<br>" if @debug
-			photo_x = photo.columns.to_f
-			photo_y = photo.rows.to_f
-			photo_ratio = 1.0
-			if photo_x >= photo_y
-				tn_ratio = $TN_SIZE / photo_x
-				tns_ratio = $TNS_SIZE / photo_x
-				photo_ratio = $PHOTO_SIZE_MAX / photo_x if photo_x >= $PHOTO_SIZE_MAX
-			else
-				tn_ratio = $TN_SIZE / photo_y
-				tns_ratio = $TNS_SIZE / photo_y
-				photo_ratio = $PHOTO_SIZE_MAX / photo_y if photo_y >= $PHOTO_SIZE_MAX
-			end
-
-			puts "medium SN resize<br>" if @debug
-			tn_file = photo.thumbnail( tn_ratio )
-			tn_file.write( "#{$PHOTO_PATH}/#{media.code}-tn.jpg" )
-
-			puts "small SN resize<br><br>" if @debug
-			tns_file = photo.thumbnail( tns_ratio )
-			tns_file.write( "#{$PHOTO_PATH}/#{media.code}-tns.jpg" )
-
-			puts "resize 2k<br>" if @debug
-			photo = photo.thumbnail( photo_ratio ) if photo_ratio != 1.0
-
-#			puts "water mark<br>" if @debug
-#			wm_text = "Nutrition Browser:#{media.code}"
-#			wm_img = Magick::Image.new( photo.columns, photo.rows )
-#			wm_drew = Magick::Draw.new
-#			wm_drew.annotate( wm_img, 0, 0, 0, 0, wm_text ) do
-#				self.gravity = Magick::SouthWestGravity
-#				self.pointsize = 18
-#				self.font_family = $WM_FONT
-#				self.font_weight = Magick::BoldWeight
-#				self.stroke = "none"
-#			end
-#			wm_img = wm_img.shade( true, 315 )
-#			photo.composite!( wm_img, Magick::CenterGravity, Magick::HardLightCompositeOp )
-			photo.write( "#{$PHOTO_PATH}/#{media.code}.jpg" )
-
-			puts "insert DB<br>" if @debug
-			media.get_series()
-			media.save_db
-
-			File.unlink "#{$TMP_PATH}/#{tmp_file}" if File.exist?( "#{$TMP_PATH}/#{tmp_file}" ) && tmp_delete
-		end
+		media.save_photo( @cgi )
+		media.get_series()
+		media.save_db
 	end
 
 when 'move'
-	if user.status != 7
+	unless user.barrier
 		puts 'Move<br>' if @debug
 		media.code = code
 		media.zidx = zidx
@@ -235,15 +133,11 @@ when 'move'
 	end
 
 when 'delete'
-	if user.status != 7
+	unless user.barrier
 		puts "delete item DB<br>" if @debug
 		media.code = code
-		if( media.delete_db )
-			puts 'Delete<br>' if @debug
-			File.unlink "#{$PHOTO_PATH}/#{code}-tns.jpg" if File.exist?( "#{$PHOTO_PATH}/#{code}-tns.jpg" )
-			File.unlink "#{$PHOTO_PATH}/#{code}-tn.jpg" if File.exist?( "#{$PHOTO_PATH}/#{code}-tn.jpg" )
-			File.unlink "#{$PHOTO_PATH}/#{code}.jpg" if File.exist?( "#{$PHOTO_PATH}/#{code}.jpg" )
-		end
+		media.delete_db( true )
+		media.delete_photo( true )
 	end
 
 when 'modal_body'
@@ -271,6 +165,3 @@ when 'modal_label'
 
 	exit
 end
-
-view_series( media, l, 200 )
-puts "	<div align='right' class='code'>#{origin}</div>"

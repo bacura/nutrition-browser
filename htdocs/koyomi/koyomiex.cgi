@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'koyomi' 	=> "こよみ:拡張",\
 		'sun' 		=> "日",\
 		'mon' 		=> "月",\
@@ -113,7 +113,7 @@ puts "LOAD config<br>" if @debug
 start = Time.new.year
 kexu = Hash.new
 kexa = Hash.new
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 		koyomi = JSON.parse( r.first['koyomi'] ) if r.first['koyomi'] != ''
@@ -137,7 +137,7 @@ th_html << '</tr></thead>'
 
 puts "LOAD date cell<br>" if @debug
 cells_day = []
-r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{user.name}' AND ( date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-#{calendar.ddl}' );", false )
+r = db.query( "SELECT * FROM #{$TB_KOYOMIEX} WHERE user='#{user.name}' AND ( date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-#{calendar.ddl}' );", false )
 r.each do |e|
 	if e['cell'] != nil && e['cell'] != ''
 		cells_day[e['date'].day] = JSON.parse( e['cell'] )
@@ -226,16 +226,16 @@ puts html.join
 if command == 'update'
 	puts "UPDATE cell<br>" if @debug
 	cell_ = JSON.generate( cells_day[dd] )
-	r = db.query( "SELECT user FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{user.name}' AND date='#{sql_ymd}';", false )
+	r = db.query( "SELECT user FROM #{$TB_KOYOMIEX} WHERE user='#{user.name}' AND date='#{sql_ymd}';", false )
 	if r.first
-		db.query( "UPDATE #{$MYSQL_TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{user.name}' AND date='#{sql_ymd}';", true )
+		db.query( "UPDATE #{$TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{user.name}' AND date='#{sql_ymd}';", true )
 	else
-		db.query( "INSERT INTO #{$MYSQL_TB_KOYOMIEX} SET cell='#{cell_}', user='#{user.name}', date='#{sql_ymd}';", true )
+		db.query( "INSERT INTO #{$TB_KOYOMIEX} SET cell='#{cell_}', user='#{user.name}', date='#{sql_ymd}';", true )
 	end
 end
 
 
 if command == 'init'
 	puts "CLEAN empty cell<br>" if @debug
-#	db.query( "DELETE FROM #{$MYSQL_TB_KOYOMIEX} WHERE cell='' OR cell IS NULL;", false, @debug )
+#	db.query( "DELETE FROM #{$TB_KOYOMIEX} WHERE cell='' OR cell IS NULL;", false, @debug )
 end

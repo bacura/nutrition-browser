@@ -22,7 +22,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'food_no' 	=> "食品番号",\
 		'load' 	=> "読み込み",\
 		'notte' 	=> "注釈",\
@@ -91,7 +91,7 @@ when 'update'
 	unit = JSON.generate( unith )
 	fn = code.split( ',' )
 	fn.each do |e|
-		db.query( "UPDATE #{$MYSQL_TB_EXT} SET unit='#{unit}' WHERE FN='#{e}';", true ) if /\d\d\d\d\d/ =~ e || /P\d\d\d\d\d/ =~ e
+		db.query( "UPDATE #{$TB_EXT} SET unit='#{unit}' WHERE FN='#{e}';", true ) if /\d\d\d\d\d/ =~ e || /P\d\d\d\d\d/ =~ e
 	end
 when 'exunit'
 	res = db.query( "SELECT * FROM recipe;", false )
@@ -144,10 +144,10 @@ uv_set = []
 note = ''
 unless code == ''
 	puts 'Loading unit JSON<br>' if @debug
-	r = db.query( "SELECT name from #{$MYSQL_TB_TAG} WHERE FN='#{code}';", false )
+	r = db.query( "SELECT name from #{$TB_TAG} WHERE FN='#{code}';", false )
 	food_name = r.first['name']
 
-	r = db.query( "SELECT unit from #{$MYSQL_TB_EXT} WHERE FN='#{code}';", false )
+	r = db.query( "SELECT unit from #{$TB_EXT} WHERE FN='#{code}';", false )
 	if r.first
 		if r.first['unit'] != nil && r.first['unit'] != ''
 			unitj = JSON.parse( r.first['unit'] )

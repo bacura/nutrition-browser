@@ -24,7 +24,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		calc: 		"食品成分計算表",
 		palette:	"パレット",
 		precision:	"精密合計",
@@ -66,7 +66,7 @@ frct_accu = @cgi['frct_accu']
 palette_ = @cgi['palette']
 
 if ew_mode == nil || ew_mode == ''
-	r = db.query( "SELECT calcc FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';",false )
+	r = db.query( "SELECT calcc FROM #{$TB_CFG} WHERE user='#{user.name}';",false )
 	if r.first && r.first['calcc'] != nil
 		a = r.first['calcc'].split( ':' )
 		palette_ = a[0]
@@ -97,7 +97,7 @@ end
 
 
 puts 'Extracting SUM data <br>' if @debug
-r = db.query( "SELECT code, name, sum, dish from #{$MYSQL_TB_SUM} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user='#{user.name}';", false )
 recipe_name = r.first['name']
 code = r.first['code']
 food_no, food_weight, total_weight = extract_sum( r.first['sum'], r.first['dish'].to_i, ew_mode )
@@ -249,7 +249,7 @@ puts html
 #==============================================================================
 
 puts 'Updating Calculation option <br>' if @debug
-db.query( "UPDATE #{$MYSQL_TB_CFG} SET calcc='#{palette_}:#{ew_mode}:#{frct_mode}:#{frct_accu}' WHERE user='#{user.name}';", true )
+db.query( "UPDATE #{$TB_CFG} SET calcc='#{palette_}:#{ew_mode}:#{frct_mode}:#{frct_accu}' WHERE user='#{user.name}';", true )
 
 #==============================================================================
 # FRONT SCRIPT START

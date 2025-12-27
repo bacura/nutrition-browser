@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'food_no' 	=> "食品番号",\
 		'regist' 	=> "登録",\
 		'start1' 	=> "1期始まり",\
@@ -79,14 +79,14 @@ when 'on'
 	fn = code.split( ',' )
 	fn.each do |e|
 		if /\d\d\d\d\d/ =~ e
-			db.query( "UPDATE #{$MYSQL_TB_EXT} SET shun1s='#{shun1s}', shun1e='#{shun1e}', shun2s='#{shun2s}', shun2e='#{shun2e}' WHERE FN='#{code}';", true )
+			db.query( "UPDATE #{$TB_EXT} SET shun1s='#{shun1s}', shun1e='#{shun1e}', shun2s='#{shun2s}', shun2e='#{shun2e}' WHERE FN='#{code}';", true )
 		end
 	end
 when 'off'
 	fn = code.split( ',' )
 	fn.each do |e|
 		if /\d\d\d\d\d/ =~ e
-			db.query( "UPDATE #{$MYSQL_TB_EXT} SET shun1s='0', shun1e='0', shun2s='0', shun2e='0' WHERE FN='#{code}';", true )
+			db.query( "UPDATE #{$TB_EXT} SET shun1s='0', shun1e='0', shun2s='0', shun2e='0' WHERE FN='#{code}';", true )
 		end
 	end
 end
@@ -94,7 +94,7 @@ end
 
 food_name = ''
 unless code == ''
-	r = db.query( "SELECT name from #{$MYSQL_TB_TAG} WHERE FN='#{code}';", false )
+	r = db.query( "SELECT name from #{$TB_TAG} WHERE FN='#{code}';", false )
 	food_name = r.first['name']
 end
 
@@ -156,13 +156,13 @@ HTML
 puts html
 
 list_html = ''
-r = db.query( "SELECT FN FROM #{$MYSQL_TB_EXT} WHERE shun1s>='1' and shun1s<='12';", false )
+r = db.query( "SELECT FN FROM #{$TB_EXT} WHERE shun1s>='1' and shun1s<='12';", false )
 if r.size != 0
 	code_list = []
 	name_tag_list = []
 
 	r.each do |e|
-		rr = db.query( "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e['FN']}';", false )
+		rr = db.query( "SELECT * from #{$TB_TAG} WHERE FN='#{e['FN']}';", false )
 		code_list << rr.first['FN']
 		name_tag_list << "#{rr.first['name']}・#{rr.first['tag1']} #{rr.first['tag2']} #{rr.first['tag3']} #{rr.first['tag4']} #{rr.first['tag5']}"
 	end
@@ -171,7 +171,7 @@ if r.size != 0
 
 	c = 0
 	code_list.each do |e|
-		rr = db.query( "SELECT * from #{$MYSQL_TB_EXT} WHERE FN='#{e}';", false )
+		rr = db.query( "SELECT * from #{$TB_EXT} WHERE FN='#{e}';", false )
 		if rr.first
 			puts "<div class='row'>"
 			puts "<div class='col-1'><button class='btn btn-sm btn-outline-danger' type='button' onclick=\"offShun( '#{e}' )\">x</button></div>"

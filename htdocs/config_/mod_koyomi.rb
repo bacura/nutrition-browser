@@ -1,4 +1,4 @@
-# Nutorition browser 2020 Config module for koyomiex 0.3.0 (2025/08/21)
+# Nutorition browser 2020 Config module for koyomiex 0.3.0 (2025/12/26)
 #encoding: utf-8
 
 @debug = false
@@ -27,14 +27,16 @@ def config_module( cgi, db )
 	kex_upper = cgi['kex_upper']
 	kex_bottom = cgi['kex_bottom']
 	preset_select = cgi['preset_select'].to_s
+	kex_preset_name = cgi['kex_preset_name'].to_s
 	if @debug
 		puts "step: #{step}<br>"
 		puts "preset_select: #{preset_select}<br>"
+		puts "kex_preset_name: #{kex_preset_name}<br>"
 	end
 
 
 	puts 'LOAD config<br>' if @debug
-	res = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user=?", false, [db.user.name] )&.first
+	res = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user=?", false, [db.user.name] )&.first
 	if res
 		if res['koyomi'].to_s != ''
 			begin
@@ -51,6 +53,10 @@ def config_module( cgi, db )
 		end
 	end
 
+ 
+	puts 'LOAD MODj<br>' if @debug
+	modj = MODj.new( db.user, 'koyomi' )
+	user_preset = modj.extract
 
 	case step
 	when 'kstart'
@@ -78,20 +84,36 @@ def config_module( cgi, db )
 		kexup[kex_key] = cgi['kex_upper'] == '' ? '' : cgi['kex_upper'].to_f
 		kexbtm[kex_key] = cgi['kex_bottom'] == '' ? '' : cgi['kex_bottom'].to_f
 
-	when 'preset_apply'
- 		koyomi_ = @kex_presets[preset_select]
-
-		begin
-			koyomi = JSON.parse( koyomi_ )
-		rescue JSON::ParserError => e
-  			puts "JSON parse error: #{e.message}<br>" if @debug
+	when 'preset_save'
+ 		unless kex_preset_name.to_s.empty?
+ 			user_preset[kex_preset_name] = { 'kexu'=>kexu,'kexa'=>kexa, 'kexg'=>kexg, 'kexup'=> kexup, 'kexbtm'=>kexbtm }
+			modj.permeate( user_preset )
 		end
 
-		kexu = koyomi['kexu'] unless koyomi['kexu'].nil?
-		kexa = koyomi['kexa'] unless koyomi['kexa'].nil?
-		kexg = koyomi['kexg'] unless koyomi['kexg'].nil?
-		kexup = koyomi['kexup'] unless koyomi['kexup'].nil?
-		kexbtm = koyomi['kexbtm'] unless koyomi['kexbtm'].nil?
+	when 'preset_apply'
+		unless preset_select.to_s.empty?
+			koyomi = Hash.new
+			if user_preset[preset_select]
+				koyomi = user_preset[preset_select]
+			else
+				begin
+					koyomi = JSON.parse( @kex_presets[preset_select] )
+				rescue JSON::ParserError => e
+		  			puts "JSON parse error: #{e.message}<br>" if @debug
+				end
+			end
+			kexu = koyomi['kexu'] unless koyomi['kexu'].nil?
+			kexa = koyomi['kexa'] unless koyomi['kexa'].nil?
+			kexg = koyomi['kexg'] unless koyomi['kexg'].nil?
+			kexup = koyomi['kexup'] unless koyomi['kexup'].nil?
+			kexbtm = koyomi['kexbtm'] unless koyomi['kexbtm'].nil?
+		end
+
+	when 'preset_delete'
+ 		unless preset_select.to_s.empty?
+ 			user_preset.delete( preset_select )
+			modj.permeate( user_preset )
+		end
 	end
 
 
@@ -105,7 +127,7 @@ def config_module( cgi, db )
 		koyomi['kexbtm'] = kexbtm
 		koyomi_ = JSON.generate( koyomi )
 
-		db.query( "UPDATE #{$MYSQL_TB_CFG} SET koyomi=? WHERE user=?", true, [koyomi_, db.user.name] )
+		db.query( "UPDATE #{$TB_CFG} SET koyomi=? WHERE user=?", true, [koyomi_, db.user.name] )
 	end
 
 
@@ -115,15 +137,8 @@ def config_module( cgi, db )
 
 	puts 'Options from KEX Preset<br>' if @debug
 	preset_opt = '<option value="">-</option>'
-	@kex_presets.each do |k, v|
-		begin
-			kex_preset =  JSON.parse( v )
-			preset_opt << "<option value='#{k}'>#{kex_preset['name']}</option>"
-    	rescue JSON::ParserError => e
-      		puts "JSON parse error: #{e.message}<br>" if @debug
-    	end			
-	end
-
+	user_preset.each do |k, v| preset_opt << "<option value='#{k}'>#{k}</option>" end
+	@kex_presets.each do |k, v| preset_opt << "<option value='#{k}'>#{k}</option>" end
 
 	puts 'HTML10<br>' if @debug
 	html[10] = <<~HTML10
@@ -140,16 +155,7 @@ def config_module( cgi, db )
 
 		<div class='row'>
 			<div class='col-6'>
-				<h5>#{l[:menu_title]}</h5>
-			</div>
-			<div class='col-6'>
-				<div class='input-group input-group-sm'>
-					<span class='input-group-text'>#{l[:preset]}</span>
-					<select class='form-select' id='preset_select'>
-						#{preset_opt}
-					</select>
-					<button type='button' class='btn btn-warning btn-sm' onclick='applyPreset()'>#{l[:apply]}</button>
-				</div>
+				<h5>#{l[:menu_title]}#{}</h5>
 			</div>
 		</div>
 		<br>
@@ -214,6 +220,7 @@ def config_module( cgi, db )
 					</select>
 				</div>
 			</div>
+			<div class='col-2'></div>
 			<div class='col'><button type='button' class='btn btn-dark btn-sm' onclick="kexAdd()">#{l[:add]}</button></div>
 		</div><br>
 
@@ -231,9 +238,35 @@ def config_module( cgi, db )
 					<input type='text' maxlength='32' id='kex_add_unit' class='form-control form-control-sm' value=''>
 				</div>
 			</div>
-			<div class='col-4'></div>
 			<div class='col'><button type='button' class='btn btn-dark btn-sm' onclick="kexNew()">#{l[:add]}</button></div>
-		</div><br>
+		</div>
+		<hr>
+
+		<div class='row'>
+			<div class='col-4'>
+				<div class='input-group input-group-sm'>
+					<span class='input-group-text'>#{l[:new_preset]}</span>
+					<input type='text' maxlength='64' id='kex_preset_name' class='form-control form-control-sm' value=''>
+					<button type='button' class='btn btn-outline-primary btn-sm' onclick='savePreset()'>#{l[:save_preset]}</button>
+				</div>
+			</div>
+			<div class='col-1'></div>
+
+			<div class='col-4'>
+				<div class='input-group input-group-sm'>
+					<select class='form-select' id='preset_select'>
+						#{preset_opt}
+					</select>
+					<button type='button' class='btn btn-warning btn-sm' onclick='applyPreset()'>#{l[:apply]}</button>
+				</div>
+			</div>
+
+			<div class='col-3' align='right'>
+				<button type='button' class='btn btn-warning btn-sm' onclick='deletePreset()'>#{l[:delete]}</button>
+			</div>
+		</div>
+
+
 		HTML30
 	end
 
@@ -292,6 +325,23 @@ var applyPreset = () => {
 	}
 };
 
+var deletePreset = () => {
+	const preset_select = document.getElementById( 'preset_select' ).value;
+	if( preset_select != '' ){
+		postLayer( 'config.cgi', '', true, 'L1', { mod:'koyomi', step:'preset_delete', preset_select });
+		displayREC();
+	}
+};
+
+var savePreset = () => {
+	const kex_preset_name = document.getElementById( 'kex_preset_name' ).value;
+	if( kex_preset_name != '' ){
+		postLayer( 'config.cgi', '', true, 'L1', { mod:'koyomi', step:'preset_save', kex_preset_name });
+		displayREC();
+	}else{
+		displayVIDEO( "Name!(>_<)" );
+	}
+};
 
 </script>
 JS
@@ -301,7 +351,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name'	=> "こよみ",
 		mod_name: "こよみ",
 		start: "こよみ開始日",
@@ -315,8 +365,10 @@ def module_lp( language )
 		goal: "目標値",
 		upper: "上限値",
 		bottom: "下限値",
-		preset: "プリセット",
-		apply: "適用",
+		new_preset: "拡張プリセット名",
+		save_preset: "保存",
+		apply: "プリセット適用",
+		delete: "プリセット削除",
 		init: "<img src='bootstrap-dist/icons/trash.svg' style='height:1.8em; width:1.8em;'>"
 	}
 

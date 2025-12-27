@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 print web page 0.2.11 (2025/03/27)
+#Nutrition browser 2020 print web page 0.2.12 (2025/12/27)
 
 #==============================================================================
 # STATIC
@@ -22,6 +22,18 @@ require 'rqrcode'
 #==============================================================================
 # DEFINITION
 #==============================================================================
+
+# Language pack
+def language_pack( language )
+	l = Hash.new
+
+	#Japanese
+	l['ja'] = {
+		viewer: 		"ビューアー"
+	}
+
+	return l[language]
+end
 
 #### html_header for printv
 def html_head_pv( recipe, x_account )
@@ -93,7 +105,7 @@ end
 
 
 #### 食材抽出
-def extract_foods( recipe, dish, template, ew_mode )
+def extract_foods( db, recipe, dish, template, ew_mode )
 	sum = recipe.sum
 	dish_recipe = recipe.dish
 	uname = recipe.user.name
@@ -111,9 +123,7 @@ def extract_foods( recipe, dish, template, ew_mode )
 		return_foods << "<thead><tr><th>食品番号</th><th class='align_l'>食材</th><th class='align_l'>備考</th><th class='align_r'>数量</th><th class='align_r'>単位</th><th class='align_r'>#{calc_weight[ew_mode]}</th><th class='align_r'>廃棄率%</th><th class='align_r'>発注量kg</th></tr></thead>\n"
 	end
 
-	db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
 	a = sum.split( "\t" )
-
 	a.each do |e|
 		fn, fw, fu, fuv, fc, fi, frr, few = e.split( ':' )
 		few = fw if few == nil
@@ -127,59 +137,56 @@ def extract_foods( recipe, dish, template, ew_mode )
 			z, fuv = food_weight_check( fuv ) if /\// =~ fuv
 			fuv = BigDecimal( fuv ) / dish_recipe * dish
 			fuv_v = unit_value( fuv )
-#			fuv_v = fuv.to_f
-#			fuv_v = fuv.to_i if fuv_v >= 10
 			few = BigDecimal( few ) / dish_recipe * dish
 			few_v = unit_value( few )
-#			few_v = few.to_f
-#			few_v = few.to_i if few_v >= 10
 
-			query = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{fn}';"
-			res = db.query( query )
+			res = db.query( "SELECT * from #{$TB_TAG} WHERE FN=?", false, [fn] )&.first
 
 			case template
 			when 0
   				class_add = ''
-  				if /\+/ =~ res.first['class1']
-    				class_add = "<span class='tagc'>#{res.first['class1'].sub( '+', '' )}</span> "
-  				elsif /\+/ =~ res.first['class2']
-    				class_add = "<span class='tagc'>#{res.first['class2'].sub( '+', '' )}</span> "
-  				elsif /\+/ =~ res.first['class3']
-    				class_add = "<span class='tagc'>#{res.first['class3'].sub( '+', '' )}</span> "
+  				if /\+/ =~ res['class1']
+    				class_add = "<span class='tagc'>#{res['class1'].sub( '+', '' )}</span> "
+  				elsif /\+/ =~ res['class2']
+    				class_add = "<span class='tagc'>#{res['class2'].sub( '+', '' )}</span> "
+  				elsif /\+/ =~ res['class3']
+    				class_add = "<span class='tagc'>#{res['class3'].sub( '+', '' )}</span> "
   				end
-  				food_name = res.first['name']
+  				food_name = res['name']
 				if /^\=/ =~ fi
 					food_name = fi.sub( '=', '' )
 					fi = ''
 				end
-				return_foods << "<tr><td>#{class_add}#{food_name}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>\n" if res.first
+				return_foods << "<tr><td>#{class_add}#{food_name}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>\n" if res
+
 			when 1
-				tags = bind_tags( res )
+				tags = tagnames( res )
 				if /^\=/ =~ fi
 					tags = fi.sub( '=', '' )
 					fi = ''
 				end
-				return_foods << "<tr><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>\n" if res.first
+				return_foods << "<tr><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>\n" if res
+
 			when 2
-				tags = bind_tags( res )
+				tags = tagnames( res )
 				if /^\=/ =~ fi
 					fi = fi.sub!( '=', '' )
 				end
-				return_foods << "<tr><td>#{fn}</td><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td><td align='right'>#{few_v.ceil( 1 )}</td></tr>\n" if res.first
+				return_foods << "<tr><td>#{fn}</td><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td><td align='right'>#{few_v.ceil( 1 )}</td></tr>\n" if res
+
 			when 3
-				tags = bind_tags( res )
+				tags = tagnames( res )
 				fi.sub!( '=', '' )
 				refuse = 0
 				query = ''
 				if /^U/ =~ fn
-					query = "SELECT * from #{$MYSQL_TB_FCTP} WHERE FN='#{fn}' AND user='#{uname}';"
+					res = db.query( "SELECT * from #{$TB_FCTP} WHERE FN=? AND user=?", false, [fn, uname] )&.first
 				elsif /^P/ =~ fn
-					query = "SELECT * from #{$MYSQL_TB_FCTP} WHERE FN='#{fn}';"
+					res = db.query( "SELECT * from #{$TB_FCTP} WHERE FN=?", false, [fn] )&.first
 				else
-					query = "SELECT REFUSE from #{$MYSQL_TB_FCT} WHERE FN='#{fn}';"
+					res = db.query( "SELECT REFUSE from #{$TB_FCT} WHERE FN=?", false, [fn] )&.first
 				end
-				res = db.query( query )
-				refuse = res.first['REFUSE'].to_i if res.first
+				refuse = res['REFUSE'].to_i if res
 				if fuv >= 10
 					t = ( fuv / ( 100 - refuse ) / BigDecimal( 10 )).ceil( 2 ).to_f.to_s
 				else
@@ -189,11 +196,11 @@ def extract_foods( recipe, dish, template, ew_mode )
 				comp = ( 2 - df[1].size )
 				comp.times do |c| df[1] = df[1] << '0' end
 				ordering_weight = df[0] + '.' + df[1]
-				return_foods << "<tr><td>#{fn}</td><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td><td align='right'>#{few_v.ceil( 1 )}</td><td align='right'>#{res.first['REFUSE']}</td><td align='right'>#{ordering_weight}</td></tr>\n" if res.first
+				return_foods << "<tr><td>#{fn}</td><td>#{tags}</td><td>#{fi}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td><td align='right'>#{few_v.ceil( 1 )}</td><td align='right'>#{res['REFUSE']}</td><td align='right'>#{ordering_weight}</td></tr>\n" if res
 			end
 		end
 	end
-	db.close
+
 	return_foods << "</table>\n"
 
 	return return_foods
@@ -201,7 +208,7 @@ end
 
 
 #### 食材抽出・参照
-def extract_ref_foods( recipe )
+def extract_ref_foods( db, recipe )
 	sum = recipe.sum
 	dish_recipe = recipe.dish
 	uname = recipe.user.name
@@ -209,9 +216,7 @@ def extract_ref_foods( recipe )
 	return_foods = "<table class='table table-sm' style='font-size:x-small'>"
 	return_foods << "<thead><tr><th class='align_l'>食材</th><th class='align_r'>数量</th><th class='align_r'>単位</th></tr></thead>"
 
-	db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
 	a = sum.split( "\t" )
-
 	a.each do |e|
 		fn, fw, fu, fuv, fc, fi, frr, few = e.split( ':' )
 		few = fw if few == nil
@@ -228,27 +233,26 @@ def extract_ref_foods( recipe )
 			few = BigDecimal( few )
 			few_v = unit_value( few )
 
-			query = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{fn}';"
-			res = db.query( query )
+			res = db.query( "SELECT * from #{$TB_TAG} WHERE FN=?", false, [fn] )&.first
 
 			class_add = ''
-			if /\+/ =~ res.first['class1']
-				class_add = "<span class='tagc'>#{res.first['class1'].sub( '+', '' )}</span> "
-			elsif /\+/ =~ res.first['class2']
-				class_add = "<span class='tagc'>#{res.first['class2'].sub( '+', '' )}</span> "
-			elsif /\+/ =~ res.first['class3']
-				class_add = "<span class='tagc'>#{res.first['class3'].sub( '+', '' )}</span> "
+			if /\+/ =~ res['class1']
+				class_add = "<span class='tagc'>#{res['class1'].sub( '+', '' )}</span> "
+			elsif /\+/ =~ res['class2']
+				class_add = "<span class='tagc'>#{res['class2'].sub( '+', '' )}</span> "
+			elsif /\+/ =~ res['class3']
+				class_add = "<span class='tagc'>#{res['class3'].sub( '+', '' )}</span> "
 			end
-			food_name = res.first['name']
+			food_name = res['name']
 			if /^\=/ =~ fi
 				food_name = fi.sub( '=', '' )
 				fi = ''
 			end
-			return_foods << "<tr><td>#{class_add}#{food_name}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>" if res.first
+			return_foods << "<tr><td>#{class_add}#{food_name}</td><td align='right'>#{fuv_v.ceil( 1 )}</td><td align='right'>#{fu}</td></tr>" if res
 
 		end
 	end
-	db.close
+#	db.close
 	return_foods << "</table>"
 
 	return return_foods
@@ -278,7 +282,7 @@ def modify_protocol( recipe, user, depth )
 
 				if recipe_load_flag
 					local_return_protocol = modify_protocol( ref_recipe, user, depth + 1 )
-					local_foods = extract_ref_foods( ref_recipe )
+					local_foods = extract_ref_foods( db, ref_recipe )
 
 					return_protocol << "<div class='accordion' id='accordion#{c}'><div align='right'><a href='printv.cgi?&c=#{link_code}' target='sub_link'><span class='badge bg-info text-dark'>Link</span></a></div>"
 					return_protocol << "	<div class='accordion-item'>"
@@ -313,14 +317,16 @@ def arrange_photo( recipe )
 	code = recipe.code
 	media_code = recipe.media
 	main_photo = ''
-	main_photo = "<a href='#{$PHOTO}/#{media_code[0]}.jpg' target='Photo'><img src='#{$PHOTO}/#{media_code[0]}.jpg' width='100%' height='100%' class='img-thumbnail'></a>\n" if media_code.size > 0
+#	main_photo = "<a href='#{$PHOTO}/#{media_code[0]}.jpg' target='Photo'><img src='#{$PHOTO}/#{media_code[0]}.jpg' width='100%' height='100%' class='img-thumbnail'></a>\n" if media_code.size > 0
+	main_photo = "<img src='#{$PHOTO}/#{media_code[0]}.jpg' width='100%' height='100%' class='img-thumbnail' onclick=\"modalPhoto( '#{media_code[0]}' )\">\n" if media_code.size > 0
 
 	sub_photos = ''
 	if media_code.size > 1
 		spw = ( 100 / ( media_code.size - 1 )).to_i
 		spw = 25 if spw < 25
 		1.upto( media_code.size - 1 ) do |c|
-			sub_photos << "<a href='#{$PHOTO}/#{media_code[c]}.jpg' target='Photo'><img src='#{$PHOTO}/#{media_code[c]}-tn.jpg' width='#{spw}%' height='#{spw}%' class='img-thumbnail'></a>\n"
+#			sub_photos << "<a href='#{$PHOTO}/#{media_code[c]}.jpg' target='Photo'><img src='#{$PHOTO}/#{media_code[c]}-tn.jpg' width='#{spw}%' height='#{spw}%' class='img-thumbnail'></a>\n"
+			sub_photos << "<img src='#{$PHOTO}/#{media_code[c]}-tn.jpg' width='#{spw}%' height='#{spw}%' class='img-thumbnail' onclick=\"modalPhoto( '#{media_code[c]}' )\">\n"
 		end
 	end
 
@@ -335,6 +341,8 @@ end
 html_init( nil )
 
 user = User.new( @cgi )
+db = Db.new( user, @debug, false )
+l = language_pack( user.language )
 
 puts "Getting GET<br>" if @debug
 get_data = get_data()
@@ -371,7 +379,7 @@ html_head_pv( recipe, x_account )
 
 
 puts "extract foods<br>" if @debug
-foods = extract_foods( recipe, dish, template, ew_mode )
+foods = extract_foods( db, recipe, dish, template, ew_mode )
 puts "foods: #{foods}<br>" if @debug
 
 
@@ -539,6 +547,16 @@ HTML
 puts 'Common footer <br>' if @debug
 if csc == ''
 	html_foot = <<-"HTML"
+
+	<!-- Modal window -->
+	<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal_label" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	      <div class="modal-body" id='modal_body'></div>
+	    </div>
+	  </div>
+	</div>
+
 	<hr>
 	<div class='row'>
 		<div class='col-6' align="center">
@@ -557,16 +575,16 @@ if csc == ''
 HTML
 
 else
-	r = mdb( "SELECT * FROM #{$MYSQL_TB_SCHOOLC} WHERE code='#{csc}';", false, @debug )
+	res = db.query( "SELECT * FROM #{$TB_SCHOOLC} WHERE code=?", false, [csc] )&.first
 	print_ins = ''
 	school_name = ''
 	qr_ins = ''
 	qr_img= ''
-	if r.first
-		print_ins = r.first['print_ins']
-		school_name = r.first['name']
-		if r.first['qr_ins'] != ''
-			makeQRcode( r.first['qr_ins'], csc )
+	if res
+		print_ins = res['print_ins']
+		school_name = res['name']
+		if res['qr_ins'] != ''
+			makeQRcode( res['qr_ins'], csc )
 			qr_img = "<img src='#{$PHOTO}/#{csc}-qr.png'>"
 		end
 	end

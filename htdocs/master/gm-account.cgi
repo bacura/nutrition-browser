@@ -12,6 +12,7 @@
 #LIBRARY
 #==============================================================================
 require '../soul'
+require 'bcrypt'
 
 #==============================================================================
 #DEFINITION
@@ -22,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'pass' 	=> "パス",\
 		'mail' 	=> "メール",\
 		'alias'	=> "二つ名",\
@@ -80,7 +81,7 @@ end
 
 account_html = ''
 if command == 'edit'
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_USER} WHERE user='#{target_uid}';", false )
+	r = db.query( "SELECT * FROM #{$TB_USER} WHERE user='#{target_uid}';", false )
 	if r.first
 		account_html << "<div class='row'>"
 		account_html << "	<div class='col-1'>#{l['pass']}</div><div class='col-4'><input type='text' class='form-control' id='target_pass' value='#{r.first['pass']}'></div>"
@@ -125,11 +126,11 @@ if command == 'edit'
 	end
 else
 	if command == 'save'
-		db.query( "UPDATE #{$MYSQL_TB_USER} SET pass='#{target_pass}', mail='#{target_mail}', aliasu='#{target_aliasu}', status='#{target_status}', language='#{target_language}' WHERE user='#{target_uid}';", true )
+		db.query( "UPDATE #{$TB_USER} SET pass='#{target_pass}', mail='#{target_mail}', aliasu='#{target_aliasu}', status='#{target_status}', language='#{target_language}' WHERE user='#{target_uid}';", true )
 	end
 
 	account_html << "<div class='row'>"
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_USER} WHERE status!='9' AND user!='';", false )
+	r = db.query( "SELECT * FROM #{$TB_USER} WHERE status!='9' AND user!='';", false )
 	if r.first
 		account_html << "<table class='table table-striped table-bordered'>"
 		account_html << "<thead>"

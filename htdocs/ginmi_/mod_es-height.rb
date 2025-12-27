@@ -18,7 +18,7 @@ def ginmi_module( cgi, db )
 		sex = 0
 		age = 18
 		kexow = 0
-		r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 		if r.first
 			if r.first['bio'] != nil && r.first['bio'] != ''
 				bio = JSON.parse( r.first['bio'] )
@@ -135,7 +135,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "身長推定",\
 		'title' => "BMI計算",\
 		'age' => "年齢",\

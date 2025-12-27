@@ -85,19 +85,6 @@ def db_create_rr_user()
 	end
 end
 
-#### NB system table.
-def nb_init()
-	query = "SHOW TABLES LIKE 'nb';"
-	res = $DB.query( query )
-	if res.first
-		puts 'nb table already exists.'
-	else
-		query = 'CREATE TABLE nb (user VARCHAR(32) NOT NULL PRIMARY KEY,his VARCHAR(4096));'
-		$DB.query( query )
-		puts 'nb table has been created.'
-	end
-end
-
 
 #### Making fct additional table.
 def fcts_init( base_file, sub_files )
@@ -665,7 +652,7 @@ def user_init()
 	if res.first
 		puts 'user table already exists.'
 	else
-		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, pass VARCHAR(32), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
+		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, passh VARCHAR(256), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
 		$DB.query( query )
 		puts 'user in ext has been created.'
 
@@ -1176,48 +1163,6 @@ def ref_para_init( ref_parallel )
 end
 
 
-#### Making cooking school koyomi table
-def schoolk_init()
-	query = "SHOW TABLES LIKE 'schoolk';"
-	res = $DB.query( query )
-	if res.first
-		puts 'schoolk already exists.'
-	else
-		query = 'CREATE TABLE schoolk ( user VARCHAR(32), student VARCHAR(32), num TINYINT, pass VARCHAR(64), status TINYINT, menu VARCHAR(32), ampm TINYINT(1), date DATE, mail VARCHAR(64), cs_code VARCHAR(8));'
-		$DB.query( query )
-		puts 'schoolk table has been created.'
-	end
-end
-
-
-#### Making cooking school menu tag table
-def schoolm_init()
-	query = "SHOW TABLES LIKE 'schoolm';"
-	res = $DB.query( query )
-	if res.first
-		puts 'schoolm already exists.'
-	else
-		query = 'CREATE TABLE schoolm ( user VARCHAR(32) NOT NULL, label_group VARCHAR(64), label VARCHAR(256), cs_code VARCHAR(8), ampm TINYINT(1), date DATE);'
-		$DB.query( query )
-		puts 'schoolm table has been created.'
-	end
-end
-
-
-#### Making cooking school custom table
-def schoolc_init()
-	query = "SHOW TABLES LIKE 'schoolc';"
-	res = $DB.query( query )
-	if res.first
-		puts 'schoolc already exists.'
-	else
-		query = 'CREATE TABLE schoolc ( user VARCHAR(32) NOT NULL, cs_code VARCHAR(8), format TINYINT(1), title VARCHAR(64), enable TINYINT(1));'
-		$DB.query( query )
-		puts 'schoolc table has been created.'
-	end
-end
-
-
 #### Making module JSON data
 def modj_init()
 	query = "SHOW TABLES LIKE 'modj';"
@@ -1321,10 +1266,6 @@ ref_phys_init( ref_phys )
 ref_eer_init( ref_eer )
 ref_its_init( ref_intake )
 ref_para_init( ref_parallel )
-
-schoolk_init()
-schoolm_init()
-schoolc_init()
 
 $DB.close
 

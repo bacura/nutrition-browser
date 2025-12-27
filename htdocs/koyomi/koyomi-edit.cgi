@@ -24,7 +24,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		breakfast: "朝食", \
 		lunch:     "昼食", \
 		dinner:    "夕食", \
@@ -271,7 +271,7 @@ end
 
 puts 'Setting palette & FCT<br>' if @debug
 palette = Palette.new( user )
-palette.set_bit( $PALETTE_DEFAULT_NAME[user.language][0] )
+palette.set_bit( @palette_default_name.first )
 fct = FCT.new( user, @fct_item, @fct_name, @fct_unit, @fct_frct, 1, 1 )
 fct.load_palette( palette.bit )
 

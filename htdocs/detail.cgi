@@ -24,7 +24,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		:login    => "ログインが必要",
 		:aliase   => "別名",
 		:request  => "リクエスト",
@@ -79,7 +79,7 @@ unit_set = []
 unit_select = []
 selectu = 'g' if selectu.empty?
 uk = BigDecimal( '1' )
-r = db.query( "SELECT unit FROM #{$MYSQL_TB_EXT} WHERE FN='#{food_no}';", false )
+r = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN='#{food_no}';", false )
 if r.first
 	unith = JSON.parse( r.first['unit'] )
 	unith.each do |k, v|
@@ -103,7 +103,7 @@ food_weight = food_volume * uk
 
 puts 'Load FCT<br>' if @debug
 fct_opt = Hash.new
-r = db.query( "SELECT * FROM #{$MYSQL_TB_FCT} WHERE FN='#{food_no}';", false )
+r = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN='#{food_no}';", false )
 if r.first
 	sid = r.first['SID']
 	food_no = r.first['FN']
@@ -112,7 +112,7 @@ end
 
 puts 'Aliase process<br>' if @debug
 search_key = ''
-r = db.query( "SELECT alias FROM #{$MYSQL_TB_DIC} WHERE org_name=(SELECT name FROM #{$MYSQL_TB_TAG} WHERE FN='#{food_no}');", false )
+r = db.query( "SELECT alias FROM #{$TB_DIC} WHERE org_name=(SELECT name FROM #{$TB_TAG} WHERE FN='#{food_no}');", false )
 r.each do |e| search_key << "#{e['alias']}," end
 search_key.chop!
 
@@ -127,17 +127,17 @@ end
 
 
 puts 'Search index<br>' if @debug
-r = db.query( "SELECT SN FROM #{$MYSQL_TB_TAG} WHERE FN='#{food_no}';", false )
+r = db.query( "SELECT SN FROM #{$TB_TAG} WHERE FN='#{food_no}';", false )
 sn = r.first['SN'].to_i
 
 sn_rev = sn - 1
 sn_rev = sn_max if sn_rev < 1
-r = db.query( "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE SN='#{sn_rev}';", false )
+r = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN='#{sn_rev}';", false )
 fn_rev = r.first['FN']
 
 sn_fwd = sn + 1
 sn_fwd = 1 if sn_fwd > sn_max
-r = db.query( "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE SN='#{sn_fwd}';", false )
+r = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN='#{sn_fwd}';", false )
 fn_fwd = r.first['FN']
 
 

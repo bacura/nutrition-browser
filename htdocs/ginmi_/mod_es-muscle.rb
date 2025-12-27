@@ -86,7 +86,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "筋量推定",\
 		'title' => "BMI計算",\
 		'age' => "年齢",\

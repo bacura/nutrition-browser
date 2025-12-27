@@ -20,25 +20,25 @@ def config_module( cgi, db )
 	when 'on'
 		fn.each do |e|
 			if /P|U?\d\d\d\d\d/ =~ e
-				db.query( "INSERT INTO #{$MYSQL_TB_PAG} SET user='#{db.user.name}', FN='#{e}';", true )
+				db.query( "INSERT INTO #{$TB_PAG} SET user='#{db.user.name}', FN='#{e}';", true )
 			end
 		end
 	when 'off'
 		fn.each do |e|
 			if /P|U?\d\d\d\d\d/ =~ e
-				db.query( "DELETE FROM #{$MYSQL_TB_PAG} WHERE user='#{db.user.name}' AND FN='#{e}';", true )
+				db.query( "DELETE FROM #{$TB_PAG} WHERE user='#{db.user.name}' AND FN='#{e}';", true )
 			end
 		end
 	when 'warning'
-		db.query( "UPDATE #{$MYSQL_TB_CFG} SET allergen='#{warning}' WHERE user='#{db.user.name}';", true )
+		db.query( "UPDATE #{$TB_CFG} SET allergen='#{warning}' WHERE user='#{db.user.name}';", true )
 	else
-		r = db.query( "SELECT allergen FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT allergen FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 		warning = r.first['allergen'] if r.first
 		warning = '000' if warning == nil || warning == ''
 	end
 
 	list_html = ''
-	r = db.query( "SELECT t1.* FROM #{$MYSQL_TB_TAG} AS t1 INNER JOIN #{$MYSQL_TB_PAG} AS t2 ON t1.FN = t2.FN WHERE t2.user='#{db.user.name}' ORDER BY t1.FN;", false )
+	r = db.query( "SELECT t1.* FROM #{$TB_TAG} AS t1 INNER JOIN #{$TB_PAG} AS t2 ON t1.FN = t2.FN WHERE t2.user='#{db.user.name}' ORDER BY t1.FN;", false )
 	r.each do |e|
 		list_html << "<tr>"
 		list_html << "<td>#{e['FN']}</td>"
@@ -160,7 +160,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "アレルゲン",\
 		'warning' => "警報区分",\
 		'obligate' => "義務７品",\

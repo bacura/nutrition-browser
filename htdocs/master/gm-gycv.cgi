@@ -22,7 +22,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'food_no' 	=> "食品番号",\
 		'regist' 	=> "登録",\
 		'gycv_edit' => "緑黄色野菜エディタ"
@@ -59,15 +59,15 @@ end
 
 case command
 when 'on'
-	db.query( "UPDATE #{$MYSQL_TB_EXT} SET gycv='1' WHERE FN='#{food_no}';", true )
+	db.query( "UPDATE #{$TB_EXT} SET gycv='1' WHERE FN='#{food_no}';", true )
 when 'off'
-	db.query( "UPDATE #{$MYSQL_TB_EXT} SET gycv ='0' WHERE FN='#{food_no}';", true )
+	db.query( "UPDATE #{$TB_EXT} SET gycv ='0' WHERE FN='#{food_no}';", true )
 end
 
 list_html = ''
 food_no_list = []
 
-r = db.query( "SELECT * from #{$MYSQL_TB_TAG} WHERE FN IN ( SELECT FN FROM #{$MYSQL_TB_EXT} WHERE gycv ='1' ORDER BY FN ASC );", false )
+r = db.query( "SELECT * from #{$TB_TAG} WHERE FN IN ( SELECT FN FROM #{$TB_EXT} WHERE gycv ='1' ORDER BY FN ASC );", false )
 r.each do |e|
 	list_html << "<div class='row'>"
 	list_html << "<div class='col-1'><button class='btn btn-sm btn-outline-danger' type='button' onclick=\"offGYCV( '#{e['FN']}' )\">x</button></div>"

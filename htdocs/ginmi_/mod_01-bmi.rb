@@ -18,7 +18,7 @@ def ginmi_module( cgi, db )
 		weight = 0.0
 		kexow = 0
 
-		r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 		if r.first
 			if r.first['bio'] != nil && r.first['bio'] != ''
 				bio = JSON.parse( r.first['bio'] )
@@ -34,7 +34,7 @@ def ginmi_module( cgi, db )
 		if kexow == 1
 			height_flag = true
 			weight_flag = true
-			r = db.query( "SELECT cell FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{db.user.name}' AND cell !='' AND cell IS NOT NULL ORDER BY date DESC;", false )
+			r = db.query( "SELECT cell FROM #{$TB_KOYOMIEX} WHERE user='#{db.user.name}' AND cell !='' AND cell IS NOT NULL ORDER BY date DESC;", false )
 			r.each do |e|
 				kexc = JSON.parse( e['cell'] )
 				if height_flag && e['身長'] != nil
@@ -312,7 +312,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "BMI",\
 		'title' => "BMI計算",\
 		'age' => "年齢",\

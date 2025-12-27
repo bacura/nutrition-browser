@@ -8,7 +8,7 @@ def config_module( cgi, db )
 	his_max = 200
 
 	puts "LOAD config<br>" if @debug
-	r = db.query( "SELECT history FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+	r = db.query( "SELECT history FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 	if r.first
 		if r.first['history'] != nil && r.first['history'] != ''
 			history = JSON.parse( r.first['history'] )
@@ -24,11 +24,11 @@ def config_module( cgi, db )
 
 		history['his_max'] = his_max
 		history_ = JSON.generate( history )
-		db.query( "UPDATE #{$MYSQL_TB_CFG} SET history='#{history_}' WHERE user='#{db.user.name}';", true )
+		db.query( "UPDATE #{$TB_CFG} SET history='#{history_}' WHERE user='#{db.user.name}';", true )
 
 	when 'clear'
 		puts "CLEAR history<br>" if @debug
-		db.query( "UPDATE #{$MYSQL_TB_HIS} SET his='' WHERE user='#{db.user.name}';", true )
+		db.query( "UPDATE #{$TB_HIS} SET his='' WHERE user='#{db.user.name}';", true )
 	end
 
 	html = <<-"HTML"
@@ -95,7 +95,7 @@ def module_lp( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name'	=> "履歴",\
 		'his_vol'	=> "履歴保存量",\
 		'msg1'	=> "※増やすとレスポンスが悪くなるかもしれません。",\

@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'sun' 		=> "日",\
 		'mon' 		=> "月",\
 		'tue' 		=> "火",\
@@ -106,7 +106,7 @@ sql_ym = "#{calendar.yyyy}-#{calendar.mm}"
 
 
 puts 'Getting koyomi start year<br>' if @debug
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 		koyomi_cfg = JSON.parse( r.first['koyomi'] )
@@ -119,7 +119,7 @@ end
 puts 'Getting standard meal start & time<br>' if @debug
 start_time_set = []
 meal_tiems_set = []
-r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['bio'] != nil && r.first['bio'] != ''
 		bio = JSON.parse( r.first['bio'] )
@@ -140,7 +140,7 @@ dd_ = nil
 puts 'Save food<br>' if @debug
 if command == 'save'
 	( yyyy_, mm_, dd_, tdiv_ ) = origin.split( ':' )
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND date='#{yyyy_}-#{mm_}-#{dd_}' AND tdiv='#{tdiv_}';", false )
+	r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND date='#{yyyy_}-#{mm_}-#{dd_}' AND tdiv='#{tdiv_}';", false )
 	if r.first
 		koyomi_ = r.first['koyomi']
 		t = ''
@@ -148,12 +148,12 @@ if command == 'save'
 		a.each do |e|
 			aa = e.split( '~' )
 			if /\-z\-/ =~ aa[0]
-				rr = db.query( "SELECT name FROM #{$MYSQL_TB_FCZ} WHERE code='#{aa[0]}' AND base='fix' AND user='#{user.name}';", false )
+				rr = db.query( "SELECT name FROM #{$TB_FCZ} WHERE code='#{aa[0]}' AND base='fix' AND user='#{user.name}';", false )
 				if rr.first
 					fzcode = generate_code( user.name, 'z' )
-					db.query( "CREATE TEMPORARY TABLE tmp SELECT * FROM #{$MYSQL_TB_FCZ} WHERE code='#{aa[0]}' AND base='fix' AND user='#{user.name}';", true )
+					db.query( "CREATE TEMPORARY TABLE tmp SELECT * FROM #{$TB_FCZ} WHERE code='#{aa[0]}' AND base='fix' AND user='#{user.name}';", true )
 					db.query( "UPDATE tmp SET code='#{fzcode}', origin='#{yyyy}-#{mm}-#{dd}-#{tdiv}' WHERE base='fix' AND user='#{user.name}';", true )
-					db.query( "INSERT INTO #{$MYSQL_TB_FCZ} SELECT * FROM tmp;", true )
+					db.query( "INSERT INTO #{$TB_FCZ} SELECT * FROM tmp;", true )
 					db.query( "DROP TABLE tmp;", true )
 
 					t << "#{fzcode}~#{aa[1]}~#{aa[2]}~#{hh_mm}~#{meal_time}\t"
@@ -164,7 +164,7 @@ if command == 'save'
 		end
 		koyomi_ = t.chop
 
-		rr = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND date='#{yyyy}-#{mm}-#{dd}' AND tdiv='#{tdiv}';", false )
+		rr = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND date='#{yyyy}-#{mm}-#{dd}' AND tdiv='#{tdiv}';", false )
 		if rr.first
 			koyomi = rr.first['koyomi']
 			if koyomi == ''
@@ -173,13 +173,13 @@ if command == 'save'
 				koyomi << "\t#{koyomi_}"
 			end
 
-			db.query( "UPDATE #{$MYSQL_TB_KOYOMI} SET koyomi='#{koyomi}', fzcode='' WHERE user='#{user.name}' AND date='#{yyyy}-#{mm}-#{dd}' AND tdiv='#{tdiv}';", true )
+			db.query( "UPDATE #{$TB_KOYOMI} SET koyomi='#{koyomi}', fzcode='' WHERE user='#{user.name}' AND date='#{yyyy}-#{mm}-#{dd}' AND tdiv='#{tdiv}';", true )
 		else
-			db.query( "INSERT INTO #{$MYSQL_TB_KOYOMI} SET user='#{user.name}', fzcode='', freeze='0', koyomi='#{koyomi_}', date='#{yyyy}-#{mm}-#{dd}', tdiv='#{tdiv}';", true )
+			db.query( "INSERT INTO #{$TB_KOYOMI} SET user='#{user.name}', fzcode='', freeze='0', koyomi='#{koyomi_}', date='#{yyyy}-#{mm}-#{dd}', tdiv='#{tdiv}';", true )
 		end
 
 		if cm_mode == 'move' && ( yyyy != yyyy_.to_i || mm != mm_.to_i || dd != dd_.to_i || tdiv != tdiv_.to_i )
-			db.query( "UPDATE #{$MYSQL_TB_KOYOMI} SET koyomi='' WHERE user='#{user.name}' AND date='#{yyyy_}-#{mm_}-#{dd_}' AND tdiv='#{tdiv_}';", true )
+			db.query( "UPDATE #{$TB_KOYOMI} SET koyomi='' WHERE user='#{user.name}' AND date='#{yyyy_}-#{mm_}-#{dd_}' AND tdiv='#{tdiv_}';", true )
 			origin = "#{yyyy}:#{mm}:#{dd}:#{tdiv}"
 		end
 		calendar = Calendar.new( user, yyyy, mm, dd )
@@ -197,7 +197,7 @@ puts "koyomi matrix<br>" if @debug
 koyomi_mx = []
 kfreeze_flags = []
 31.times do |i| koyomi_mx[i + 1] = Array.new end
-r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-31';", false )
+r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-31';", false )
 r.each do |e|
 	koyomi_mx[e['date'].day][e['tdiv']] = e
 	kfreeze_flags[e['date'].day] = true if e['freeze'] == 1

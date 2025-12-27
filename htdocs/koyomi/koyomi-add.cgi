@@ -24,7 +24,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'koyomi' 	=> "こよみ:食事",\
 		'sun' 		=> "日",\
 		'mon' 		=> "月",\
@@ -61,7 +61,7 @@ def unit_select_html( code, selectu, db )
 	unit_select_html = ''
 	unit_set = []
 	unit_select = []
-	r = db.query( "SELECT unit FROM #{$MYSQL_TB_EXT} WHERE FN='#{code}';", false )
+	r = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN='#{code}';", false )
 	if r.first
 		unith = JSON.parse( r.first['unit'] )
 		unith.each do |k, v|
@@ -150,7 +150,7 @@ org_ymd = "#{calendar.yyyy}:#{calendar.mm}:#{calendar.dd}"
 
 
 puts 'SET koyomi start year<br>' if @debug
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 		koyomi_cfg = JSON.parse( r.first['koyomi'] )
@@ -163,7 +163,7 @@ end
 puts 'SET standard meal start & time<br>' if @debug
 start_time_set = []
 meal_tiems_set = []
-r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['bio'] != nil && r.first['bio'] != ''
 		bio = JSON.parse( r.first['bio'] )
@@ -183,7 +183,7 @@ new_solid = ''
 if ( command == 'move' && copy != 1 ) || ( command == 'fixcopy' && copy != 1 )
 	puts 'Move food (deleting origin )<br>' if @debug
 	a = origin.split( ':' )
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND date='#{a[0]}-#{a[1]}-#{a[2]}' AND tdiv='#{a[3]}';", false )
+	r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND date='#{a[0]}-#{a[1]}-#{a[2]}' AND tdiv='#{a[3]}';", false )
 	if r.first['koyomi']
 		t = r.first['koyomi']
 		aa = t.split( "\t" )
@@ -192,7 +192,7 @@ if ( command == 'move' && copy != 1 ) || ( command == 'fixcopy' && copy != 1 )
 		end
 		new_solid.chop! unless new_solid == ''
 	end
-	db.query( "UPDATE #{$MYSQL_TB_KOYOMI} SET koyomi='#{new_solid}' WHERE user='#{user.name}' AND date='#{a[0]}-#{a[1]}-#{a[2]}' AND tdiv='#{a[3]}';", true )
+	db.query( "UPDATE #{$TB_KOYOMI} SET koyomi='#{new_solid}' WHERE user='#{user.name}' AND date='#{a[0]}-#{a[1]}-#{a[2]}' AND tdiv='#{a[3]}';", true )
 end
 
 #Saving post-koyomi
@@ -200,15 +200,15 @@ if command == 'save' || command == 'move' || command == 'fixcopy' || command == 
 
 	if command == 'fixcopy' && copy == 1
 		puts 'Duplicate fix<br>' if @debug
-		db.query( "CREATE TEMPORARY TABLE tt AS SELECT * FROM #{$MYSQL_TB_FCZ} WHERE code='#{code}';", true )
+		db.query( "CREATE TEMPORARY TABLE tt AS SELECT * FROM #{$TB_FCZ} WHERE code='#{code}';", true )
 		new_fix_code = generate_code( user.name, 'z' )
 		db.query( "UPDATE tt SET code='#{new_fix_code}' WHERE code='#{code}';", true )
-		db.query( "INSERT INTO #{$MYSQL_TB_FCZ} SELECT * FROM tt WHERE code='#{new_fix_code}';", true )
+		db.query( "INSERT INTO #{$TB_FCZ} SELECT * FROM tt WHERE code='#{new_fix_code}';", true )
 		code = new_fix_code
 	end
 
 	puts 'Save food<br>' if @debug
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND date='#{sql_ymd}' AND tdiv='#{tdiv}';", false )
+	r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND date='#{sql_ymd}' AND tdiv='#{tdiv}';", false )
 	if r.first
 		koyomi = r.first['koyomi']
 		delimiter = ''
@@ -223,11 +223,11 @@ if command == 'save' || command == 'move' || command == 'fixcopy' || command == 
 		end
 		koyomi << "#{delimiter}#{code}~#{ev}~#{eu}~#{hh_mm}~#{meal_time}"
 
-		db.query( "UPDATE #{$MYSQL_TB_KOYOMI} SET koyomi='#{koyomi}' WHERE user='#{user.name}' AND date='#{sql_ymd}' AND tdiv='#{tdiv}';", true )
+		db.query( "UPDATE #{$TB_KOYOMI} SET koyomi='#{koyomi}' WHERE user='#{user.name}' AND date='#{sql_ymd}' AND tdiv='#{tdiv}';", true )
 		origin = "#{org_ymd}:#{tdiv}:#{koyomi.split( "\t" ).size - 1}" if command == 'move' || command == 'fixcopy'
 	else
 		koyomi = "#{code}~#{ev}~#{eu}~#{hh_mm}~#{meal_time}"
-		db.query( "INSERT INTO #{$MYSQL_TB_KOYOMI} SET user='#{user.name}', fzcode='', freeze='0', koyomi='#{koyomi}', date='#{sql_ymd}', tdiv='#{tdiv}';", true )
+		db.query( "INSERT INTO #{$TB_KOYOMI} SET user='#{user.name}', fzcode='', freeze='0', koyomi='#{koyomi}', date='#{sql_ymd}', tdiv='#{tdiv}';", true )
 		origin = "#{org_ymd}:#{tdiv}:0" if command == 'move' || command == 'fixcopy'
 	end
 end
@@ -254,17 +254,17 @@ end
 ####
 food_name = code
 if /\-m\-/ =~ code
-	r = db.query( "SELECT name FROM #{$MYSQL_TB_MENU} WHERE code='#{code}' and user='#{user.name}';", false )
+	r = db.query( "SELECT name FROM #{$TB_MENU} WHERE code='#{code}' and user='#{user.name}';", false )
 	food_name = r.first['name']
 elsif /\-z\-/ =~ code
-	r = db.query( "SELECT name FROM #{$MYSQL_TB_FCZ} WHERE code='#{code}' and user='#{user.name}';", false )
+	r = db.query( "SELECT name FROM #{$TB_FCZ} WHERE code='#{code}' and user='#{user.name}';", false )
 	food_name = r.first['name']
 elsif /\-/ =~ code
-	r = db.query( "SELECT name FROM #{$MYSQL_TB_RECIPE} WHERE code='#{code}' and user='#{user.name}';", false )
+	r = db.query( "SELECT name FROM #{$TB_RECIPE} WHERE code='#{code}' and user='#{user.name}';", false )
 	food_name = r.first['name']
 else
-	q = "SELECT name FROM #{$MYSQL_TB_TAG} WHERE FN='#{code}';"
-	q = "SELECT name FROM #{$MYSQL_TB_TAG} WHERE FN='#{code}' AND user='#{user.name}';" if /^U\d{5}/ =~ code
+	q = "SELECT name FROM #{$TB_TAG} WHERE FN='#{code}';"
+	q = "SELECT name FROM #{$TB_TAG} WHERE FN='#{code}' AND user='#{user.name}';" if /^U\d{5}/ =~ code
 	r = db.query( q, false )
 	food_name = r.first['name']
 end
@@ -274,7 +274,7 @@ puts "koyomi matrix<br>" if @debug
 koyomi_mx = []
 kfreeze_flags = []
 31.times do |i| koyomi_mx[i + 1] = Array.new end
-r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-31';", false )
+r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN '#{sql_ym}-1' AND '#{sql_ym}-31';", false )
 r.each do |e|
 	koyomi_mx[e['date'].day][e['tdiv']] = e
 	kfreeze_flags[e['date'].day] = true if e['freeze'] == 1

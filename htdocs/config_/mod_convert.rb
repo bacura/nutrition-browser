@@ -65,14 +65,14 @@ def config_module( cgi, db )
 	html = ''
 	case cgi['step']
 	when 'confirm-fn'
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{into_fn}';", false )
+		r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{into_fn}';", false )
 		if r.first
-			rr = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{from_fn}';", false )
+			rr = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{from_fn}';", false )
 			if rr.first
 				count = 0
 				protect = ''
 				protect = ' AND protect!="1"' if ignore_p == 'off'
-				rrr = db.query( "SELECT sum FROM #{$MYSQL_TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
+				rrr = db.query( "SELECT sum FROM #{$TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
 				rrr.each do |e|
 					hit_flag = false
 					a = e['sum'].split( "\t" )
@@ -97,7 +97,7 @@ def config_module( cgi, db )
 		count = 0
 		protect = ''
 		protect = ' AND protect!="1"' if ignore_p == 'off'
-		r = db.query( "SELECT sum, code, user FROM #{$MYSQL_TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
+		r = db.query( "SELECT sum, code, user FROM #{$TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
 		r.each do |e|
 			sums = []
 			a = e['sum'].split( "\t" )
@@ -116,7 +116,7 @@ def config_module( cgi, db )
 			sum_post = sums.join( "\t" )
 
 			if e['sum'] != sum_post
-				db.query( "UPDATE #{$MYSQL_TB_RECIPE} set sum='#{sum_post}' WHERE user='#{db.user.name}' AND code='#{e['code']}';", true )
+				db.query( "UPDATE #{$TB_RECIPE} set sum='#{sum_post}' WHERE user='#{db.user.name}' AND code='#{e['code']}';", true )
 				count += 1
 			end
 		end
@@ -128,7 +128,7 @@ def config_module( cgi, db )
 		protect = ''
 		protect = ' AND protect!="1"' if ignore_tagp == 'off'
 
-		r = db.query( "SELECT code, protocol FROM #{$MYSQL_TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
+		r = db.query( "SELECT code, protocol FROM #{$TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
 		r.each do |e|
 			a = e['protocol'].split( "\n" )
 			if /^\#/ =~ a[0]
@@ -144,7 +144,7 @@ def config_module( cgi, db )
 		protect = ' AND protect!="1"' if ignore_p == 'off'
 
 		recipe = Recipe.new( user.name )
-		r = db.query( "SELECT code, protocol FROM #{$MYSQL_TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
+		r = db.query( "SELECT code, protocol FROM #{$TB_RECIPE} WHERE user='#{db.user.name}'#{protect};", false )
 		r.each do |e|
 			recipe.load_db( e['code'], true )
 			a = recipe.protocol.split( "\n" )
@@ -285,7 +285,7 @@ end
 # Langege pack
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "食品番号・タグ変換",\
 		'fn' => "レシピ［食品番号］",\
 		'tag' => "レシピ［タグ］",\

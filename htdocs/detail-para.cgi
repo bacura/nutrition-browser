@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'weight' 	=> "重量",\
 		'fn' 		=> "食品番号",\
 		'name' 		=> "食品名",\
@@ -128,10 +128,10 @@ when 'init', 'weight', 'cb', 'cbp'
 	end
 
 	puts 'Base food<br>' if @debug
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_FCT} WHERE FN='#{base_fn}';", false )
+	r = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN='#{base_fn}';", false )
 	base_energy = num_opt( r.first['ENERC_KCAL'], food_weight, frct_mode, @fct_frct['ENERC_KCAL'] )
 
-	rr = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{base_fn}';", false )
+	rr = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{base_fn}';", false )
 	base_name = rr.first['name']
 	base_tags = "<span class='tag1'>#{rr.first['tag1']}</span> <span class='tag2'>#{rr.first['tag2']}</span> <span class='tag3'>#{rr.first['tag3']}</span> <span class='tag4'>#{rr.first['tag4']}</span> <span class='tag5'>#{rr.first['tag5']}</span>"
  
@@ -142,9 +142,9 @@ when 'init', 'weight', 'cb', 'cbp'
 	end
 
 
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_PARA} WHERE FN='#{base_fn}' AND JUTEN='#{juten}';", false )
+	r = db.query( "SELECT * FROM #{$TB_PARA} WHERE FN='#{base_fn}' AND JUTEN='#{juten}';", false )
 	if r.first
-		rr = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN IN (#{r.first['para']});", false )
+		rr = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN IN (#{r.first['para']});", false )
 		rr.each do |e|
 			food_no_list << e['FN']
 			food_name_list << e['name']
@@ -175,7 +175,7 @@ when 'init', 'weight', 'cb', 'cbp'
 
 
 	c = 0
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_FCT} WHERE FN IN (#{r.first['para']});", false )
+	r = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN IN (#{r.first['para']});", false )
 	r.each do |e|
 		para_energy = num_opt( e['ENERC_KCAL'], food_weight, frct_mode, @fct_frct['ENERC_KCAL'] )
 		para_weight = ( food_weight.to_f * base_energy / para_energy ).round( 1 )

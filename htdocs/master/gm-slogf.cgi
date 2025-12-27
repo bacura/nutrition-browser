@@ -22,7 +22,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'user' 	=> "ユーザー",\
 		'word' 	=> "ワード",\
 		'code'	=> "code",\
@@ -60,12 +60,12 @@ end
 
 
 if command == 'edit'
-#	db.query( "UPDATE #{$MYSQL_TB_USER} SET;", true )
+#	db.query( "UPDATE #{$TB_USER} SET;", true )
 end
 
 
 slogf_html = "<div class='row'>"
-r = db.query( "SELECT * FROM #{$MYSQL_TB_SLOGF};", false )
+r = db.query( "SELECT * FROM #{$TB_SLOGF};", false )
 if r.first
 	slogf_html << "<table class='table-striped table-bordered'>"
 	slogf_html << "<thead>"

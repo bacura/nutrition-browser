@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'koyomi' 	=> "こよみ栄養計算",\
 		'fromto'	=> "　～　",\
 		'calc'		=> "計　算",\
@@ -86,7 +86,7 @@ end
 
 
 puts 'LOAD config<br>' if @debug
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 		koyomi = JSON.parse( r.first['koyomi'] )
@@ -104,7 +104,7 @@ end
 puts "Multi calc process<br>" if @debug
 day_list = []
 koyomi_box = [ Hash.new, Hash.new, Hash.new, Hash.new ]
-r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{user.name}' AND tdiv != 4 AND date BETWEEN '#{yyyymmdds}' AND '#{yyyymmdde}';", false )
+r = db.query( "SELECT * FROM #{$TB_KOYOMI} WHERE user='#{user.name}' AND tdiv != 4 AND date BETWEEN '#{yyyymmdds}' AND '#{yyyymmdde}';", false )
 r.each do |e|
 	koyomi_box[e['tdiv'].to_i][e['date'].to_s] = e['koyomi']
 	day_list << e['date'].to_s
@@ -127,11 +127,11 @@ end
 
 puts 'HTML FCZの生成 <br>' if @debug
 fcz_html = ''
-r = db.query( "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='ref_intake';", false )
+r = db.query( "SELECT * FROM #{$TB_FCZ} WHERE user='#{user.name}' AND base='ref_intake';", false )
 r.each do |e|
 	fcz_html << "<option value='#{e['code']}' #{$SELECT[fcz == e['code']]}>#{e['name']}</option>"
 end
-r_fcz = db.query( "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='ref_intake' AND code='#{fcz}';", false )
+r_fcz = db.query( "SELECT * FROM #{$TB_FCZ} WHERE user='#{user.name}' AND base='ref_intake' AND code='#{fcz}';", false )
 
 
 
@@ -431,7 +431,7 @@ puts html
 if command == 'calc'
 		koyomi['calc'] = { 'yyyymmdds' => yyyymmdds, 'yyyymmdde' => yyyymmdde, 'palette' => palette_, 'fcz' => fcz, 'ew_mode' => ew_mode }
 		koyomi_ = JSON.generate( koyomi )
-	db.query( "UPDATE #{$MYSQL_TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
+	db.query( "UPDATE #{$TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
 end
 
 

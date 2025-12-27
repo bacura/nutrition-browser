@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 			search: "レシピ検索",
 			fract: "端数",
 			round: "四捨五入",
@@ -137,7 +137,7 @@ when 'init', 'weight', 'cb', 'cbp'
 
 	# 正規食品
 	sub_query = class_no.to_i != 0 ? " AND class#{class_no}='#{class_name}'" : ''
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND status='9'#{sub_query};", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND status='9'#{sub_query};", false )
 	if r.first
 		r.each do |e|
 			food_no_list << e['FN']
@@ -153,7 +153,7 @@ when 'init', 'weight', 'cb', 'cbp'
 
 	# 擬似食品
 	sub_query = class_no.to_i != 0 ? " AND class#{class_no}='#{class_name}'" : ''
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' )#{sub_query};", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' )#{sub_query};", false )
 	if r.first
 		r.each do |e|
 			food_no_list << e['FN']
@@ -170,7 +170,7 @@ when 'init', 'weight', 'cb', 'cbp'
  	fc_items = []
 	fc_items_html = ''
 
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_PALETTE} WHERE user='#{user.name}' AND name='簡易表示用';", false )
+	r = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE user='#{user.name}' AND name='簡易表示用';", false )
 	if r.first
 		palette = r.first['palette']
 		palette.size.times do |c|
@@ -190,13 +190,13 @@ when 'init', 'weight', 'cb', 'cbp'
 		pseudo_flag = false
 		# 栄養素の一部を取得
 		if /U/ =~ food_no_list[c]
-			query = "SELECT * FROM #{$MYSQL_TB_FCTP} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';"
+			query = "SELECT * FROM #{$TB_FCTP} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';"
 			pseudo_flag = true
 		elsif /P|C/ =~ food_no_list[c]
-			query = "SELECT * FROM #{$MYSQL_TB_FCTP} WHERE FN='#{food_no_list[c]}';"
+			query = "SELECT * FROM #{$TB_FCTP} WHERE FN='#{food_no_list[c]}';"
 			pseudo_flag = true
 		else
-			query = "SELECT * FROM #{$MYSQL_TB_FCT} WHERE FN='#{food_no_list[c]}';"
+			query = "SELECT * FROM #{$TB_FCT} WHERE FN='#{food_no_list[c]}';"
 		end
 		p query if @debug
 
@@ -204,8 +204,8 @@ when 'init', 'weight', 'cb', 'cbp'
 		unless res.first
 			puts "<span class='error'>[FCTP load]ERROR!!<br>"
 			puts "code:#{food_no_list[c]}</span><br>"
-			db.query( "DELETE FROM #{$MYSQL_TB_TAG} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
-			db.query( "DELETE FROM #{$MYSQL_TB_EXT} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
+			db.query( "DELETE FROM #{$TB_TAG} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
+			db.query( "DELETE FROM #{$TB_EXT} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
 			exit()
 		end
 
@@ -241,7 +241,7 @@ when 'init', 'weight', 'cb', 'cbp'
 		gm_dic = ''
 
 		if user.status >= 8
-			res = db.query( "SELECT * FROM #{$MYSQL_TB_EXT} WHERE FN='#{food_no_list[c]}';", false )
+			res = db.query( "SELECT * FROM #{$TB_EXT} WHERE FN='#{food_no_list[c]}';", false )
 			if res.first
 				bc = res.first['unit'] != '{"g":1}' ? 'btn-outline-danger' : 'btn-outline-secondary'
 				gm_unitc = "<button type='button' class='btn #{bc} btn-sm' onclick=\"directUnit( '#{food_no_list[c]}' )\">#{l[:unit]}</button>"

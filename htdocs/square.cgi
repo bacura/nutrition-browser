@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		:plus 		=> "<img src='bootstrap-dist/icons/plus-square-fill.svg' style='height:2em; width:2em;'>",\
 		:signpost	=> "<img src='bootstrap-dist/icons/signpost.svg' style='height:2em; width:2em;'>"
 	}
@@ -35,7 +35,7 @@ end
 def get_history_name( fg, db )
 	name_his = []
 	if db.user.name
-		r = db.query( "SELECT his FROM #{$MYSQL_TB_HIS} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT his FROM #{$TB_HIS} WHERE user='#{db.user.name}';", false )
 		if r.first
 			his_raw = r.first['his'].split( "\t" )
 			his_raw.map! do |x|
@@ -45,7 +45,7 @@ def get_history_name( fg, db )
 			his = his_raw.join( ',' )
 
 			unless his == ''
-				rr = db.query( "SELECT name FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg}' AND FN IN (#{his});", false )
+				rr = db.query( "SELECT name FROM #{$TB_TAG} WHERE FG='#{fg}' AND FN IN (#{his});", false )
 				rr.each do |e| name_his << e['name'] end
 			end
 		end
@@ -162,7 +162,7 @@ case channel
 when 'fctb'
 
 	# 正規食品
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_no}' AND status='9' GROUP BY SN;", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_no}' AND status='9' GROUP BY SN;", false )
 	r.each do |e|
 		if e['class1'] != ''
 			class1_group << e['class1']
@@ -187,7 +187,7 @@ when 'fctb'
 
 	# 擬似食品
 	unless user.status == 0
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_no}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
+		r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_no}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
 		r.each do |e|
 			if e['class1'].to_s != ''
 				class1_group_p << e['class1']
@@ -228,7 +228,7 @@ HTML
 #### 第２層閲覧選択ページ
 when 'fctb_l2'
 	# 正規食品
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
 	r.each do |e|
 		if e['class1'] != '' && e['class2'] != ''
 			class2_group << e['class2']
@@ -255,7 +255,7 @@ when 'fctb_l2'
 
 	# 擬似食品
 	unless user.status == 0
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG= '#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
+		r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG= '#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
 		r.each do |e|
 			if e['class1'].to_s != '' && e['class2'].to_s != ''
 				class2_group_p << e['class2']
@@ -292,7 +292,7 @@ HTML
 #### 第３層閲覧選択ページ
 when 'fctb_l3'
 	# 正規食品
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
 	r.each do |e|
 		if e['class3'] != '' && e['class1'] != '' && e['class2'] != ''
 			class3_group << e['class3']
@@ -311,7 +311,7 @@ when 'fctb_l3'
 
 	# 擬似食品
 	unless user.status == 0
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
+		r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
 		r.each do |e|
 			if e['class3'].to_s != '' && e['class1'].to_s != '' && e['class2'].to_s != ''
 				class3_group_p << e['class3']
@@ -343,7 +343,7 @@ HTML
 #### 第４層閲覧選択ページ
 when 'fctb_l4'
 	# 正規食品
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND status='9' GROUP BY SN;", false )
 	r.each do |e| direct_group << e['name'] end
 
 	# ダイレクトグループの作成
@@ -351,7 +351,7 @@ when 'fctb_l4'
 
 	# 擬似食品
 	unless user.status == 0
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
+		r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND class#{class_no}='#{class_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' );", false )
 		r.each do |e| direct_group_p << e['name'] end
 
 		# ダイレクトグループの作成

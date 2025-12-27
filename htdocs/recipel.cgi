@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		recipel:	"レシピ帳",
 		words:		"検索語：",
 		norecipe:	"検索条件のレシピは見つかりませんでした",
@@ -215,10 +215,10 @@ def referencing( words, db, sql_where_ij )
 	# Recoding query & converting by DIC
 	true_query = []
 	query_word.each do |e|
-		db.query( "INSERT INTO #{$MYSQL_TB_SLOGR} SET user=?, words=?, date=?", true, [db.user.name, e, @datetime] )
-		res = db.query( "SELECT * FROM #{$MYSQL_TB_DIC} WHERE alias=?", false, [e] )&.first
+		db.query( "INSERT INTO #{$TB_SLOGR} SET user=?, words=?, date=?", true, [db.user.name, e, @datetime] )
+		res = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias=?", false, [e] )&.first
 		if res
-			res2 = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE class1=? OR class2=? OR class3=?", false, [res['org_name'], res['org_name'], res['org_name']] )&.first
+			res2 = db.query( "SELECT * FROM #{$TB_TAG} WHERE class1=? OR class2=? OR class3=?", false, [res['org_name'], res['org_name'], res['org_name']] )&.first
 			if res2
 				res2.each do |ee| true_query << ee['name'] end
 			else
@@ -239,9 +239,9 @@ def referencing( words, db, sql_where_ij )
 	# Referencing recipe
 	true_query.each do |e|
 		if e =~ /\-r\-/
-			return db.query( "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code=? AND ( user=? OR public='1' );", false, [e, db.user.name] )
+			return db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code=? AND ( user=? OR public='1' );", false, [e, db.user.name] )
 		else
-			return db.query( "SELECT t1.* FROM #{$MYSQL_TB_RECIPE} AS t1 INNER JOIN #{$MYSQL_TB_RECIPEI} AS t2 ON t1.code = t2.code #{sql_where_ij} AND t2.word='#{e}';", false )
+			return db.query( "SELECT t1.* FROM #{$TB_RECIPE} AS t1 INNER JOIN #{$TB_RECIPEI} AS t2 ON t1.code = t2.code #{sql_where_ij} AND t2.word='#{e}';", false )
 		end
 	end
 end
@@ -384,8 +384,8 @@ when 'delete'
 		recipe.delete_db
 
 		puts "Clearing Sum<br>" if @debug
-		res = db.query( "SELECT code FROM #{$MYSQL_TB_SUM} WHERE user=?", false, [user.name] )&.first
-		db.query( "UPDATE #{$MYSQL_TB_SUM} SET code='', name='', dish=1 WHERE user=?", true, [user.name] ) if res['code'] == code
+		res = db.query( "SELECT code FROM #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
+		db.query( "UPDATE #{$TB_SUM} SET code='', name='', dish=1 WHERE user=?", true, [user.name] ) if res['code'] == code
 	end
 when 'subspecies'
 	# Loading original recipe
@@ -556,7 +556,7 @@ ref_msg = cfg.val['words']
 
 if cfg.val['words'].to_s != ''
 	if /\-r\-/ =~ cfg.val['words'].to_s
-		res = db.query( "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code='#{cfg.val['words'].to_s}';", false )
+		res = db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code='#{cfg.val['words'].to_s}';", false )
 		ref_msg = res.first['name']
 	else
 		res = referencing( cfg.val['words'], db, sql_where_ij )
@@ -566,10 +566,10 @@ if cfg.val['words'].to_s != ''
 	recipe_num = res.size
 	ref_msg = "#{l[:words]}#{cfg.val['words']}<br>#{l[:norecipe]}" if res.size == 0
 else
-	r = db.query( "SELECT COUNT(*) FROM #{$MYSQL_TB_RECIPE} #{sql_where};", false )
+	r = db.query( "SELECT COUNT(*) FROM #{$TB_RECIPE} #{sql_where};", false )
 	recipe_num = r.first['COUNT(*)']
 	offset = ( cfg.val['page'] - 1 ) * cfg.val['page_limit']
-	res = db.query( "SELECT * FROM #{$MYSQL_TB_RECIPE} #{sql_where} ORDER BY name LIMIT #{offset}, #{cfg.val['page_limit']};", false )
+	res = db.query( "SELECT * FROM #{$TB_RECIPE} #{sql_where} ORDER BY name LIMIT #{offset}, #{cfg.val['page_limit']};", false )
 
 end
 
@@ -610,7 +610,7 @@ family_recipes = Hash.new
 
 if cfg.val['family'] == 1
 	recipes.each do |e|
-		r = db.query( "SELECT code FROM #{$MYSQL_TB_RECIPE} WHERE user=? and root=? ORDER BY name;", false, [user.name, e.code] )
+		r = db.query( "SELECT code FROM #{$TB_RECIPE} WHERE user=? and root=? ORDER BY name;", false, [user.name, e.code] )
 		daughters = []
 		daughter_recipes = []
 		r.each do |ee|

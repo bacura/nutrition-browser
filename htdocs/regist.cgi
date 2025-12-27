@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 # encoding: utf-8
-# Nutrition Browser 2020 regist 0.0.10 (2025/08/11)
+# Nutrition Browser 2020 regist 0.0.11 (2025/12/13)
 
 #==============================================================================
 # STATIC
@@ -12,41 +12,44 @@
 # LIBRARY
 #==============================================================================
 require './soul'
+require 'bcrypt'
 
 #==============================================================================
 # DEFINITION
 #==============================================================================
 
 # Language Pack
-def load_language_pack( language_code )
-  l = {
-    'jp' => {
-      nb:        "栄養ブラウザ",
-      login:     "ログイン",
-      help:      "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:2em; width:2em;'>",
-      message:   "IDとパスワードは必須です。英数字とアンダーバー(_)のみ使用可能です。ご登録前に利用規約を確認しておいてください。",
-      id_rule:   "ID (4~30文字)",
-      pass_rule: "パスワード (30文字まで)",
-      a_rule:    "二つ名 (60文字まで)",
-      mail_rule: "メールアドレス (60文字まで)",
-      submit:    "送信",
-      error1:    "入力されたIDは英数字とハイフン、アンダーバー以外の文字が使用されています。別のIDを入力して登録してください。",
-      error2:    "入力されたIDは制限の30文字を越えています。別のIDを入力して登録してください。",
-      error3:    "IDは4文字以上の長さが必要です。別のIDを入力して登録してください。",
-      error4:    "入力されたIDはすでに使用されています。別のIDを入力して登録してください。",
-      confirm:   "下記の内容でよろしければ登録してください。",
-      id:        "ID",
-      aliase:    "二つ名",
-      mail:    "メールアドレス",
-      pass:      "パスワード",
-      language:  "言語",
-      regist:    "登録する",
-      back:      "変更する",
-      thanks:    "ご登録ありがとうございました。",
-      thanks2:   "して引き続きご利用ください。"
-    }
+def load_language_pack( language )
+  l = Hash.new
+
+  #Japanese
+  l['ja'] = {
+    nb:        "栄養ブラウザ",
+    login:     "ログイン",
+    help:      "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:2em; width:2em;'>",
+    message:   "IDとパスワードは必須です。英数字とアンダーバー(_)のみ使用可能です。ご登録前に利用規約を確認しておいてください。",
+    id_rule:   "ID (8~30文字)",
+    pass_rule: "パスワード (30文字まで)",
+    a_rule:    "二つ名 (60文字まで)",
+    mail_rule: "メールアドレス (60文字まで。大文字は小文字に変換されます。)",
+    submit:    "送信",
+    error1:    "入力されたIDは英数字とハイフン、アンダーバー以外の文字が使用されています。別のIDを入力して登録してください。",
+    error2:    "入力されたIDは制限の30文字を越えています。別のIDを入力して登録してください。",
+    error3:    "IDは4文字以上の長さが必要です。別のIDを入力して登録してください。",
+    error4:    "入力されたIDはすでに使用されています。別のIDを入力して登録してください。",
+    confirm:   "下記の内容でよろしければ登録してください。",
+    id:        "ID",
+    aliase:    "二つ名",
+    mail:    "メールアドレス",
+    pass:      "パスワード",
+    language:  "言語",
+    regist:    "登録する",
+    back:      "変更する",
+    thanks:    "ご登録ありがとうございました。",
+    thanks2:   "して引き続きご利用ください。"
   }
-  return l[language_code]
+
+  return l[language]
 end
 
 # HTML Header
@@ -174,12 +177,12 @@ when 'confirm'
     error_message = "<p class='msg_small_red'>#{l[:error2]}</p>"
     render_registration_form( nil, @cgi['mail'], nil, error_message, @cgi['aliasu'], l )
 
-  elsif @cgi['id'].size < 4
+  elsif @cgi['id'].size < 8
     error_message = "<p class='msg_small_red'>#{l[:error3]}</p>"
     render_registration_form( nil, @cgi['mail'], nil, error_message, @cgi['aliasu'], l )
 
   else
-    res = db.query( "SELECT user FROM #{$MYSQL_TB_USER} WHERE user=?", false, [@cgi['id']] )&.first
+    res = db.query( "SELECT user FROM #{$TB_USER} WHERE user=?", false, [@cgi['id']] )&.first
     if res
       p true if @debug
       error_message = "<p class='msg_small_red'>#{l[:error4]}</p>"
@@ -195,17 +198,20 @@ when 'finish'
   aliasu = @cgi['aliasu'].empty? ? @cgi['id'] : @cgi['aliasu']
   p @cgi if @debug
 
-  db.query( "INSERT INTO #{$MYSQL_TB_USER} SET user=?, mail=?, pass=?, aliasu=?, status=1, language=?, reg_date=?", true, @cgi['id'], @cgi['mail'], @cgi['pass'], aliasu, @cgi['language'], @datetime )
+  mail = @cgi['mail']&.strip.downcase
+  mail ||= ''
+
+  db.query( "INSERT INTO #{$TB_USER} SET user=?, mail=?, pass=?, aliasu=?, status=1, language=?, reg_date=?", true, @cgi['id'], mail, @cgi['pass'], aliasu, @cgi['language'], @datetime )
 
   # Inserting standard palettes
   3.times do |c|
-    db.query( "INSERT INTO #{$MYSQL_TB_PALETTE} SET user=?, name=?, palette=?", true, [@cgi['id'], @palette_default_name[c], @palette_default[c]] )
+    db.query( "INSERT INTO #{$TB_PALETTE} SET user=?, name=?, palette=?", true, [@cgi['id'], @palette_default_name[c], @palette_default[c]] )
   end
 
-  db.query( "INSERT INTO #{$MYSQL_TB_HIS} SET user=?, his='';", true, [@cgi['id']] )
-  db.query( "INSERT INTO #{$MYSQL_TB_SUM} SET user=?, sum='';", true, [@cgi['id']] )
-  db.query( "INSERT INTO #{$MYSQL_TB_MEAL} SET user=?, meal='';", true, [@cgi['id']] )
-  db.query( "INSERT INTO #{$MYSQL_TB_CFG} SET user=?, icache=1;", true, [@cgi['id']] )
+  db.query( "INSERT INTO #{$TB_HIS} SET user=?, his='';", true, [@cgi['id']] )
+  db.query( "INSERT INTO #{$TB_SUM} SET user=?, sum='';", true, [@cgi['id']] )
+  db.query( "INSERT INTO #{$TB_MEAL} SET user=?, meal='';", true, [@cgi['id']] )
+  db.query( "INSERT INTO #{$TB_CFG} SET user=?, icache=1;", true, [@cgi['id']] )
 
   render_registration_finish( l )
 else

@@ -22,7 +22,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		fg: "食品群",
 		fn: "食品",
 		alias: "別名",
@@ -125,19 +125,19 @@ when 'new'
 		aliases_list = aliases.split(/[\s、，,]+/).uniq
 		aliases_list.each do |e|
 
-			r = db.query( "SELECT * FROM #{$MYSQL_TB_DIC} WHERE alias='#{e}' AND org_name='#{org_name}' AND FG ='#{sg}';", false )
-			db.query( "INSERT INTO #{$MYSQL_TB_DIC} SET alias='#{e}', org_name='#{org_name}', def_fn='#{dfn}', FG ='#{sg}', user='#{user.name}';", true ) unless r.first
+			r = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias='#{e}' AND org_name='#{org_name}' AND FG ='#{sg}';", false )
+			db.query( "INSERT INTO #{$TB_DIC} SET alias='#{e}', org_name='#{org_name}', def_fn='#{dfn}', FG ='#{sg}', user='#{user.name}';", true ) unless r.first
 		end
 	end
 
 when 'update'
 	org_name = org_name_def.split( '_' ).first
   	unless org_name.empty?
-		db.query( "DELETE FROM #{$MYSQL_TB_DIC} WHERE org_name='#{org_name}' AND FG ='#{sg}' AND ( def_fn='#{dfn}' OR def_fn='' OR def_fn IS NULL);", true )
+		db.query( "DELETE FROM #{$TB_DIC} WHERE org_name='#{org_name}' AND FG ='#{sg}' AND ( def_fn='#{dfn}' OR def_fn='' OR def_fn IS NULL);", true )
 		unless aliases.empty?
 			aliases_list = aliases.split(/[\s、，,]+/).uniq
 			aliases_list.each do |e|
-				db.query( "INSERT INTO #{$MYSQL_TB_DIC} SET alias='#{e}', org_name='#{org_name}', def_fn='#{dfn}', FG ='#{sg}', user='#{user.name}';", true )
+				db.query( "INSERT INTO #{$TB_DIC} SET alias='#{e}', org_name='#{org_name}', def_fn='#{dfn}', FG ='#{sg}', user='#{user.name}';", true )
 			end
 		end
 
@@ -151,18 +151,18 @@ list_html << "<div class='col-1 cb_header'>#{l[:linkno]}</div>"
 list_html << "<div class='col-8 cb_header'>#{l[:alias]}</div>"
 list_html << '</div>'
 
-r = db.query( "SELECT DISTINCT org_name, def_fn FROM #{$MYSQL_TB_DIC} WHERE FG ='#{sg}' ORDER BY org_name ASC;", false )
+r = db.query( "SELECT DISTINCT org_name, def_fn FROM #{$TB_DIC} WHERE FG ='#{sg}' ORDER BY org_name ASC;", false )
 r.each do |e|
 	alias_value = ''
 	def_fn = ''
 	tags = ''
-	rr = db.query( "SELECT DISTINCT * from #{$MYSQL_TB_DIC} WHERE org_name='#{e['org_name']}' AND FG ='#{sg}' AND ( def_fn='#{e['def_fn']}' OR def_fn='' OR def_fn IS NULL);", false )
+	rr = db.query( "SELECT DISTINCT * from #{$TB_DIC} WHERE org_name='#{e['org_name']}' AND FG ='#{sg}' AND ( def_fn='#{e['def_fn']}' OR def_fn='' OR def_fn IS NULL);", false )
 	rr.each do |ee|
 		alias_value << "#{ee['alias']},"
 		def_fn = ee['def_fn']
 		tags = ''
 		unless def_fn.empty?
-			rrr = db.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{def_fn}';", false )
+			rrr = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{def_fn}';", false )
 			tags = bind_tags( rrr ) if rrr.first
 		end
 	end

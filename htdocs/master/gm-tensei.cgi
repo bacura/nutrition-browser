@@ -25,7 +25,7 @@ def language_pack( language )
   l = Hash.new
 
   #Japanese
-  l['jp'] = {
+  l['ja'] = {
     tensei:  "転生コード管理",
     code:  "転生コード",
     exp_day:     "有効期限",
@@ -104,7 +104,7 @@ status_disable = false
 case command
 when 'delete'
   puts "Deleting tensei<br>" if @debug
-  db.query( "DELETE FROM #{$MYSQL_TB_TENSEI} WHERE code=?", true, [tensei_code] )
+  db.query( "DELETE FROM #{$TB_TENSEI} WHERE code=?", true, [tensei_code] )
   tensei_code = ''
 
 when 'issue'
@@ -114,15 +114,15 @@ when 'issue'
 
   10.times do
     new_tensei_code = SecureRandom.alphanumeric( 4 ) + '-' + SecureRandom.alphanumeric( 4 ) + '-' + SecureRandom.alphanumeric( 4 ) + '-' + SecureRandom.alphanumeric( 4 ) + '-' + SecureRandom.alphanumeric( 4 )
-    unless db.query( "SELECT code FROM #{$MYSQL_TB_TENSEI} WHERE code=?", false, [new_tensei_code] )&.first
-      db.query( "INSERT INTO #{$MYSQL_TB_TENSEI} SET code=?, period=?, expd=?, updd=?, status=?, note=?", true, [new_tensei_code, period, expd.ymd, updd.ymd, status, note] )
+    unless db.query( "SELECT code FROM #{$TB_TENSEI} WHERE code=?", false, [new_tensei_code] )&.first
+      db.query( "INSERT INTO #{$TB_TENSEI} SET code=?, period=?, expd=?, updd=?, status=?, note=?", true, [new_tensei_code, period, expd.ymd, updd.ymd, status, note] )
       break
     end
   end
 
 when 'updatef'
   status_disable = true
-  res = db.query( "SELECT * FROM #{$MYSQL_TB_TENSEI} WHERE code=?", false, [tensei_code] )&.first
+  res = db.query( "SELECT * FROM #{$TB_TENSEI} WHERE code=?", false, [tensei_code] )&.first
   if res
     status = res['status'].to_i
     period = res['period'].to_s
@@ -136,7 +136,7 @@ when 'update'
   expd = Calendar.new( user, yyyy.to_i, mm.to_i, dd.to_i )
   expd = move_expd( expd, period )
 
-  db.query( "UPDATE #{$MYSQL_TB_TENSEI} SET period=?, expd=?, updd=?, note=? WHERE code=?", true, [period, expd.ymd, updd.ymd, note, tensei_code] )
+  db.query( "UPDATE #{$TB_TENSEI} SET period=?, expd=?, updd=?, note=? WHERE code=?", true, [period, expd.ymd, updd.ymd, note, tensei_code] )
 
   updd = Calendar.new( user, 0, 0, 0 )
   tensei_code = ''
@@ -147,10 +147,10 @@ end
 
 
 puts "tensei list<br>" if @debug
-res = db.query( "SELECT * FROM #{$MYSQL_TB_TENSEI} ORDER BY expd;", false )
+res = db.query( "SELECT * FROM #{$TB_TENSEI} ORDER BY expd;", false )
 teisei_html = ''
 res.each do |r|
-  res2 = db.query( "SELECT COUNT(user) AS tensei_count FROM #{$MYSQL_TB_USER} WHERE tensei=? AND status>0", false, [r['code']] )&.first
+  res2 = db.query( "SELECT COUNT(user) AS tensei_count FROM #{$TB_USER} WHERE tensei=? AND status>0", false, [r['code']] )&.first
   count = res2 ? res2['tensei_count'] : 0
 
   item = <<~ITEM

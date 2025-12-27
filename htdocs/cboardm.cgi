@@ -17,12 +17,12 @@ require './brain'
 # METHODS
 #==============================================================================
 def load_sum_for_user( db )
-	r = db.query( "SELECT sum FROM #{$MYSQL_TB_SUM} WHERE user = '#{db.user.name}';", false )
+	r = db.query( "SELECT sum FROM #{$TB_SUM} WHERE user = '#{db.user.name}';", false )
 	r.first['sum'].split( "\t" )
 end
 
 def update_sum( db, new_sum )
-	db.query( "UPDATE #{$MYSQL_TB_SUM} SET sum = '#{new_sum}' WHERE user = '#{db.user.name}';", true )
+	db.query( "UPDATE #{$TB_SUM} SET sum = '#{new_sum}' WHERE user = '#{db.user.name}';", true )
 end
 
 def generate_new_sum( cb_num, r, food_no, food_weight, food_check )
@@ -72,7 +72,7 @@ new_sum = ''
 
 case mode
 when 'add'
-	r = db.query( "SELECT sum FROM #{$MYSQL_TB_SUM} WHERE user = '#{user.name}';", false )
+	r = db.query( "SELECT sum FROM #{$TB_SUM} WHERE user = '#{user.name}';", false )
 	new_sum = generate_new_sum( cb_num, r, food_no, food_weight, food_check )
 	update_sum( db, new_sum )
 	cb_num += 1

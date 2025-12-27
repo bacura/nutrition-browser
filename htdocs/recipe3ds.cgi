@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		recipe3ds:	"レシピ プロット",
 		all: 		"全て",
 		all_ns:		"全て（ー調味系）",
@@ -298,8 +298,8 @@ names = []
 codes = []
 
 # WHERE setting
-t1 = "#{$MYSQL_TB_RECIPE}"
-t2 = "#{$MYSQL_TB_FCZ}"
+t1 = "#{$TB_RECIPE}"
+t2 = "#{$TB_FCZ}"
 
 sql_where = 'WHERE '
 case cfg.val['range']
@@ -342,7 +342,7 @@ sql_where << " AND t1.time>0 AND t1.time<=#{cfg.val['time']}" unless cfg.val['ti
 sql_where << " AND t1.cost>0 AND t1.cost<=#{cfg.val['cost']}" unless cfg.val['cost'] == 99
 
 #Z成分カットオフ
-r = db.query( "SELECT count(*) FROM #{$MYSQL_TB_RECIPE} AS t1 LEFT JOIN #{$MYSQL_TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
+r = db.query( "SELECT count(*) FROM #{$TB_RECIPE} AS t1 LEFT JOIN #{$TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
 spot_num = r.first['count(*)']
 percent = cfg.val['zrange'].to_f / 100
 elements_count = ( spot_num * percent ).floor
@@ -356,7 +356,7 @@ end
 case command
 when 'plott_area'
 when 'plott_data'
-	r = db.query( "SELECT t1.name, t1.code, t2.#{cfg.val['xitem']}, t2.#{cfg.val['yitem']} FROM #{$MYSQL_TB_RECIPE} AS t1 LEFT JOIN #{$MYSQL_TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
+	r = db.query( "SELECT t1.name, t1.code, t2.#{cfg.val['xitem']}, t2.#{cfg.val['yitem']} FROM #{$TB_RECIPE} AS t1 LEFT JOIN #{$TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
 	if  r.first
 		r.each do |e|
 			xitems << convert_zero( e[cfg.val['xitem']] ).to_f.round( 1 )
@@ -417,7 +417,7 @@ when 'monitor'
 	  z: { values: [], key: cfg.val['zitem'], label: '[z]' }
 	}
 
-	r = db.query( "SELECT t1.name, t1.code, t2.#{items[:x][:key]}, t2.#{items[:y][:key]}, t2.#{items[:z][:key]} FROM #{$MYSQL_TB_RECIPE} AS t1 LEFT JOIN #{$MYSQL_TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
+	r = db.query( "SELECT t1.name, t1.code, t2.#{items[:x][:key]}, t2.#{items[:y][:key]}, t2.#{items[:z][:key]} FROM #{$TB_RECIPE} AS t1 LEFT JOIN #{$TB_FCZ} AS t2 ON t1.code=t2.origin #{sql_where};", false )
 	r.each do |e|
 	  items.each do |axis, data| data[:values] << convert_zero( e[data[:key]] ).to_f.round( 1 ) end
 	end

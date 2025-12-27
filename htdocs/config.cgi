@@ -34,7 +34,7 @@ def menu( user )
 		require "#{$HTDOCS_PATH}/config_/mod_#{e}.rb"
 		ml = module_lp( user.language )
 		bclass = ( i == mods.size - 1 ) ? 'bg-danger' : 'ppill'
-		"<span class='btn badge rounded-pill #{bclass}' onclick='configForm( \"#{e}\" )'>#{ml['mod_name']}</span>&nbsp;"
+		puts "<span class='btn badge rounded-pill #{bclass}' onclick='configForm( \"#{e}\" )'>#{ml['mod_name']}</span>&nbsp;"
 	end.join
 
 	return html

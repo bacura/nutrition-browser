@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'allergen' 	=> "アレルゲン登録",\
 		'fn' 		=> "食品番号",\
 		'name' 		=> "食品名",\
@@ -78,30 +78,30 @@ when 'on'
 	fn = code.split( ',' )
 	fn.each do |e|
 		if /P?\d\d\d\d\d/ =~ e
-			db.query( "UPDATE #{$MYSQL_TB_EXT} SET allergen#{allergen}=1 WHERE FN='#{e}';", true )
+			db.query( "UPDATE #{$TB_EXT} SET allergen#{allergen}=1 WHERE FN='#{e}';", true )
 		end
 	end
 when 'off'
 	fn = code.split( ',' )
 	fn.each do |e|
 		if /P?\d\d\d\d\d/ =~ e
-			db.query( "UPDATE #{$MYSQL_TB_EXT} SET allergen#{allergen}=0 WHERE FN='#{e}';", true )
+			db.query( "UPDATE #{$TB_EXT} SET allergen#{allergen}=0 WHERE FN='#{e}';", true )
 		end
 	end
 end
 
 food_name = ''
 unless code == ''
-	r = db.query( "SELECT name from #{$MYSQL_TB_TAG} WHERE FN='#{code}';", false )
+	r = db.query( "SELECT name from #{$TB_TAG} WHERE FN='#{code}';", false )
 	food_name = r.first['name'] if r.first
 end
 
 list_html = ''
 query = ''
 if allergen == 1 || allergen == 2
-	query = "SELECT t1.*, t2.allergen#{allergen} FROM #{$MYSQL_TB_TAG} AS t1 INNER JOIN #{$MYSQL_TB_EXT} AS t2 ON t1.FN = t2.FN WHERE t2.allergen#{allergen}='1' ORDER BY t1.FN;"
+	query = "SELECT t1.*, t2.allergen#{allergen} FROM #{$TB_TAG} AS t1 INNER JOIN #{$TB_EXT} AS t2 ON t1.FN = t2.FN WHERE t2.allergen#{allergen}='1' ORDER BY t1.FN;"
 else
-	query = "SELECT t1.* FROM #{$MYSQL_TB_TAG} AS t1 INNER JOIN #{$MYSQL_TB_PAG} AS t2 ON t1.FN = t2.FN WHERE t2.user='#{user.name}' ORDER BY t1.FN;"
+	query = "SELECT t1.* FROM #{$TB_TAG} AS t1 INNER JOIN #{$TB_PAG} AS t2 ON t1.FN = t2.FN WHERE t2.user='#{user.name}' ORDER BY t1.FN;"
 end
 r = db.query( query, false )
 r.each do |e|
@@ -109,7 +109,7 @@ r.each do |e|
 	list_html << "<td>#{e['FN']}</td>"
 	list_html << "<td>#{e['name']} #{e['tag1']} #{e['tag2']} #{e['tag3']} #{e['tag4']} #{e['tag5']}</td>"
 
-	r = db.query( "SELECT COUNT(FN) FROM #{$MYSQL_TB_PAG} WHERE FN='#{e['FN']}';", false )
+	r = db.query( "SELECT COUNT(FN) FROM #{$TB_PAG} WHERE FN='#{e['FN']}';", false )
 	count = r.first['COUNT(FN)']
 
 	list_html << "<td>#{count}</td>"

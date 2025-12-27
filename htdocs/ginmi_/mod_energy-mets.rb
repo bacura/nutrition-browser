@@ -26,7 +26,7 @@ def ginmi_module( cgi, db )
 		puts "Load bio config" if @debug
 		weight = 0.0
 		kexow = 0
-		r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 		if r.first
 			if r.first['bio'] != nil && r.first['bio'] != ''
 				bio = JSON.parse( r.first['bio'] )
@@ -38,7 +38,7 @@ def ginmi_module( cgi, db )
 		puts "IMPORT height & weight from KEX" if @debug
 		if kexow == 1
 			weight_flag = true
-			r = db.query( "SELECT cell FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{db.user.name}' AND cell !='' AND cell IS NOT NULL ORDER BY date DESC;", false )
+			r = db.query( "SELECT cell FROM #{$TB_KOYOMIEX} WHERE user='#{db.user.name}' AND cell !='' AND cell IS NOT NULL ORDER BY date DESC;", false )
 			r.each do |e|
 				kexc = JSON.parse( e['cell'] )
 				if weight_flag && e['体重'] != nil
@@ -53,15 +53,15 @@ def ginmi_module( cgi, db )
 	when 'result', 'display'
 		mets_mm = hh * 60 + mm
 		mets = ''
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_METS} WHERE user='#{db.user.name}' and name='default';", false )
+		r = db.query( "SELECT * FROM #{$TB_METS} WHERE user='#{db.user.name}' and name='default';", false )
 		if r.first
 			mets = r.first['mets']
 			if command == 'result'
 				mets = "#{mets}\t#{active}:#{mets_mm}"
-				db.query( "UPDATE #{$MYSQL_TB_METS} SET mets='#{mets}' WHERE user='#{db.user.name}' and name='default';", true )
+				db.query( "UPDATE #{$TB_METS} SET mets='#{mets}' WHERE user='#{db.user.name}' and name='default';", true )
 			end
 		elsif command == 'result'
-			db.query( "INSERT INTO #{$MYSQL_TB_METS} SET user='#{db.user.name}', name='default',mets='#{active}:#{mets_mm}';", true )
+			db.query( "INSERT INTO #{$TB_METS} SET user='#{db.user.name}', name='default',mets='#{active}:#{mets_mm}';", true )
 			mets << "#{active}:#{mets_mm}"
 		end
 
@@ -93,7 +93,7 @@ def ginmi_module( cgi, db )
 		mets_table_html << '</thead>'
 
 		code_set.size.times do |c|
-			r = db.query( "SELECT * FROM #{$MYSQL_TB_METST} WHERE code='#{code_set[c]}';", false )
+			r = db.query( "SELECT * FROM #{$TB_METST} WHERE code='#{code_set[c]}';", false )
 			if r.first
 				mets = BigDecimal( r.first['mets'] )
 				d_mets = BigDecimal( r.first['mets'] ) - 1
@@ -174,7 +174,7 @@ RESULT_HTML
 
 
 		if command == 'result'
-			r = db.query( "SELECT * FROM #{$MYSQL_TB_METS} WHERE user='#{db.user.name}' AND name='history';", false )
+			r = db.query( "SELECT * FROM #{$TB_METS} WHERE user='#{db.user.name}' AND name='history';", false )
 			if r.first
 				a = r.first['mets'].split( "\t" )
 				a.unshift( active ).uniq!
@@ -185,19 +185,19 @@ RESULT_HTML
 				else
 					new_history = a[0..limit].join( "\t" )
 				end
-				db.query( "UPDATE #{$MYSQL_TB_METS} SET mets='#{new_history}' WHERE user='#{db.user.name}' AND name='history';", true )
+				db.query( "UPDATE #{$TB_METS} SET mets='#{new_history}' WHERE user='#{db.user.name}' AND name='history';", true )
 			else
-				db.query( "INSERT INTO #{$MYSQL_TB_METS} SET user='#{db.user.name}', name='history', mets='#{active}';", true )
+				db.query( "INSERT INTO #{$TB_METS} SET user='#{db.user.name}', name='history', mets='#{active}';", true )
 			end
 		end
 		exit( 0 )
 
 	when 'reset'
-		db.query( "delete from #{$MYSQL_TB_METS} WHERE user='#{db.user.name}' and name='default';", true )
+		db.query( "delete from #{$TB_METS} WHERE user='#{db.user.name}' and name='default';", true )
 		exit( 0 )
 
 	when 'kexout'
-		r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 		if r.first
 			if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 				koyomi = JSON.parse( r.first['koyomi'] )
@@ -206,8 +206,8 @@ RESULT_HTML
 			end
 		end
 
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{db.user.name}' AND date='#{yyyy_mm_dd}';", false )
-		db.query( "INSERT INTO #{$MYSQL_TB_KOYOMIEX} SET user='#{db.user.name}', date='#{yyyy_mm_dd}';", true ) unless r.first
+		r = db.query( "SELECT * FROM #{$TB_KOYOMIEX} WHERE user='#{db.user.name}' AND date='#{yyyy_mm_dd}';", false )
+		db.query( "INSERT INTO #{$TB_KOYOMIEX} SET user='#{db.user.name}', date='#{yyyy_mm_dd}';", true ) unless r.first
 
 		cell = Hash.new
 		cell = JSON.parse( r.first['cell'] ) if r.first['cell'] != nil
@@ -215,14 +215,14 @@ RESULT_HTML
 		cell[l['denergy']] = denergy if kex_active[l['denergy']] == '1'
 
 		cell_ = JSON.generate( cell )
-		db.query( "UPDATE #{$MYSQL_TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{db.user.name}' AND date='#{yyyy_mm_dd}';", true )
+		db.query( "UPDATE #{$TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{db.user.name}' AND date='#{yyyy_mm_dd}';", true )
 		exit( 0 )
 	end
 
 
 	####
 	heading_select = ''
-	r = db.query( "SELECT DISTINCT heading FROM #{$MYSQL_TB_METST};", false )
+	r = db.query( "SELECT DISTINCT heading FROM #{$TB_METST};", false )
 	heading = r.first['heading'] if heading == ''
 	r.each do |e|
 		if e['heading'] == heading
@@ -234,7 +234,7 @@ RESULT_HTML
 
 	####
 	sub_heading_select = ''
-	r = db.query( "SELECT DISTINCT sub_heading FROM #{$MYSQL_TB_METST} WHERE heading='#{heading}';", false )
+	r = db.query( "SELECT DISTINCT sub_heading FROM #{$TB_METST} WHERE heading='#{heading}';", false )
 	sub_heading = r.first['sub_heading'] if sub_heading == ''
 	r.each do |e|
 		if e['sub_heading'] == sub_heading
@@ -247,7 +247,7 @@ RESULT_HTML
 	####
 	active_select = ''
 	mets_value = '0.0'
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_METST} WHERE sub_heading='#{sub_heading}';", false )
+	r = db.query( "SELECT * FROM #{$TB_METST} WHERE sub_heading='#{sub_heading}';", false )
 	mets_value = r.first['mets']
 	r.each do |e|
 		if e['code'] == active
@@ -261,17 +261,17 @@ RESULT_HTML
 
 	####
 	history_select = "<option value='0'>↓↓</option>"
-	r = db.query( "SELECT mets FROM #{$MYSQL_TB_METS} WHERE user='#{db.user.name}' AND name='history';", false )
+	r = db.query( "SELECT mets FROM #{$TB_METS} WHERE user='#{db.user.name}' AND name='history';", false )
 	if r.first
 		a = r.first['mets'].split( "\t" )
 		a.each do |e|
-			rr = db.query( "SELECT * FROM #{$MYSQL_TB_METST} WHERE code='#{e}';", false )
+			rr = db.query( "SELECT * FROM #{$TB_METST} WHERE code='#{e}';", false )
 			history_select << "<option value='#{e}'>[#{e}] #{rr.first['active']}</option>"
 		end
 	end
 
 
-	r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+	r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 	if r.first
 		if r.first['koyomi'] != nil && r.first['koyomi'] != ''
 			koyomi = JSON.parse( r.first['koyomi'] )
@@ -447,7 +447,7 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "METs計算",\
 		'title' => "BMI 計算フォーム",\
 		'age' => "年齢",\

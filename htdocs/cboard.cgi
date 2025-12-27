@@ -23,38 +23,38 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
-		'cboard' 	=> "まな板",\
-		'dish' 		=> "食数",\
-		'fn' 		=> "食品#",\
-		'chomi' 	=> "調味％",\
-		'guide_g' 	=> "目安g",\
-		'guide_e' 	=> "目安E",\
-		'guide_s' 	=> "目安塩",\
-		'waste' 	=> "残食g",\
-		'gram' 		=> "g/人",\
-		'reset' 	=> "お片付け",\
-		'operation' => "操作",\
-		'food_name' => "食品名",\
-		'memo' 		=> "一言メモ",\
-		'simple_g' 	=> "単純g",\
-		:chomi_pub 	=> '公開含む',\
-		'sort' 		=> "<img src='bootstrap-dist/icons/sort-down.svg' style='height:1.2em; width:1.2em;'>",\
-		'expect_g' 	=> "予想g",\
-		'volume' 	=> "量",\
-		'unit' 		=> "単位",\
-		'rrate' 	=> "摂食率",\
-		'up' 		=> "<img src='bootstrap-dist/icons/chevron-up.svg' style='height:1.5em; width:1.5em;'>",\
-		'down' 		=> "<img src='bootstrap-dist/icons/chevron-down.svg' style='height:1.5em; width:1.5em;'>",\
-		'eraser' 	=> "<img src='bootstrap-dist/icons/eraser.svg' style='height:1.8em; width:1.8em;'>",\
-		'recipe'	=> "レシピ",\
-		'calc' 		=> "栄養",\
-		'price' 	=> "原価",\
-		'lucky' 	=> "Lucky☆",\
-		'foodize' 	=> "食品化",\
-		'detective' => "名探偵",\
-		'save' 		=> "<img src='bootstrap-dist/icons/save.svg' style='height:1.8em; width:1.8em;'>",\
-		'printer'	=> "<img src='bootstrap-dist/icons/printer.svg' style='height:1.8em; width:1.8em;'>"
+	l['ja'] = {
+		cboard: 	"まな板",
+		dish: 		"食数",
+		fn: 		"食品#",
+		chomi: 	"調味％",
+		guide_g: 	"目安g",
+		guide_e: 	"目安E",
+		guide_s: 	"目安塩",
+		waste: 	"残食g",
+		gram: 	"g/人",
+		reset: 	"お片付け",
+		operation: "操作",
+		food_name: "食品名",
+		memo: 		"一言メモ",
+		simple_g: 	"単純g",
+		chomi_pub: 	'公開含む',
+		expect_g: 	"予想g",
+		volume: 	"量",
+		unit: 		"単位",
+		rrate: 	"摂食率",
+		recipe:	"レシピ",
+		calc: 	"栄養",
+		price: 	"原価",
+		lucky: 	"Lucky☆",
+		foodize: "食品化",
+		detective: "名探偵",
+		sort: 		"<img src='bootstrap-dist/icons/sort-down.svg' style='height:1.2em; width:1.2em;'>",
+		up: 		"<img src='bootstrap-dist/icons/chevron-up.svg' style='height:1.5em; width:1.5em;'>",
+		down: 		"<img src='bootstrap-dist/icons/chevron-down.svg' style='height:1.5em; width:1.5em;'>",
+		eraser: 	"<img src='bootstrap-dist/icons/eraser.svg' style='height:1.8em; width:1.8em;'>",
+		save: 		"<img src='bootstrap-dist/icons/save.svg' style='height:1.8em; width:1.8em;'>",
+		printer:	"<img src='bootstrap-dist/icons/printer.svg' style='height:1.8em; width:1.8em;'>"
 	}
 
 	return l[language]
@@ -64,6 +64,7 @@ end
 def weight_calc( food_list, dish_num, adjew )
 	weight = BigDecimal( '0' )
 	weight_checked = BigDecimal( '0' )
+	food_list ||= [] 
 
 	check_all = true
 	food_list.each do |e|
@@ -91,6 +92,7 @@ end
 def energy_calc( food_list, dish_num, adjew, db )
 	energy = BigDecimal( '0' )
 	energy_checked = BigDecimal( '0' )
+	food_list ||= [] 
 
 	check_all = true
 	food_list.each do |e|
@@ -99,14 +101,16 @@ def energy_calc( food_list, dish_num, adjew, db )
 
 	food_list.each do |e|
 		unless e.fn == '-' || e.fn == '+'
-			q = "SELECT ENERC_KCAL from #{$MYSQL_TB_FCT} WHERE FN='#{e.fn}';"
-			q = "SELECT ENERC_KCAL from #{$MYSQL_TB_FCTP} WHERE FN='#{e.fn}' AND ( user='#{db.user.name}' OR user='#{$GM}' );" if /P|U/ =~ e.fn
-			r = db.query( q, false )
-			if r.first
+			if /[PUC]/ =~ e.fn
+				res = db.query( "SELECT ENERC_KCAL from #{$TB_FCTP} WHERE FN=? AND ( user=? OR user='#{$GM}' )", false, [e.fn, db.user.name] )&.first
+			else
+				res = db.query( "SELECT ENERC_KCAL from #{$TB_FCT} WHERE FN=?", false, [e.fn] )&.first
+			end
+			if res
 				rr = 1.0
 				rr = e.rr.to_f if adjew == 1
 				weight_ = BigDecimal( e.weight.to_s ) * rr
-				t = BigDecimal( convert_zero( r.first['ENERC_KCAL'] ))
+				t = BigDecimal( convert_zero( res['ENERC_KCAL'] ))
 				energy += ( t * weight_ / 100 )
 				energy_checked += ( t * weight_ / 100 ) if e.check == '1' || check_all
 			end
@@ -123,6 +127,7 @@ end
 def salt_calc( food_list, dish_num, adjew, db )
 	salt = BigDecimal( '0' )
 	salt_checked = BigDecimal( '0' )
+	food_list ||= [] 
 
 	check_all = true
 	food_list.each do |e|
@@ -131,14 +136,16 @@ def salt_calc( food_list, dish_num, adjew, db )
 
 	food_list.each do |e|
 		unless e.fn == '-' || e.fn == '+'
-			q = "SELECT NACL_EQ from #{$MYSQL_TB_FCT} WHERE FN='#{e.fn}';"
-			q = "SELECT NACL_EQ from #{$MYSQL_TB_FCTP} WHERE FN='#{e.fn}' AND ( user='#{db.user.name}' OR user='#{$GM}' );" if /P|U/ =~ e.fn
-			r = db.query( q, false )
-			if r.first
+			if /[PUC]/ =~ e.fn
+				res = db.query( "SELECT NACL_EQ from #{$TB_FCTP} WHERE FN=? AND ( user=? OR user='#{$GM}' )", false, [e.fn, db.user.name] )&.first
+			else
+				res = db.query( "SELECT NACL_EQ from #{$TB_FCT} WHERE FN=?", false, [e.fn] )&.first
+			end
+			if res
 				rr = 1.0
 				rr = e.rr.to_f if adjew == 1
 				weight_ = BigDecimal( e.weight.to_s ) * rr
-				t = BigDecimal( convert_zero( r.first['NACL_EQ'] ))
+				t = BigDecimal( convert_zero( res['NACL_EQ'] ))
 				salt += ( t * weight_ / 100 )
 				salt_checked += ( t * weight_ / 100 ) if e.check == '1' || check_all
 			end
@@ -223,7 +230,7 @@ def chomi_cell( l, code, chomi_selected, chomi_code, chomi_pub, db )
 	chomim_categoty = []
 
 	sql_chomi_pub = chomi_pub == 1 ? "OR public='1'" : ''
-	r = db.query( "SELECT code, name FROM #{$MYSQL_TB_RECIPE} WHERE ( user='#{db.user.name}' #{sql_chomi_pub} ) and role='100' ORDER BY name;", false )
+	r = db.query( "SELECT code, name FROM #{$TB_RECIPE} WHERE ( user=? #{sql_chomi_pub} ) and role='100' ORDER BY name;", false, [db.user.name] )
 	r.each do |e|
 		a = e['name'].sub( '：', ':' ).split( ':' )
 		chomim_categoty << a[0]
@@ -235,9 +242,9 @@ def chomi_cell( l, code, chomi_selected, chomi_code, chomi_pub, db )
 	chomi_html << "<input type=\"hidden\" value=\"#{code}\" id=\"recipe_code\">"
 
 	if chomi_selected != '' && chomi_selected != nil
-		chomi_html << "<button type=\"button\" class=\"btn btn-outline-primary btn-sm\" onclick=\"chomiAdd( '#{code}' )\">#{l['chomi']}</button>"
+		chomi_html << "<button type=\"button\" class=\"btn btn-outline-primary btn-sm\" onclick=\"chomiAdd( '#{code}' )\">#{l[:chomi]}</button>"
 	else
-		chomi_html << "<button type=\"button\" class=\"btn btn-secondary btn-sm\">#{l['chomi']}</button>"
+		chomi_html << "<button type=\"button\" class=\"btn btn-secondary btn-sm\">#{l[:chomi]}</button>"
 	end
 
 	chomi_html << "<select class=\"form-select\" id=\"chomi_selected\" onchange=\"chomiSelect()\">"
@@ -313,27 +320,28 @@ chomi_pub = chomi_pub.to_s.empty? ? cfg.val['chomi_pub'].to_i : chomi_pub.to_i
 
 puts "Loading Sum<br>" if @debug
 if command == 'load'
-	query = "SELECT * from #{$MYSQL_TB_RECIPE} WHERE user='#{recipe_user}' AND code='#{code}';"
+	res = db.query( "SELECT * from #{$TB_RECIPE} WHERE user=? AND code=?", false, [recipe_user, code] )&.first
 else
-	query = "SELECT * from #{$MYSQL_TB_SUM} WHERE user='#{user.name}';"
+	res = db.query( "SELECT * from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
 end
-r = db.query( query, false )
-code = r.first['code']
-recipe_name = r.first['name']
-recipe_user = r.first['user']
-dish_num = r.first['dish'].to_i if dish_num == '' || dish_num == nil
-dish_num = 1 if dish_num == 0
-protect = r.first['protect'].to_i
-adjew = 0
-adjew = r.first['adjew'].to_i if command != 'load' && command != 'adjew'
+if res
+	code = res['code']
+	recipe_name = res['name']
+	recipe_user = res['user']
+	dish_num = res['dish'].to_i if dish_num == '' || dish_num == nil
+	dish_num = 1 if dish_num == 0
+	protect = res['protect'].to_i
+	adjew = 0
+	adjew = res['adjew'].to_i if command != 'load' && command != 'adjew'
 
-sum = r.first['sum']
-sum = '' if sum == nil
-food_list = []
-sum.split( "\t" ).each do |e|
-	t = Sum.new( user )
-	t.load_sum( e )
-	food_list << t
+	sum = res['sum']
+	sum = '' if sum == nil
+	food_list = []
+	sum.split( "\t" ).each do |e|
+		t = Sum.new( user )
+		t.load_sum( e )
+		food_list << t
+	end
 end
 if @debug
 	puts "code:#{code}<br>"
@@ -347,10 +355,9 @@ end
 
 
 #### adjust weight mode
-adjew_checked = [ '', 'CHECKED' ]
-r = db.query( "SELECT calcc FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';",false )
-if r.first && r.first['calcc'] != nil
-	a = r.first['calcc'].split( ':' )
+r = db.query( "SELECT calcc FROM #{$TB_CFG} WHERE user=?", false, [user.name] )&.first
+if res && res['calcc'] != nil
+	a = res['calcc'].split( ':' )
 	palette_ = a[0]
 	adjew = a[1].to_i
 	frct_mode = a[2].to_i
@@ -363,7 +370,7 @@ end
 if command == 'adjew'
 	puts "Adjust mode<br>" if @debug
 	adjew = @cgi['adjew'].to_i
-	db.query( "UPDATE #{$MYSQL_TB_CFG} SET calcc='#{palette_}:#{adjew}:#{frct_mode}:#{frct_accu}' WHERE user='#{user.name}';", true )
+	db.query( "UPDATE #{$TB_CFG} SET calcc=? WHERE user=?", true, ["#{palette_}:#{adjew}:#{frct_mode}:#{frct_accu}", user.name] )
 end
 
 update = ''
@@ -382,7 +389,6 @@ when 'clear'
 		recipe_name = ''
 		code = ''
 		dish_num = 1
-
 
 	# 1つずつ削除
 	else
@@ -489,7 +495,7 @@ when 'weight'
 	# 食品ごとの単位読み込み
 	uk = BigDecimal( '1' )
 	if unit != 'g'
-		r = db.query( "SELECT unit from #{$MYSQL_TB_EXT} WHERE FN='#{food_list[order_no].fn}';", false )
+		r = db.query( "SELECT unit from #{$TB_EXT} WHERE FN=?", false, [food_list[order_no].fn] )
 		unith = JSON.parse( r.first['unit'] )
 		uk = unith[unit]
 	end
@@ -550,11 +556,11 @@ when 'add'
 	if add_food_no == nil
 		o.fn = '-'
 	elsif /\d{5}/ =~ add_food_no
-		r = db.query( "SELECT FN from #{$MYSQL_TB_TAG} WHERE FN='#{add_food_no}';", false )
-		o.load_sum( "#{add_food_no}:#{add_food_weight}:0:#{add_food_weight}:0::1.0:#{add_food_weight}" ) if r.first
-	elsif /[PU]?\d{5}/ =~ add_food_no
-		r = db.query( "SELECT FN from #{$MYSQL_TB_TAG} WHERE FN='#{add_food_no}' AND (( user='#{user.name}' AND public!='#{2}' ) OR public='1' );", false )
-		o.load_sum( "#{add_food_no}:#{add_food_weight}:0:#{add_food_weight}:0::1.0:#{add_food_weight}" ) if r.first
+		res = db.query( "SELECT FN from #{$TB_TAG} WHERE FN=?", false, [add_food_no] )&.first
+		o.load_sum( "#{add_food_no}:#{add_food_weight}:0:#{add_food_weight}:0::1.0:#{add_food_weight}" ) if res
+	elsif /[PUC]?\d{5}/ =~ add_food_no
+		res = db.query( "SELECT FN from #{$TB_TAG} WHERE FN=? AND (( user=? AND public!='2' ) OR public='1' );", false, [add_food_no, user.name, ] )&.first
+		o.load_sum( "#{add_food_no}:#{add_food_weight}:0:#{add_food_weight}:0::1.0:#{add_food_weight}" ) if res
 	else
 		o.load_sum( "+::::0:#{add_food_no}" )
 	end
@@ -581,7 +587,7 @@ when 'allSwitch'
 	puts "allSwitch:#{allSwitch}<br>" if @debug
 
 	food_list.size.times do |c| food_list[c].check = allSwitch end
-	all_check = 'CHECKED' if allSwitch == '1'
+	all_check = $CHECK[allSwitch]
 
 when 'dish'
 	puts "Change dish num<br>" if @debug
@@ -629,9 +635,7 @@ when 'chomis'
 	target_weight = BigDecimal( 0 )
 	food_list.each do |e|
 		unless e.fn == '-' || e.fn == '+'
-			if e.check == '1'
-				target_weight += BigDecimal( e.weight )
-			end
+			target_weight += BigDecimal( e.weight ) if e.check == '1'
 			total_weight += BigDecimal( e.weight )
 		end
 	end
@@ -640,7 +644,7 @@ when 'chomis'
 	chomi_rate = 1.0 if chomi_rate == 0
 
 
-	r = db.query( "SELECT sum from #{$MYSQL_TB_RECIPE} WHERE code='#{chomi_code}';", false )
+	r = db.query( "SELECT sum from #{$TB_RECIPE} WHERE code=?", false, [chomi_code] )
 	if r.first
 		 r.first['sum'].split( "\t" ).each do |e|
 			t = Sum.new( user )
@@ -731,6 +735,11 @@ puts "Getting food weight & food energy & food salt<br>" if @debug
 weight_ctrl, weight_checked = weight_calc( food_list, dish_num, adjew )
 energy_ctrl, energy_checked = energy_calc( food_list, dish_num, adjew, db )
 salt_ctrl, salt_checked = salt_calc( food_list, dish_num, adjew, db )
+
+weight_ctrl = 0 if weight_ctrl.respond_to?( :finite? ) && !weight_ctrl.finite?
+energy_ctrl = 0 if energy_ctrl.respond_to?( :finite? ) && !energy_ctrl.finite?
+salt_ctrl = 0 if salt_ctrl.respond_to?( :finite? ) && !salt_ctrl.finite?
+
 weitht_adj = weight_ctrl if weitht_adj == 0
 energy_adj = energy_ctrl if energy_adj == 0
 salt_adj = salt_ctrl if salt_adj == 0
@@ -738,20 +747,15 @@ salt_adj = salt_ctrl if salt_adj == 0
 
 puts "Loading CB tag<br>" if @debug
 food_tag = []
-if false
-	food_list.each do |e|
-		r = db.query( "SELECT Tagnames from #{$MYSQL_TB_FCT} WHERE FN='#{e.fn}';", false )
-		food_tag << r.first['Tagnames'] if r.first
-		food_tag << '' if e.fn == '-' || e.fn == '+'
+food_list ||= [] 
+food_list.each do |e|
+	if /^U\d{5}/ =~ e.fn
+		res = db.query( "SELECT * from #{$TB_TAG} WHERE FN=? AND user=?", false, [e.fn, user.name] )&.first
+	else
+		res = db.query( "SELECT * from #{$TB_TAG} WHERE FN=?", false, [e.fn] ).first
 	end
-else
-	food_list.each do |e|
-		q = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e.fn}';"
-		q = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e.fn}' AND user='#{user.name}';" if /^U\d{5}/ =~ e.fn
-		r = db.query( q, false )
-		food_tag << bind_tags( r ) if r.first
-		food_tag << '' if e.fn == '-' || e.fn == '+'
-	end
+	food_tag << tagnames( res ) if res
+	food_tag << '' if e.fn == '-' || e.fn == '+'
 end
 
 
@@ -762,19 +766,19 @@ puts 'HTML upper part<br>' if @debug
 html = <<-"UPPER_MENU"
 <div class='container-fluid'>
 	<div class='row'>
-		<div class='col'><h5>#{l['cboard']}: #{update}#{recipe_name}</h5></div>
+		<div class='col'><h5>#{l[:cboard]}: #{update}#{recipe_name}</h5></div>
 	</div>
 
 	<div class='row'>
 		<div class='col-2'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"dishCB( '#{code}' )\">#{l['dish']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"dishCB( '#{code}' )\">#{l[:dish]}</button>
   				<input type="number" min='1' class="form-control" id="dish_num" value="#{dish_num}" onchange=\"dishCB( '#{code}' )\">
 			</div>
 		</div>
 		<div class='col-3'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"recipeAdd( '#{code}' )\">#{l['fn']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"recipeAdd( '#{code}' )\">#{l[:fn]}</button>
   				<input type="text" class="form-control" maxlength='12' placeholder="00000 100" id="food_add">
 			</div>
 		</div>
@@ -793,42 +797,42 @@ html = <<-"UPPER_MENU"
 	<div class='row'>
 		<div class='col-2'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"weightAdj( '#{code}' )\">#{l['guide_g']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"weightAdj( '#{code}' )\">#{l[:guide_g]}</button>
   				<input type="number" min='1' class="form-control" id="weight_adj" value="#{weight_ctrl.round}">
 			</div>
 		</div>
 
 		<div class='col-2'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"energyAdj( '#{code}' )\">#{l['guide_e']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"energyAdj( '#{code}' )\">#{l[:guide_e]}</button>
  				<input type="number" min='1' class="form-control" id="energy_adj" value="#{energy_ctrl.round}">
 			</div>
 		</div>
 
 		<div class='col-2'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"saltAdj( '#{code}' )\">#{l['guide_s']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"saltAdj( '#{code}' )\">#{l[:guide_s]}</button>
   				<input type="number" min='1' step="0.1" class="form-control" id="salt_adj" value="#{salt_ctrl.round( 1 ).to_f}">
 			</div>
 		</div>
 		<div class='col-1'>
 			<div class="form-check form-switch">
-			  <input class="form-check-input" type="checkbox" id='adjew' onchange="changeAdjew( '#{code}' )" #{adjew_checked[adjew]}>
-			  <label class="form-check-label">#{l['expect_g']}</label>
+			  <input class="form-check-input" type="checkbox" id='adjew' onchange="changeAdjew( '#{code}' )" #{$CHECK[adjew]}>
+			  <label class="form-check-label">#{l[:expect_g]}</label>
 			</div>
 		</div>
 		<div class='col-2'>
 			<div class='input-group input-group-sm'>
-	        	<button class='btn btn-outline-primary' type='button' onclick=\"lossAdj( '#{code}' )\">#{l['waste']}</button>
+	        	<button class='btn btn-outline-primary' type='button' onclick=\"lossAdj( '#{code}' )\">#{l[:waste]}</button>
   				<input type="number" min='0' class="form-control" id="loss_adj" value="0">
 			</div>
 		</div>
 		<div class='col' align='right'>
 			<input type='checkbox' id='gn_check'>&nbsp;
-			<span class='badge rounded-pill npill' onclick=\"gnExchange( '#{code}' )\">#{l['gram']}</span>
+			<span class='badge rounded-pill npill' onclick=\"gnExchange( '#{code}' )\">#{l[:gram]}</span>
 			&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type='checkbox' id='all_check'>&nbsp;
-			<span class='badge rounded-pill npill' onclick=\"clearCB( 'all', '#{code}' )\">#{l['reset']}</span>
+			<span class='badge rounded-pill npill' onclick=\"clearCB( 'all', '#{code}' )\">#{l[:reset]}</span>
 		</div>
 	</div>
 	<hr>
@@ -838,20 +842,20 @@ puts html
 
 html = <<-"ITEM_NAME"
 <div class='row cb_header'>
-	<div class='col-2'>#{l['operation']}&nbsp;&nbsp;&nbsp;<input type='checkbox' id='switch_all' #{all_check} onclick=\"allSwitch( '#{code}' )\">&nbsp;#{l['fn']}</div>
-	<div class='col-3'>#{l['food_name']}</div>
+	<div class='col-2'>#{l[:operation]}&nbsp;&nbsp;&nbsp;<input type='checkbox' id='switch_all' #{all_check} onclick=\"allSwitch( '#{code}' )\">&nbsp;#{l[:fn]}</div>
+	<div class='col-3'>#{l[:food_name]}</div>
 	<div class='col-3'>
   		<div class='row'>
-			<div class='col-6'>#{l['memo']}</div>
-			<div class='col-3'>#{l['simple_g']}&nbsp;<span onclick=\"sortCB( '#{code}' )\">#{l['sort']}</span></div>
-			<div class='col-3'>#{l['expect_g']}</div>
+			<div class='col-6'>#{l[:memo]}</div>
+			<div class='col-3'>#{l[:simple_g]}&nbsp;<span onclick=\"sortCB( '#{code}' )\">#{l[:sort]}</span></div>
+			<div class='col-3'>#{l[:expect_g]}</div>
 		</div>
 	</div>
 	<div class='col-4'>
   		<div class='row'>
-			<div class='col-3'>#{l['volume']}</div>
-			<div class='col-4'>#{l['unit']}</div>
-			<div class='col-3'>#{l['rrate']}</div>
+			<div class='col-3'>#{l[:volume]}</div>
+			<div class='col-4'>#{l[:unit]}</div>
+			<div class='col-3'>#{l[:rrate]}</div>
 		</div>
 	</div>
 </div>
@@ -865,25 +869,17 @@ food_list.each do |e|
 #	puts e.unit if user.status >= 8 && e.unit != 'g'
 
 	# フードチェック
-	check = ''
-	check = 'CHECKED' if e.check == '1'
+	check = $CHECK[e.check]
 
 	# 単位の生成と選択
 	unit_set = []
 	unit_select = []
   	unless e.fn == '-' || e.fn == '+'
-		r = db.query( "SELECT unit FROM #{$MYSQL_TB_EXT} WHERE FN='#{e.fn}';", false )
-		if r.first
-			unith = JSON.parse( r.first['unit'] )
+		res = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN=?", false, [e.fn] )&.first
+		if res
+			unith = JSON.parse( res['unit'] )
 			unith.each do |k, v|
-				unless k == 'note'
-					unit_set << k
-					if k == e.unit
-						unit_select << 'SELECTED'
-					else
-						unit_select << ''
-					end
-				end
+				unit_select << $SELECT[k == e.unit] unless k == 'note'
 			end
 		end
 	end
@@ -891,25 +887,27 @@ food_list.each do |e|
 	puts 'Generating food key<br>' if @debug
 	food_key = ''
   	unless e.fn == '-' || e.fn == '+'
-  		q = "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{e.fn}';"
-		q = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e.fn}' AND user='#{user.name}';" if /^U\d{5}/ =~ e.fn
-		r = db.query( q, false )
-		food_key = "#{r.first['FG']}:#{r.first['class1']}:#{r.first['class2']}:#{r.first['class3']}:#{r.first['name']}" if r.first
+  		if /^U\d{5}/ =~ e.fn
+			res = db.query( "SELECT * from #{$TB_TAG} WHERE FN=? AND user=?", false, [e.fn, user.name] )&.first
+		else
+			res = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [e.fn] )&.first
+		end
+		food_key = "#{res['FG']}:#{res['class1']}:#{res['class2']}:#{res['class3']}:#{res['name']}" if res
 	end
 
 	html = "<div class='row'>"
  	html << "	<div class='col-2'>"
- 	html << "		<span onclick=\"upperCB( '#{c}', '#{code}' )\">#{l['up']}</span>"
- 	html << "		<span onclick=\"lowerCB( '#{c}', '#{code}' )\">#{l['down']}</span>"
+ 	html << "		<span onclick=\"upperCB( '#{c}', '#{code}' )\">#{l[:up]}</span>"
+ 	html << "		<span onclick=\"lowerCB( '#{c}', '#{code}' )\">#{l[:down]}</span>"
  	if e.fn == '-'
 	  	html << "&nbsp;&nbsp;&nbsp;<input class='form-check-input' type='checkbox' id='food_cb#{c}' onchange=\"checkCB( '#{c}', '#{code}', 'food_cb#{c}' )\" #{check}></div>"
 		html << "<div class='col-9'><hr></div>"
-		html << "<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l['eraser']}</span></div>"
+		html << "<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l[:eraser]}</span></div>"
  	elsif e.fn == '+'
 	  	html << "&nbsp;&nbsp;&nbsp;<input class='form-check-input' type='checkbox' id='food_cb#{c}' onchange=\"checkCB( '#{c}', '#{code}', 'food_cb#{c}' )\" #{check}></div>"
 		html << "<div class='col-3 text-secondary cb_food_label' align='right'>( #{e.init} )</div>"
 		html << "<div class='col-6'><hr></div>"
-		html << "<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l['eraser']}</span></div>"
+		html << "<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l[:eraser]}</span></div>"
   	else
 
 	  	html << "&nbsp;&nbsp;&nbsp;<input class='form-check-input' type='checkbox' id='food_cb#{c}' onchange=\"checkCB( '#{c}', '#{code}', 'food_cb#{c}' )\" #{check}>&nbsp;#{e.fn}</div>"
@@ -935,7 +933,7 @@ food_list.each do |e|
 		html << "				</select>"
 		html << "			</div>"
   		html << "			<div class='col-2'><input type='text' maxlength='3' class='form-control form-control-sm' id='food_rr_#{c}' value='#{e.rr}' onchange=\"weightCB( '#{c}', 'unitv_#{c}', 'unit_#{c}', 'food_init_#{c}', 'food_rr_#{c}', '#{code}' )\"></div>"
-  		html << "			<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l['eraser']}</span></div>"
+  		html << "			<div class='col-1'><span onclick=\"clearCB( '#{c}', '#{code}' )\">#{l[:eraser]}</span></div>"
 		html << "		</div>"
 		html << "	</div>"
 	end
@@ -947,42 +945,31 @@ end
 
 
 puts 'HTML lower menu part<br>' if @debug
-price_html = ''
-if recipe_name != '' && update == ''
-	price_html = "<div class='col-1 btn btn-light btn-sm nav_button' onclick=\"priceView( '#{code}' )\">#{l['price']}</div>" if recipe_name != '' && update == ''
-else
-	price_html = "<div class='col-1 btn btn-secondary btn-sm nav_button'>#{l['price']}</div>"
-end
-
 #### Quick Save
-qsave_html =''
-if recipe_name == '' || protect == 1 || user.name != recipe_user
-	qsave_html = "<div class='col-1'></div>"
-else
-	qsave_html = "<div class='col-1'><span onclick=\"quickSave( '#{code}' )\">#{l['save']}</span></div>"
-end
+qsave_html = ( recipe_name == '' || protect == 1 || user.name != recipe_user ) ? '' : "<span onclick=\"quickSave( '#{code}' )\">#{l[:save]}</span>"
 
 #### Quick Print
-qprint_html = ''
-if recipe_name == '' || user.name != recipe_user
-	qprint_html = "<div class='col-1'></div>"
-else
-	qprint_html = "<div class='col-1'><span onclick=\"print_templateSelect( '#{code}' )\">#{l['printer']}</span></div>"
-end
+qprint_html = ( recipe_name == '' || user.name != recipe_user ) ? '' : "<span onclick=\"print_templateSelect( '#{code}' )\">#{l[:printer]}</span>"
 
+#### Price
+price_html = ( recipe_name != '' && update == '' ) ? "<div class='col-1 btn btn-light btn-sm nav_button' onclick=\"priceView( '#{code}' )\">#{l[:price]}</div>" : "<div class='col-1 btn btn-secondary btn-sm nav_button'>#{l[:price]}</div>"
 
-foot_html = <<-"LOWER_MENU"
+#### Detective
+detective_html = $NBURL == $MYURL ? "<div class='col-1 btn btn-light btn-sm nav_button' onclick='initDetective()'>#{l[:detective]}</div>" : ''
+
+foot_html = <<~"LOWER_MENU"
 <br>
 	<div class='row'>
-		<div class='col-1 btn btn-light btn-sm nav_button' onclick="recipeEdit( 'init', '#{code}' )" align='justify'>#{l['recipe']}</div>
-		<div class='col-1 btn btn-light btn-sm nav_button' onclick="calcView( '#{code}' )">#{l['calc']}</div>
+		<div class='col-1 btn btn-light btn-sm nav_button' onclick="recipeEdit( 'init', '#{code}' )" align='justify'>#{l[:recipe]}</div>
+		<div class='col-1 btn btn-light btn-sm nav_button' onclick="calcView( '#{code}' )">#{l[:calc]}</div>
 		#{price_html}
-		<div class='col-1 btn btn-light btn-sm nav_button' onclick="luckyInput()">#{l['lucky']}</div>
-		<div class='col-1 btn btn-light btn-sm nav_button' onclick='Pseudo_R2F("#{code}")'>#{l['foodize']}</div>
-		<div class='col-1 btn btn-light btn-sm nav_button' onclick='initDetective()'>#{l['detective']}</div>
+		<div class='col-1 btn btn-light btn-sm nav_button' onclick="luckyInput()">#{l[:lucky]}</div>
+		<div class='col-1 btn btn-light btn-sm nav_button' onclick='Pseudo_R2F("#{code}")'>#{l[:foodize]}</div>
+		#{detective_html}
 		<div class='col-4'></div>
-		#{qsave_html}
-		#{qprint_html}
+
+		<div class='col-1'>#{qsave_html}</div>
+		<div class='col-1'>#{qprint_html}</div>
 	</div>
 	<div class='code'>#{code}</div>
 </div>
@@ -999,7 +986,7 @@ puts 'Updating cboard sum<br>' if @debug
 sum_new = ''
 food_list.each do |e| sum_new << "#{e.fn}:#{e.weight}:#{e.unit}:#{e.unitv}:#{e.check}:#{e.init}:#{e.rr}:#{e.ew}\t" end
 sum_new.chop!
-db.query( "UPDATE #{$MYSQL_TB_SUM} set code='#{code}', name='#{recipe_name}', sum='#{sum_new}', dish='#{dish_num}', protect='#{protect}' WHERE user='#{user.name}';", true ) unless user.status == 7
+db.query( "UPDATE #{$TB_SUM} set code='#{code}', name='#{recipe_name}', sum='#{sum_new}', dish='#{dish_num}', protect='#{protect}' WHERE user='#{user.name}';", true ) unless user.status == 7
 
 puts 'Updating config<br>' if @debug
 cfg.val['chomi_pub'] = chomi_pub

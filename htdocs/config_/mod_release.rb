@@ -56,17 +56,17 @@ def render_general_release( l )
 end
 
 def update_user_status( db )
-	db.query( "UPDATE #{$MYSQL_TB_USER} SET status='0' WHERE user='#{db.user.name}' AND cookie='#{db.user.uid}';", true )
+	db.query( "UPDATE #{$TB_USER} SET status='0' WHERE user='#{db.user.name}' AND cookie='#{db.user.uid}';", true )
 end
 
 def delete_user_data( db )
 	[
-		$MYSQL_TB_HIS, 
-		$MYSQL_TB_SUM, 
-		$MYSQL_TB_CFG, 
-		$MYSQL_TB_MEAL,
-		$MYSQL_TB_PRICEM, 
-		$MYSQL_TB_PALETTE
+		$TB_HIS, 
+		$TB_SUM, 
+		$TB_CFG, 
+		$TB_MEAL,
+		$TB_PRICEM, 
+		$TB_PALETTE
 	].each do |table|
 		db.query( "DELETE FROM #{table} WHERE user='#{db.user.name}';", true )
 	end

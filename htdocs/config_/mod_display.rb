@@ -18,9 +18,9 @@ def config_module( cgi, db )
 		icalc = cgi['icalc'].to_i
 
 		# Updating bio information
-		db.query( "UPDATE #{$MYSQL_TB_CFG} SET icache='#{icache}', ifix='#{ifix}', icalc='#{icalc}' WHERE user='#{db.user.name}';", true )
+		db.query( "UPDATE #{$TB_CFG} SET icache='#{icache}', ifix='#{ifix}', icalc='#{icalc}' WHERE user='#{db.user.name}';", true )
 	else
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_CFG} WHERE user='#{db.user.name}';", false )
+		r = db.query( "SELECT * FROM #{$TB_CFG} WHERE user='#{db.user.name}';", false )
 
 		icache = r.first['icache'].to_i
 		ifix = r.first['ifix'].to_i
@@ -92,7 +92,7 @@ end
 def module_lp( language )
 	l = Hash.new
 
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name' => "表示",\
 		'cache' => "画像キャッシュ",\
 		'fix' => "メニューの固定:",\

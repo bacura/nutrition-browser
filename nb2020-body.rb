@@ -1,4 +1,4 @@
-#Nutrition browser 2020 body 0.1.0.AI (2025/01/04)
+#Nutrition browser 2020 body 0.1.1 (2025/12/19)
 
 #==============================================================================
 #STATIC
@@ -9,7 +9,6 @@
 # LIBRARY
 #==============================================================================
 require 'fileutils'
-require 'rmagick'
 require 'time'
 
 
@@ -33,25 +32,37 @@ class Bio
 
   def initialize( user )
     @user = user
-    r = $DB.prepare( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( @user.name )
-    if r.first
-      if r.first['bio'] != nil && r.first['bio'] != ''
-        bio = JSON.parse( r.first['bio'] )
-        @sex = bio['sex'].to_i
-        @birth = Time.parse( bio['birth'] )
-        @height = bio['height'].to_f * 100
-        @weight = bio['weight'].to_f
-        @kexow = bio['kexow'].to_i
-        @pgene = bio['pgene'].to_i
-        @age = ( Date.today.strftime( "%Y%m%d" ).to_i - @birth.strftime( "%Y%m%d" ).to_i ) / 10000
-      end
+    res = $DB.prepare( "SELECT bio FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )&.first
+    if res['bio']&.to_s.empty?
+
+      begin
+        bio = JSON.parse( res['bio'] )
+      rescue JSON::ParserError => e
+        puts "J(x_x)pE: #{e.message}<br>"
+        exit
+      end     
+ 
+      @sex = bio['sex'].to_i
+      @birth = Time.parse( bio['birth'] )
+      @height = bio['height'].to_f * 100
+      @weight = bio['weight'].to_f
+      @kexow = bio['kexow'].to_i
+      @pgene = bio['pgene'].to_i
+      @age = ( Date.today.strftime( "%Y%m%d" ).to_i - @birth.strftime( "%Y%m%d" ).to_i ) / 10000
     end
   end
 
   def kex_ow()
-    r = $DB.prepare( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( @user.name )
-    if r.first && @kexow == 1
-      koyomi = JSON.parse( r.first['koyomi'] )
+    res = $DB.prepare( "SELECT koyomi FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )&.first
+    if res && @kexow == 1
+
+      begin
+        koyomi = JSON.parse( res['koyomi'] )
+      rescue JSON::ParserError => e
+        puts "J(x_x)pE: #{e.message}<br>"
+        exit
+      end     
+
       kex_select = koyomi['kex_select']
       0.upto( 9 ) do |c|
         @height = kex_select[c.to_s].to_f * 100 if kex_select[c.to_s] == 'HEIGHT'
@@ -89,12 +100,17 @@ class Calendar
     @wd, @wf, @ddl, @wl, @mms, @dds = update_sub( @date )
 
     @yyyyf = Time.now.year
-    res = $DB.prepare( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( @user.name )
-    if res.first
-      if res.first['koyomi'] != nil && res.first['koyomi'] != ''
-        koyomi = JSON.parse( res.first['koyomi'] )
-        @yyyyf = koyomi['start']
-      end
+    res = $DB.prepare( "SELECT koyomi FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )&.first
+    unless res['koyomi']&.to_s.empty?
+
+      begin
+        koyomi = JSON.parse( res['koyomi'] )
+      rescue JSON::ParserError => e
+        puts "J(x_x)pE: #{e.message}<br>"
+        exit
+      end     
+
+      @yyyyf = koyomi['start']
     end
   end
 
@@ -187,22 +203,22 @@ class Media
     @flesh = true
     @flesh = false if @user.status == 7
 
-    res = $DB.prepare( "SELECT COUNT(code), MIN(date), MAX(date) FROM #{$MYSQL_TB_MEDIA} WHERE user=?" ).execute( @user.name )
-
-    @count = res.first['COUNT(code)']
-    @t = res.first['MIN(date)']
-    if @t
-      @yyyy_min = @t.strftime( "%Y" ).to_i
-    else
-      @yyyy_min = 0
+    res = $DB.prepare( "SELECT COUNT(code), MIN(date), MAX(date) FROM #{$TB_MEDIA} WHERE user=?" ).execute( @user.name )&.first
+    if res
+      @count = res['COUNT(code)']
+      @t = res['MIN(date)']
+      if @t
+        @yyyy_min = @t.strftime( "%Y" ).to_i
+      else
+        @yyyy_min = 0
+      end
+      @t = res['MAX(date)']
+      if @t
+        @yyyy_max = @t.strftime( "%Y" ).to_i
+      else
+        @yyyy_max = 0
+      end
     end
-    @t = res.first['MAX(date)']
-    if @t
-      @yyyy_max = @t.strftime( "%Y" ).to_i
-    else
-      @yyyy_max = 0
-    end
-
 
     @l = {
       'camera'  => "<img src='bootstrap-dist/icons/camera.svg' style='height:1.2em; width:1.2em;'>",\
@@ -214,16 +230,16 @@ class Media
 
 
   def load_db()
-    res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_MEDIA} WHERE code=?" ).execute( @code )
-    if res.first
-      @owner = res.first['user'].to_s
-      @base = res.first['base'].to_s
-      @origin = res.first['origin'].to_s
-      @type = res.first['type'].to_s
-      @alt = res.first['alt'].to_s
-      @date = res.first['date']
-      @zidx = res.first['zidx'].to_i
-      @secure = res.first['secure'].to_i
+    res = $DB.prepare( "SELECT * FROM #{$TB_MEDIA} WHERE code=?" ).execute( @code )&.first
+    if res
+      @owner = res['user'].to_s
+      @base = res['base'].to_s
+      @origin = res['origin'].to_s
+      @type = res['type'].to_s
+      @alt = res['alt'].to_s
+      @date = res['date']
+      @zidx = res['zidx'].to_i
+      @secure = res['secure'].to_i
     else
       puts "<span class='error'>[Media load]ERROR!!<br>"
       puts "code:#{@code}</span><br>"
@@ -246,24 +262,23 @@ class Media
   def save_db()
     if @code
       @zidx = @series.size
-      $DB.prepare( "INSERT INTO #{$MYSQL_TB_MEDIA} SET user=?, code=?, base=?, origin=?, type=?, alt=?, date=?, zidx=?, secure=?" ).execute( @user.name, @code, @base, @origin, @type, @alt, @date, @zidx, @secure ) unless @user.barrier
+      $DB.prepare( "INSERT INTO #{$TB_MEDIA} SET user=?, code=?, base=?, origin=?, type=?, alt=?, date=?, zidx=?, secure=?" ).execute( @user.name, @code, @base, @origin, @type, @alt, @date, @zidx, @secure ) unless @user.barrier
     end
   end
 
   def delete_db( real )
     if @code
       if real
-        $DB.prepare( "DELETE FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
+        $DB.prepare( "DELETE FROM #{$TB_MEDIA} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
       else
-        $DB.prepare( "UPDATE #{$MYSQL_TB_MEDIA} SET base=? WHERE user=? AND code=?" ).execute( 'lost', @user.name, @code ) unless @user.barrier
+        $DB.prepare( "UPDATE #{$TB_MEDIA} SET base=? WHERE user=? AND code=?" ).execute( 'lost', @user.name, @code ) unless @user.barrier
       end
     end
   end
 
   def get_series()
-    unless @origin == '' || @origin == nil
-      res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_MEDIA} WHERE origin=? AND base=? ORDER BY zidx" ).execute( @origin, @base )
-
+    unless @origin.to_s.empty?
+      res = $DB.prepare( "SELECT * FROM #{$TB_MEDIA} WHERE origin=? AND base=? ORDER BY zidx" ).execute( @origin, @base )
       @owner = res.first['user'] if res.first
       @series = []
       res.each do |e| @series << e['code'] end
@@ -291,7 +306,7 @@ class Media
 
   def get_bases()
     @bases = []
-    res = $DB.prepare( "SELECT DISTINCT base FROM #{$MYSQL_TB_MEDIA} WHERE user=?" ).execute( @user.name )
+    res = $DB.prepare( "SELECT DISTINCT base FROM #{$TB_MEDIA} WHERE user=?" ).execute( @user.name )
     res.each do |r| @bases << r['base'] end
 
     return @bases
@@ -312,7 +327,7 @@ class Media
       @series.delete( @code )
       @series.insert( @zidx.to_i, @code )
       @series.each.with_index do |e, i|
-        $DB.prepare( "UPDATE #{$MYSQL_TB_MEDIA} SET zidx=? WHERE code=? AND origin=? AND base=?" ).execute( i, e, @origin, @base ) unless @user.barrier
+        $DB.prepare( "UPDATE #{$TB_MEDIA} SET zidx=? WHERE code=? AND origin=? AND base=?" ).execute( i, e, @origin, @base ) unless @user.barrier
       end
     end
   end
@@ -330,9 +345,9 @@ class Media
             File.unlink "#{path}/#{e}.jpg" if File.exist?( "#{path}/#{e}.jpg" )
           end
         end
-        $DB.prepare( "DELETE FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, @origin, @base ) unless @user.barrier
+        $DB.prepare( "DELETE FROM #{$TB_MEDIA} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, @origin, @base ) unless @user.barrier
       else
-        $DB.prepare( "UPDATE #{$MYSQL_TB_MEDIA} SET base=? WHERE user=? AND origin=? AND base=?" ).execute( 'lost', @user.name, @origin, @base ) unless @user.barrier
+        $DB.prepare( "UPDATE #{$TB_MEDIA} SET base=? WHERE user=? AND origin=? AND base=?" ).execute( 'lost', @user.name, @origin, @base ) unless @user.barrier
       end
     end
   end
@@ -396,7 +411,7 @@ class Media
     photo_size = photo_body.size.to_i
 
     @code = generate_code( @user.name, 'p' )
-    @date = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    @date = Time.now.strftime( "%Y-%m-%d %H:%M:%S" )
     if photo_type == 'image/jpeg' || photo_type == 'image/jpg'
       @type = 'jpeg'
       ex = 'jpg'
@@ -414,48 +429,17 @@ class Media
       f.puts photo_body
       f.close
 
-      begin
-        # For rmagick
+      # thumbnail (small)
+      ok = system( "vipsthumbnail #{$TMP_PATH}/#{tmp_file} -s #{$TN_SIZE} -o #{path}/#{@code}-tn.jpg" )
+      raise "vipsthumbnail tn failed" unless ok
 
-        photo = Magick::ImageList.new( "#{$TMP_PATH}/#{tmp_file}" )
+      # thumbnail (smaller)
+      ok = system( "vipsthumbnail #{$TMP_PATH}/#{tmp_file} -s #{$TNS_SIZE} -o #{path}/#{@code}-tns.jpg" )
+      raise "vipsthumbnail tns failed" unless ok
 
-        photo_x = photo.columns.to_f
-        photo_y = photo.rows.to_f
-        photo_ratio = 1.0
-        if photo_x >= photo_y
-          tn_ratio = $TN_SIZE / photo_x
-          tns_ratio = $TNS_SIZE / photo_x
-          photo_ratio = $PHOTO_SIZE_MAX / photo_x if photo_x >= $PHOTO_SIZE_MAX
-        else
-          tn_ratio = $TN_SIZE / photo_y
-          tns_ratio = $TNS_SIZE / photo_y
-          photo_ratio = $PHOTO_SIZE_MAX / photo_y if photo_y >= $PHOTO_SIZE_MAX
-        end
-
-        tn_file = photo.thumbnail( tn_ratio )
-        tn_file.write( "#{path}/#{@code}-tn.jpg" )
-        tns_file = photo.thumbnail( tns_ratio )
-        tns_file.write( "#{path}/#{@code}-tns.jpg" )
-        photo = photo.thumbnail( photo_ratio ) if photo_ratio != 1.0
-        photo.write( "#{path}/#{@code}.jpg" )
-
-      rescue
-        # In case of non-rmagick, temporary
-        puts '[Rescue]'
-        photo_x, photo_y = `identify -format "%w %h" #{$TMP_PATH}/#{tmp_file}`.split( ' ' )
-
-        if photo_x
-          if photo_x.to_i >= photo_y.to_i
-            result_resize = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail 2000x\\> #{path}/#{@code}.#{ex}" )
-            result_tn = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail #{$TN_SIZE}x #{path}/#{@code}-tn.#{ex}" ) if result_resize
-            result_tns = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail #{$TNS_SIZE}x #{path}/#{@code}-tns.#{ex}" ) if result_tn
-          else
-            result_resize = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail x2000\\> #{path}/#{@code}.#{ex}" )
-            result_tn = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail x#{$TN_SIZE} #{path}/#{@code}-tn.#{ex}" ) if result_resize
-            result_tns = system( "convert #{$TMP_PATH}/#{tmp_file} -thumbnail x#{$TNS_SIZE} #{path}/#{@code}-tns.#{ex}" ) if result_tn
-          end
-        end
-      end
+      # main image (max size)
+      ok = system( "vipsthumbnail #{$TMP_PATH}/#{tmp_file} -s #{$PHOTO_SIZE_MAX} -o #{path}/#{@code}.jpg" )
+      raise "vipsthumbnail main failed" unless ok
 
       File.unlink "#{$TMP_PATH}/#{tmp_file}" if File.exist?( "#{$TMP_PATH}/#{tmp_file}" )
     end

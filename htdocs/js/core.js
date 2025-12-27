@@ -397,33 +397,29 @@ const cb_detail_para_juten = ( key, weight, base_fn ) => {
 // Referencing /////////////////////////////////////////////////////////////////////////
 
 // Disply results
-const search = function(){
+const search = () => {
 	const words = document.getElementById( "words" ).value;
 	const qcate = document.getElementById( "qcate" ).value;
 	if( words != '' ){
 		flashBW();
 		switch( qcate ){
 		case '0':
-			$.post( "search-food.cgi", { words:words }, function( data ){
-				$( "#L1" ).html( data );
-		 		dl1 = true;
-		 		displayBW();
-			});
+			postLayer( 'search-food.cgi', 'dummy', true, 'L1', {words});
+		 	dl1 = true;
+		 	displayBW();
 			break;
+
 		case '1':
-			$.post( "recipel.cgi", { command:'refer', words:words }, function( data ){
-				$( "#L1" ).html( data );
-		 		dl1 = true;
-		 		displayBW();
-			});
+			postLayer( 'recipel.cgi', 'refer', true, 'L1', {words});
+		 	dl1 = true;
+		 	displayBW();
 			break;
+
 		case '2':
-			$.post( "memory.cgi", { command:'refer', words:words, depth:1 }, function( data ){
-				$( "#L1" ).html( data );
-		 		dl1 = true;
-		 		pushBW();
-		 		displayBW();
-			});
+			postLayer( 'memory.cgi', 'refer', true, 'L1', {words, depth:1});
+	 		dl1 = true;
+//	 		pushBW();
+	 		displayBW();
 			break;
  		}
 	}

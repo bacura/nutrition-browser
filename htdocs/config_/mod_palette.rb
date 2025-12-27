@@ -1,11 +1,11 @@
-# Nutorition browser 2020 Config module for Palette 0.21b (2023/07/30)
+# Nutorition browser 2020 Config module for Palette 0.2.1 (2025/12/27)
 #encoding: utf-8
 
-@degug = true
+@degug = false
 
 #### displying palette
 def listing( db, l )
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_PALETTE} WHERE user='#{db.user.name}';", false )
+	r = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE user=?", false, [db.user.name] )
 	list_body = ''
 	r.each do |e|
 		count = e['palette'].count( '1' )
@@ -59,10 +59,12 @@ def config_module( cgi, db )
 	when 'new_palette', 'edit_palette'
 		checked = Hash.new
 		if step == 'edit_palette'
-			r = db.query( "SELECT * FROM #{$MYSQL_TB_PALETTE} WHERE user='#{db.user.name}' AND name='#{cgi['palette_name']}';", false )
-			palette = r.first['palette']
-			palette.size.times do |c|
-				checked[@fct_item[c]] = 'checked' if palette[c] == '1'
+			res = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE user=? AND name=?", false, [db.user.name, cgi['palette_name']] )&.first
+			if res
+				palette = res['palette']
+				palette.size.times do |c|
+					checked[@fct_item[c]] = 'checked' if palette[c] == '1'
+				end
 			end
 		end
 
@@ -108,24 +110,24 @@ HTML
 		palette_name = cgi['palette_name']
 
 		@fct_min.each do |e| fct_bits << cgi[e].to_i.to_s end
-		r = db.query( "SELECT * FROM #{$MYSQL_TB_PALETTE} WHERE name='#{palette_name}' AND user='#{db.user.name}';", false )
-		if r.first
-			db.query( "UPDATE #{$MYSQL_TB_PALETTE} SET palette='#{fct_bits}' WHERE name='#{palette_name}' AND user='#{db.user.name}';", true )
+		res = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE name=? AND user=?", false, [palette_name, db.user.name] )&.first
+		if res
+			db.query( "UPDATE #{$TB_PALETTE} SET palette=? WHERE name=? AND user=?", true, [fct_bits, palette_name, db.user.name] )
 		else
-			db.query( "INSERT INTO #{$MYSQL_TB_PALETTE} SET name='#{palette_name}', user='#{db.user.name}', palette='#{fct_bits}';", true )
+			db.query( "INSERT INTO #{$TB_PALETTE} SET palette=?, name=?, user=?", true, [fct_bits, palette_name, db.user.name] )
 		end
 
 		html = listing( db, l )
 
 	when 'delete_palette'
-		db.query( "DELETE FROM #{$MYSQL_TB_PALETTE} WHERE name='#{cgi['palette_name']}' AND user='#{db.user.name}';", true )
+		db.query( "DELETE FROM #{$TB_PALETTE} WHERE name=? AND user=?", true, [cgi['palette_name'], db.user.name] )
 
 		html = listing( db, l )
 
 	when 'reset_palette'
-		db.query( "DELETE FROM #{$MYSQL_TB_PALETTE} WHERE user='#{db.user.name}';", true )
+		db.query( "DELETE FROM #{$TB_PALETTE} WHERE user=?", true, [db.user.name] )
 		0.upto( @palette_default.size - 1 ) do |c|
-			db.query( "INSERT INTO #{$MYSQL_TB_PALETTE} SET user='#{db.user.name}', name='#{$PALETTE_DEFAULT_NAME['jp'][c]}', palette='#{$PALETTE_DEFAULT['jp'][c]}';", true )
+			db.query( "INSERT INTO #{$TB_PALETTE} SET user=?, name=?, palette=?", true, [db.user.name, @palette_default_name[c], @palette_default[c]] )
 		end
 		html = listing( db, l )
 	end
@@ -140,7 +142,7 @@ def module_js()
 
 	@fct_min.each do |e|
 		js_fc_set << "if( document.getElementById( '#{e}' ).checked ){ var #{e} = 1 }"
-		post_fc_set << "#{e}:#{e},"
+		post_fc_set << "#{e},"
 	end
 	post_fc_set.chop!
 
@@ -148,22 +150,20 @@ def module_js()
 <script type='text/javascript'>
 
 // Sending FC palette
-var palette_cfg = function( step, id ){
+var palette_cfg = ( step, id ) => {
 
 	flashBW();
 	if( step == 'new_palette' ){
-		$.post( "config.cgi", { mod:'palette', step:step }, function( data ){
-			$( "#L2" ).html( data );
-			dl2 = true;
-			displayBW();
-		});
+		postLayer( 'config.cgi', 'dummy', true, 'L2', { mod:'palette', step });
+
+		dl2 = true;
+		displayBW();
 	}
 
 	if( step == 'reset_palette' ){
-		$.post( "config.cgi", { mod:'palette', step:step }, function( data ){
-			$( "#L1" ).html( data );
-			displayVIDEO( 'Reset' );
-		});
+		postLayer( 'config.cgi', 'dummy', true, 'L1', { mod:'palette', step });
+
+		displayVIDEO( 'Reset' );
 	}
 
 	if( step == 'regist' ){
@@ -172,10 +172,10 @@ var palette_cfg = function( step, id ){
 		if( palette_name != '' ){
 			#{js_fc_set}
 
-			$.post( "config.cgi", { mod:'palette', step:step, palette_name:palette_name, #{post_fc_set} }, function( data ){
-				$( "#L1" ).html( data );
-				displayVIDEO( palette_name );
-			});
+			postLayer( 'config.cgi', 'dummy', true, 'L1', { mod:'palette', step, palette_name, #{post_fc_set} });
+
+			displayVIDEO( palette_name );
+
 		}else{
 			displayVIDEO( 'Palette name!(>_<)' );
 		}
@@ -183,19 +183,17 @@ var palette_cfg = function( step, id ){
 
 	// Edit FC palette
 	if( step == 'edit_palette' ){
-		$.post( "config.cgi", { mod:'palette', step:step, palette_name:id }, function( data ){
-			$( "#L2" ).html( data );
-			dl2 = true;
-			displayBW();
-		});
+		postLayer( 'config.cgi', 'dummy', true, 'L2', { mod:'palette', step, palette_name:id });
+
+		dl2 = true;
+		displayBW();
 	}
 
 	// Deleting FC palette
 	if( step == 'delete_palette' ){
 		if( document.getElementById( id ).checked ){
-			$.post( "config.cgi", { mod:'palette', step:step, palette_name:id }, function( data ){
-				$( "#L1" ).html( data );
-			});
+			postLayer( 'config.cgi', 'dummy', true, 'L1', { mod:'palette', step, palette_name:id });
+
 		}else{
 			displayVIDEO( 'Check!(>_<)' );
 		}
@@ -214,17 +212,18 @@ end
 
 def module_lp( language )
 	l = Hash.new
-	l['jp'] = {
-		'mod_name' => "成分パレット",\
-		'edit' => "編集",\
-		'delete' => "削除",\
-		'palette_list' => "カスタム成分パレット一覧",\
-		'new_palette' => "新規登録",\
-		'reset' => "リセット",\
-		'palette_name' => "パレット名",\
-		'fc_num' => "成分数",\
-		'operation' => "操作",\
-		'regist' => "登録"
+	l['ja'] = {
+		'mod_name' => "成分パレット",
+		mod_name:	"成分パレット",
+		edit:	"編集",
+		delete: "削除",
+		palette_list:	"カスタム成分パレット一覧",
+		new_palette:	"新規登録",
+		reset:	"リセット",
+		palette_name:	"パレット名",
+		fc_num:	"成分数",
+		operation:	"操作",
+		regist:	"登録"
 	}
 
 	return l[language]

@@ -67,7 +67,7 @@ lp = lp_init( script, lg )
 
 
 puts "Extracting SUM data\n" if @debug
-r = mdb( "SELECT code, name, sum, dish from #{$MYSQL_TB_SUM} WHERE user='#{uname}';", false, @debug )
+r = mdb( "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user='#{uname}';", false, @debug )
 recipe_name = r.first['name']
 code = r.first['code']
 dish_num = r.first['dish'].to_i

@@ -22,7 +22,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'non' 		=> "指定のレシピは存在しません。",\
 		'palette'	=> "パレット",\
 		'precision'	=> "精密合計",\
@@ -65,7 +65,7 @@ end
 
 
 puts 'Checking recipe code<br>' if @debug
-r = db.query( "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code='#{code}';", false )
+r = db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code='#{code}';", false )
 unless r.first
 	puts "#{l['non']}(#{code})"
 	exit( 9 )
@@ -78,7 +78,7 @@ puts 'Generating palette HTML<br>' if @debug
 palette_html = ''
 #### Setting palette
 palette_name = []
-r = db.query( "SELECT * from #{$MYSQL_TB_PALETTE} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT * from #{$TB_PALETTE} WHERE user='#{user.name}';", false )
 r.each do |e| palette_name << e['name'] end
 palette_name.size.times do |c| palette_html << "<option value='#{palette_name[c]}'>#{palette_name[c]}</option>" end
 
@@ -87,7 +87,7 @@ puts 'Cooking school HTML<br>' if @debug
 csc = ''
 cs_disabled = ''
 if user.status == 5 ||  user.status >= 8
-	r = db.query( "SELECT enable FROM #{$MYSQL_TB_SCHOOLC} WHERE user='#{user.name}';", false )
+	r = db.query( "SELECT enable FROM #{$TB_SCHOOLC} WHERE user='#{user.name}';", false )
 	if r.first
 		enable = r.first['enable']
 		cs_disabled = 'DISABLED' if enable != 1

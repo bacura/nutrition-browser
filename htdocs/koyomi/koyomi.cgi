@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi 0.2.8 (2025/09/17)
+#Nutrition browser 2020 koyomi 0.2.9 (2025/12/27)
 
 
 #==============================================================================
@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		koyomi:      'こよみ:食事',
 		sun:         '日',
 		mon:         '月',
@@ -111,16 +111,6 @@ def meals_html( solid, db )
 end
 
 
-#def media_html( yyyy, mm, dd, tdiv, db )
-#	html = ''
-#	r = db.query( "SELECT code, zidx FROM #{$MYSQL_TB_MEDIA} WHERE user='#{db.user.name}' AND origin='#{yyyy}-#{mm}-#{dd}-#{tdiv}' AND type='jpg' ORDER BY zidx;", false )
-#	r.each do |e|
-#		html << "<img src='#{$PHOTO}/#{e['code']}-tns.jpg' class='photo_tns' onclick=\"modalPhoto( '#{e['code']}' )\">"
-#	end
-
-#	return html
-#end
-
 #==============================================================================
 # Main
 #==============================================================================
@@ -186,7 +176,7 @@ end
 
 puts "Palette setting<br>" if @debug
 palette = Palette.new( user )
-palette.set_bit( $PALETTE_DEFAULT_NAME[user.language][0] )
+palette.set_bit( @palette_default_name.first )
 
 puts "html parts<br>" if @debug
 fct_day_htmls = ['']

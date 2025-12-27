@@ -1,6 +1,8 @@
 # Nutorition browser 2020 Config module for acount 0.1.0 (2025/08/10)
 #encoding: utf-8
 
+require 'bcrypt'
+
 @debug = false
 
 def config_module( cgi, db )
@@ -8,7 +10,7 @@ def config_module( cgi, db )
 	l = module_lp( db.user.language )
 	step = cgi['step']
 
-	res = db.query( "SELECT pass, mail, aliasu FROM #{$MYSQL_TB_USER} WHERE user=? AND cookie=?", false, [db.user.name, db.user.uid] )&.first
+	res = db.query( "SELECT pass, mail, aliasu FROM #{$TB_USER} WHERE user=? AND cookie=?", false, [db.user.name, db.user.uid] )&.first
 	if res
 		aliasu = res['aliasu']
 		mail = res['mail']
@@ -32,23 +34,23 @@ def config_module( cgi, db )
 			end
 
 			# Updating acount information
-			db.query( "UPDATE #{$MYSQL_TB_USER} SET pass=?, mail=?, aliasu=?, language=? WHERE user=? AND cookie=?", true, [pass, mail, aliasu, language, db.user.name, db.user.uid] )
+			db.query( "UPDATE #{$TB_USER} SET pass=?, mail=?, aliasu=?, language=? WHERE user=? AND cookie=?", true, [pass, mail, aliasu, language, db.user.name, db.user.uid] )
 		else
 			puts "<span class='msg_small_red'>#{l[:no_save]}</span><br>"
 		end
 
 	elsif step ==  'tensei'
 		tensei_code = "#{cgi['tensei1']}-#{cgi['tensei2']}-#{cgi['tensei3']}-#{cgi['tensei4']}-#{cgi['tensei5']}"
-		res = db.query( "SELECT * FROM #{$MYSQL_TB_TENSEI} WHERE code=?", false, [tensei_code] )&.first
+		res = db.query( "SELECT * FROM #{$TB_TENSEI} WHERE code=?", false, [tensei_code] )&.first
 		if res && res['expd'] >= Date.today
 
 			# Updating acount status
-			db.query( "UPDATE #{$MYSQL_TB_USER} SET status=?, tensei=? WHERE user=? AND cookie=?", true, [res['status'], res['code'], db.user.name, db.user.uid] )
+			db.query( "UPDATE #{$TB_USER} SET status=?, tensei=? WHERE user=? AND cookie=?", true, [res['status'], res['code'], db.user.name, db.user.uid] )
 			puts "<span class='msg_small_red'>#{l[:tensei_exec]}</span><br>"
 
 		elsif tensei_code == 'R-E-S-E-T'
 			# Resetting acount status
-			db.query( "UPDATE #{$MYSQL_TB_USER} SET status=1, tensei='' WHERE user=? AND cookie=?", true, [db.user.name, db.user.uid] )
+			db.query( "UPDATE #{$TB_USER} SET status=1, tensei='' WHERE user=? AND cookie=?", true, [db.user.name, db.user.uid] )
 			puts "<span class='msg_small_red'>#{l[:tensei_reset]}</span><br>"
 
 		else
@@ -179,7 +181,7 @@ def module_lp( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		'mod_name'	=> "アカウント",
 		aliase: "二つ名",
 		mail: "メールアドレス",

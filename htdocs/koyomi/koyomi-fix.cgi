@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser koyomi fix fct editer 0.4.0 (2025/08/29)
+#Nutrition browser koyomi fix fct editer 0.4.1 (2025/12/27)
 
 #==============================================================================
 # STATIC
@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		save: 		"保　存",\
 		g100: 		"100 g相当",\
 		food_n: 	"食品名",\
@@ -74,7 +74,6 @@ koyomi = Calendar.new( user, 0, 0, 0 )
 
 
 puts 'POST<br>' if @debug
-p @cgi if @debug
 command = @cgi['command']
 yyyy = @cgi['yyyy'].to_i
 mm = @cgi['mm'].to_i
@@ -84,6 +83,7 @@ hh_mm = @cgi['hh_mm']
 meal_time = @cgi['meal_time'].to_i
 order = @cgi['order'].to_i
 palette_ = @cgi['palette']
+palette_ = @palette_default_name.first if palette_.to_s.empty?
 modifyf = @cgi['modifyf'].to_i
 carry_on = @cgi['carry_on']
 carry_on = 1 if @cgi['carry_on'] == ''
@@ -101,13 +101,18 @@ food_weight = BigDecimal( food_weight )
 puts 'Getting standard meal start & time<br>' if @debug
 start_times = []
 meal_tiems = []
-r = db.query( "SELECT bio FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
-if r.first
-	if r.first['bio'] != nil && r.first['bio'] != ''
-		bio = JSON.parse( r.first['bio'] )
-		start_times = [bio['bst'], bio['lst'], bio['dst']]
-		meal_tiems = [bio['bti'].to_i, bio['lti'].to_i, bio['dti'].to_i]
-	end
+res = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user=?", false, [user.name] )&.first
+unless res['bio'].to_s.empty?
+
+	begin
+		bio = JSON.parse( res['bio'] )
+	rescue JSON::ParserError => e
+		puts "J(x_x)pE: #{e.message}<br>"
+		exit
+	end     
+
+	start_times = [bio['bst'], bio['lst'], bio['dst']]
+	meal_tiems = [bio['bti'].to_i, bio['lti'].to_i, bio['dti'].to_i]
 end
 hh_mm = start_times[tdiv] if hh_mm == '' || hh_mm == nil
 hh_mm = @time_now.strftime( "%H:%M" ) if hh_mm == '' || hh_mm == nil
@@ -153,7 +158,7 @@ if command == 'save'
 		koyomi_ = koyomi.get_sub( ymd, tdiv, order )
 		if koyomi_
 			code = koyomi_.split( "~" )[0]
-			db.query( "UPDATE #{$MYSQL_TB_FCZ} SET name='#{food_name}', date='#{yyyy}-#{mm}-#{dd}', #{fix_set} WHERE user='#{user.name}' AND base='fix' AND code='#{code}';", true )
+			db.query( "UPDATE #{$TB_FCZ} SET name=?, date=?, #{fix_set} WHERE user=? AND base='fix' AND code=?", true, [food_name, "#{yyyy}-#{mm}-#{dd}", user.name, code] )
 		end
 		modified_koyomi = "#{code}~100~99~#{hh_mm}~#{meal_time}"
 		koyomi.modify_sub( ymd, tdiv, order, modified_koyomi )
@@ -167,7 +172,7 @@ if command == 'save'
 		else
 			puts '[Insert mode]' if @debug
  			fix_code = generate_code( user.name, 'z' )
-			db.query( "INSERT INTO #{$MYSQL_TB_FCZ} SET base='fix', code='#{fix_code}', origin='#{yyyy}-#{mm}-#{dd}-#{tdiv}', date='#{yyyy}-#{mm}-#{dd}', name='#{food_name}',user='#{user.name}', #{fix_set};", true )
+			db.query( "INSERT INTO #{$TB_FCZ} SET base='fix', code=?, origin=?, date=?, name=?, user=?, #{fix_set};", true, [fix_code, "#{yyyy}-#{mm}-#{dd}-#{tdiv}", "#{yyyy}-#{mm}-#{dd}", food_name, user.name] )
 		end
 		new_koyomi = "#{fix_code}~100~99~#{hh_mm}~#{meal_time}"
 		koyomi.add_sub( ymd, tdiv, new_koyomi )
@@ -189,10 +194,10 @@ if command == 'modify' || modifyf == 1
 		code = elements[0]
 		hh_mm = elements[3]
 		meal_time = elements[4].to_i
-		rr = db.query( "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='fix' AND code='#{code}';", false )
-		if rr.first
-			food_name = rr.first['name']
-			@fct_min_nr.each do |e| fix_opt[e] = rr.first[e].to_f end
+		res = db.query( "SELECT * FROM #{$TB_FCZ} WHERE user=? AND base='fix' AND code=?;", false, [user.name, code] )&.first
+		if res
+			food_name = res['name']
+			@fct_min_nr.each do |e| fix_opt[e] = res[e].to_f end
 		end
 	end
 	modifyf = 1
@@ -203,10 +208,10 @@ end
 if command == 'history'
 	puts 'HISTORY<br>' if @debug
 	fix_his_code = @cgi['fix_his_code']
-	r = db.query( "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='fix' AND code='#{fix_his_code}';", false )
-	if r.first
-		food_name = r.first['name']
-		@fct_min_nr.each do |e| fix_opt[e] = r.first[e].to_f end
+	res = db.query( "SELECT * FROM #{$TB_FCZ} WHERE user=? AND base='fix' AND code=?", false, [user.name, fix_his_code] )&.first
+	if res
+		food_name = res['name']
+		@fct_min_nr.each do |e| fix_opt[e] = res[e].to_f end
 	end
 end
 
@@ -287,9 +292,9 @@ his_m1 = ( @time_now - ( 60 * 60 * 24 * 30 )).strftime( "%Y-%m-%d" )
 his_m1_ = ( @time_now - ( 60 * 60 * 24 * 31 )).strftime( "%Y-%m-%d" )
 his_m3 = ( @time_now - ( 60 * 60 * 24 * 90 )).strftime( "%Y-%m-%d" )
 
-r = db.query( "SELECT code, name, origin FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='fix' AND date BETWEEN '#{his_w1}' AND '#{his_today}' GROUP BY name;", false )
-rr = db.query( "SELECT code, name, origin FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='fix' AND date BETWEEN '#{his_m1}' AND '#{his_w1_}' GROUP BY name;", false )
-rrr = db.query( "SELECT code, name, origin FROM #{$MYSQL_TB_FCZ} WHERE user='#{user.name}' AND base='fix' AND date BETWEEN '#{his_m3}' AND '#{his_m1_}' GROUP BY name;", false )
+r = db.query( "SELECT code, name, origin FROM #{$TB_FCZ} WHERE user=? AND base='fix' AND date BETWEEN ? AND ? GROUP BY name;", false, [user.name, his_w1, his_today] )
+rr = db.query( "SELECT code, name, origin FROM #{$TB_FCZ} WHERE user=? AND base='fix' AND date BETWEEN ? AND ? GROUP BY name;", false, [user.name, his_m1, his_w1_] )
+rrr = db.query( "SELECT code, name, origin FROM #{$TB_FCZ} WHERE user=? AND base='fix' AND date BETWEEN ? AND ? GROUP BY name;", false, [user.name, his_m3, his_m1_] )
 fix_his_html << "<div class='input-group input-group-sm'>"
 
 fix_his_html << "<label class='input-group-text'>#{l[:history]}</label>"

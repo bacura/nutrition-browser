@@ -26,7 +26,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		msg_err: 	"このタイプのファイルは受け付けておりません。",
 		file_name:	"ファイル名：",
 		file_type:	"ファイルタイプ：",
@@ -87,7 +87,7 @@ skip_line1 = nil
 overwrite = nil
 selecteds = ''
 
-r = db.query( "SELECT koyomi FROM #{$MYSQL_TB_CFG} WHERE user='#{user.name}';", false )
+r = db.query( "SELECT koyomi FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
 if r.first
 	begin
 		json_str = r.first['koyomi'].to_s.strip
@@ -273,7 +273,7 @@ when 'update'
 
 		if yyyymmdd != nil
 			puts "LOAD date cell[#{yyyymmdd}]<br>" if @debug
-			r = db.query( "SELECT * FROM #{$MYSQL_TB_KOYOMIEX} WHERE user='#{user.name}' AND date='#{yyyymmdd}';", false )
+			r = db.query( "SELECT * FROM #{$TB_KOYOMIEX} WHERE user='#{user.name}' AND date='#{yyyymmdd}';", false )
 			kexc = Hash.new
 			count_flag = false
 			if r.first
@@ -287,7 +287,7 @@ when 'update'
 					end
 				end
 				cell_ = JSON.generate( kexc )
-				db.query( "UPDATE #{$MYSQL_TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{user.name}' AND date='#{yyyymmdd}';", true )
+				db.query( "UPDATE #{$TB_KOYOMIEX} SET cell='#{cell_}' WHERE user='#{user.name}' AND date='#{yyyymmdd}';", true )
 				count += 1 if count_flag
 
 			else
@@ -295,7 +295,7 @@ when 'update'
 					kexc[k] = ea[v] unless k == 'date'
 				end
 				cell_ = JSON.generate( kexc )
-				db.query( "INSERT INTO #{$MYSQL_TB_KOYOMIEX} SET cell='#{cell_}', user='#{user.name}', date='#{yyyymmdd}';", true )
+				db.query( "INSERT INTO #{$TB_KOYOMIEX} SET cell='#{cell_}', user='#{user.name}', date='#{yyyymmdd}';", true )
 				count += 1
 			end
 		else
@@ -338,7 +338,7 @@ if command == 'update'
 
 	kexin = { 'skip_line1'=>skip_line1, 'overwrite'=>overwrite, 'selecteds'=>selecteds_ }
 	koyomi_ = JSON.generate( { "start"=>start,  "kexu"=>kexu, "kexa"=>kexa, "kexin"=>kexin } )
-	db.query( "UPDATE #{$MYSQL_TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
+	db.query( "UPDATE #{$TB_CFG} SET koyomi='#{koyomi_}' WHERE user='#{user.name}';", true )
 end
 
 #==============================================================================

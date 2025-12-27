@@ -19,7 +19,7 @@ require 'bigdecimal'
 #### R用データベース処理
 def mdbr( query, html_opt, debug )
   begin
-    db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USERR}", :password => "", :database => "#{$MYSQL_DBR}", :encoding => "utf8" )
+    db = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USERR}", :password => "", :database => "#{$DBR}", :encoding => "utf8" )
     t = query.chop
     query_ = ''
     query_ = query if debug
@@ -101,7 +101,7 @@ end
 def unit_weight( vol, uc, fn )
   w = 0.0
 
-  res = $DB.prepare( "SELECT unit FROM #{$MYSQL_TB_EXT} WHERE FN=?" ).execute( fn )
+  res = $DB.prepare( "SELECT unit FROM #{$TB_EXT} WHERE FN=?" ).execute( fn )
   if res.first
     if res.first['unit'] != nil && res.first['unit'] != ''
       unith = JSON.parse( res.first['unit'] )
@@ -149,7 +149,7 @@ end
 
 def menu2rc( user, code )
   codes = []
-  res = $DB.prepare( "SELECT meal FROM #{$MYSQL_TB_MENU} WHERE user=? AND code=?" ).execute( user.name, code )
+  res = $DB.prepare( "SELECT meal FROM #{$TB_MENU} WHERE user=? AND code=?" ).execute( user.name, code )
   if res.first
     codes = res.first['meal'].split( "\t" ) unless res.first['meal'].to_s.empty?
   end
@@ -162,7 +162,7 @@ def recipe2fns( user, code, rate, unit, ew_mode )
   ew_mode ||= 0
   fns, fws, tw = [], [], []
 
-  res = $DB.prepare( "SELECT sum, dish FROM #{$MYSQL_TB_RECIPE} WHERE user=? AND code=?" ).execute( user.name, code )
+  res = $DB.prepare( "SELECT sum, dish FROM #{$TB_RECIPE} WHERE user=? AND code=?" ).execute( user.name, code )
   if res.first
     fns, fws, tw = extract_sum( res.first['sum'], res.first['dish'], ew_mode )
 
@@ -170,7 +170,7 @@ def recipe2fns( user, code, rate, unit, ew_mode )
       fws.map! do |x| x * rate / 100 if x != '-' && x != '+' end
 
     elsif unit == 'kcal'
-      rr = $DB.prepare( "SELECT ENERC_KCAL FROM #{$MYSQL_TB_FCZ} WHERE user=? AND base = 'recipe' AND origin=?" ).execute( user.name, code )
+      rr = $DB.prepare( "SELECT ENERC_KCAL FROM #{$TB_FCZ} WHERE user=? AND base = 'recipe' AND origin=?" ).execute( user.name, code )
       rate = ( rate / BigDecimal( rr.first['ENERC_KCAL'] ))
       fws.map! do |x| x * rate if x != '-' && x != '+' end
 
@@ -216,7 +216,7 @@ class Palette
     @bit = []
 
     if @user.name
-      res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_PALETTE} WHERE user=?" ).execute( @user.name )
+      res = $DB.prepare( "SELECT * FROM #{$TB_PALETTE} WHERE user=?" ).execute( @user.name )
       res.each do |e| @sets[e['name']] = e['palette'] end
     else
       $PALETTE_DEFAULT_NAME[$DEFAULT_LP].size.times do |c|
@@ -303,15 +303,15 @@ class FCT
         end
       else
         if /U/ =~ e && @user.name != nil
-          q = "SELECT * from #{$MYSQL_TB_FCTP} WHERE FN='#{e}' AND user='#{@user.name}';"
-          q = "SELECT * from #{$MYSQL_TB_FCTP} WHERE FN='#{e}';" if @user.name == '+anonymous+'
-          qq = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e}' AND user='#{@user.name}';"
+          q = "SELECT * from #{$TB_FCTP} WHERE FN='#{e}' AND user='#{@user.name}';"
+          q = "SELECT * from #{$TB_FCTP} WHERE FN='#{e}';" if @user.name == '+anonymous+'
+          qq = "SELECT * from #{$TB_TAG} WHERE FN='#{e}' AND user='#{@user.name}';"
         elsif /P/ =~ e
-          q = "SELECT * from #{$MYSQL_TB_FCTP} WHERE FN='#{e}';"
-          qq = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e}';"
+          q = "SELECT * from #{$TB_FCTP} WHERE FN='#{e}';"
+          qq = "SELECT * from #{$TB_TAG} WHERE FN='#{e}';"
         else
-          q = "SELECT * from #{$MYSQL_TB_FCT} WHERE FN='#{e}';"
-          qq = "SELECT * from #{$MYSQL_TB_TAG} WHERE FN='#{e}';"
+          q = "SELECT * from #{$TB_FCT} WHERE FN='#{e}';"
+          qq = "SELECT * from #{$TB_TAG} WHERE FN='#{e}';"
         end
         res = $DB.query( q )
         if res.first
@@ -480,7 +480,7 @@ class FCT
   def load_fcz( base = nil, fzcode = nil )
     return false if fzcode.to_s == ''
 
-    r = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE user=? AND code=? AND base=?" ).execute( @user.name, fzcode, base )
+    r = $DB.prepare( "SELECT * FROM #{$TB_FCZ} WHERE user=? AND code=? AND base=?" ).execute( @user.name, fzcode, base )
     if r.first
       a = []
       @zname = r.first['name']
@@ -503,19 +503,19 @@ class FCT
 
   def delete_fcz( base = nil, fzcode = nil, origin = nil )
     if !base.nil? && !fzcode.nil? 
-      $DB.prepare( "DELETE FROM #{$MYSQL_TB_FCZ} WHERE user=? AND code=? AND base=?" ).execute( @user.name, fzcode, base ) unless @user.barrier
+      $DB.prepare( "DELETE FROM #{$TB_FCZ} WHERE user=? AND code=? AND base=?" ).execute( @user.name, fzcode, base ) unless @user.barrier
     elsif !base.nil? && !origin.nil? 
-      $DB.prepare( "DELETE FROM #{$MYSQL_TB_FCZ} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, origin, base ) unless @user.barrier
+      $DB.prepare( "DELETE FROM #{$TB_FCZ} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, origin, base ) unless @user.barrier
     elsif !base.nil?
-      $DB.prepare( "DELETE FROM #{$MYSQL_TB_FCZ} WHERE user=? AND base=?" ).execute( @user.name, base ) unless @user.barrier
+      $DB.prepare( "DELETE FROM #{$TB_FCZ} WHERE user=? AND base=?" ).execute( @user.name, base ) unless @user.barrier
     end
   end
 
   def load_fctp( code )
     if /^P/ =~ code
-      r = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_FCTP} WHERE FN=?" ).execute( code )
+      r = $DB.prepare( "SELECT * FROM #{$TB_FCTP} WHERE FN=?" ).execute( code )
     else
-      r = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_FCTP} WHERE FN=? AND user=?" ).execute( code, @user.name )
+      r = $DB.prepare( "SELECT * FROM #{$TB_FCTP} WHERE FN=? AND user=?" ).execute( code, @user.name )
     end
 
     if r.first
@@ -558,13 +558,13 @@ class FCT
     fct_ << " weightp='#{@total_weight}'"
 
     code = ''
-    r = $DB.prepare( "SELECT code FROM #{$MYSQL_TB_FCZ} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, origin, base )
+    r = $DB.prepare( "SELECT code FROM #{$TB_FCZ} WHERE user=? AND origin=? AND base=?" ).execute( @user.name, origin, base )
     if r.first
-      $DB.query( "UPDATE #{$MYSQL_TB_FCZ} SET #{fct_} WHERE user='#{@user.name}' AND origin='#{origin}' AND base='#{base}';" )
+      $DB.query( "UPDATE #{$TB_FCZ} SET #{fct_} WHERE user='#{@user.name}' AND origin='#{origin}' AND base='#{base}';" )
       code = r.first['code']
     else
       code = generate_code( @user.name, 'z' )
-      $DB.query( "INSERT INTO #{$MYSQL_TB_FCZ} SET code='#{code}', base='#{base}', name='#{zname}', user='#{@user.name}', origin='#{origin}', #{fct_};" )
+      $DB.query( "INSERT INTO #{$TB_FCZ} SET code='#{code}', base='#{base}', name='#{zname}', user='#{@user.name}', origin='#{origin}', #{fct_};" )
     end
 
     return code
@@ -620,7 +620,7 @@ class Memory
 
   def get_categories()
     array = []
-    res = $DB.query( "SELECT DISTINCT category FROM #{$MYSQL_TB_MEMORY};" )
+    res = $DB.query( "SELECT DISTINCT category FROM #{$TB_MEMORY};" )
     res.each do |e| array << e['category'] end
 
     return array
@@ -629,7 +629,7 @@ class Memory
   def get_pointers( category = nil )
     array = []
     sql_where = category.nil? ? '' : " WHERE category='#{category}'"
-    res = $DB.query( "SELECT DISTINCT pointer FROM #{$MYSQL_TB_MEMORY}#{sql_where};" )
+    res = $DB.query( "SELECT DISTINCT pointer FROM #{$TB_MEMORY}#{sql_where};" )
     res.each do |e| array << e['pointer'] end
 
     return array
@@ -637,7 +637,7 @@ class Memory
 
 
   def load_db()
-    res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_MEMORY} WHERE code=?" ).execute( @code )
+    res = $DB.prepare( "SELECT * FROM #{$TB_MEMORY} WHERE code=?" ).execute( @code )
     if res.first
       @category = res.first['category']
       @pointer = res.first['pointer']
@@ -655,11 +655,11 @@ class Memory
 
   def save_db()
     unless @code == nil
-      res = $DB.prepare( "SELECT code FROM #{$MYSQL_TB_MEMORY} WHERE code=?" ).execute( @code )
+      res = $DB.prepare( "SELECT code FROM #{$TB_MEMORY} WHERE code=?" ).execute( @code )
       if res.first
-        $DB.prepare( "UPDATE #{$MYSQL_TB_MEMORY} SET category=?, pointer=?, content=?, date=? WHERE code=?" ).execute( @category, @pointer, @content, @date, @code )
+        $DB.prepare( "UPDATE #{$TB_MEMORY} SET category=?, pointer=?, content=?, date=? WHERE code=?" ).execute( @category, @pointer, @content, @date, @code )
       else
-        $DB.prepare( "INSERT INTO #{$MYSQL_TB_MEMORY} SET code=?, user=?, category=?, pointer=?, content=?, date=?, public=?" ).execute( @code, @user.name, @category, @pointer, @content, @date, @public )
+        $DB.prepare( "INSERT INTO #{$TB_MEMORY} SET code=?, user=?, category=?, pointer=?, content=?, date=?, public=?" ).execute( @code, @user.name, @category, @pointer, @content, @date, @public )
       end
     else
       puts "<span class='worning'>[Memory get_pointers]WORNING!!<br>"
@@ -670,7 +670,7 @@ class Memory
   def delete_db()
     unless @code == nil
       user_sql = @user.status >= 8 ? '' : "AND user=?"
-      query = "DELETE FROM #{$MYSQL_TB_MEMORY} WHERE code=? #{user_sql};"
+      query = "DELETE FROM #{$TB_MEMORY} WHERE code=? #{user_sql};"
       $DB.prepare( query ).execute( @code, @user.name )
     else
       puts "<span class='worning'>[Memory delete_db]WORNING!!<br>"
@@ -680,14 +680,14 @@ class Memory
 
   def delete_category()
     if @user.status >= 8
-      $DB.prepare( "DELETE FROM #{$MYSQL_TB_MEMORY} WHERE category=?" ).execute( @category )
+      $DB.prepare( "DELETE FROM #{$TB_MEMORY} WHERE category=?" ).execute( @category )
     end
   end
 
   def change_category( new_category )
     if @user.status >= 8
       unless new_category == nil
-        $DB.prepare( "UPDATE #{$MYSQL_TB_MEMORY} SET category=? WHERE category=?" ).execute( new_category, @category )
+        $DB.prepare( "UPDATE #{$TB_MEMORY} SET category=? WHERE category=?" ).execute( new_category, @category )
       else
         puts "<span class='worning'>[Memory change_category]WORNING!!<br>"
         puts "No new_category</span><br>"
@@ -702,7 +702,7 @@ class Memory
       sql_user = "AND user='#{@user.name}'"
       sql_user = '' if @user.status >= 8
 
-      res = $DB.query( "SELECT user, code, pointer, content FROM #{$MYSQL_TB_MEMORY} WHERE category='#{@category}' #{sql_user} ORDER BY pointer;" )
+      res = $DB.query( "SELECT user, code, pointer, content FROM #{$TB_MEMORY} WHERE category='#{@category}' #{sql_user} ORDER BY pointer;" )
       res.each do |e| solid << e end 
     else
       sql_user = ''
@@ -710,7 +710,7 @@ class Memory
       sql_user = "AND public='1'" if range == 'public'
       sql_user = "AND ( user='#{@user.name}' OR public='1' )" if range == 'merge'
 
-      res = $DB.query( "SELECT * from #{$MYSQL_TB_MEMORY} WHERE pointer='#{@pointer}' #{sql_user};" )
+      res = $DB.query( "SELECT * from #{$TB_MEMORY} WHERE pointer='#{@pointer}' #{sql_user};" )
       res.each do |e| solid << e end 
     end
 
@@ -745,7 +745,7 @@ class Koyomi
     @solid = {}
     @fz_bit = {}
     @fz_code = {}
-    res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_KOYOMI} WHERE user=? AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN ? AND ? ORDER BY date;" ).execute( @user.name, @start_day, @end_day )
+    res = $DB.prepare( "SELECT * FROM #{$TB_KOYOMI} WHERE user=? AND koyomi!='' AND koyomi IS NOT NULL AND date BETWEEN ? AND ? ORDER BY date;" ).execute( @user.name, @start_day, @end_day )
     if res.first
       res.each do |e|
         key = e['date'].to_s
@@ -768,12 +768,12 @@ class Koyomi
     @updates.uniq.each do |key|
       5.times do |tdiv|
         next if @solid[key][tdiv].nil?
-        res = $DB.query( "SELECT 1 FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{@user.name}' AND date='#{key}' AND tdiv='#{tdiv}';" )
+        res = $DB.query( "SELECT 1 FROM #{$TB_KOYOMI} WHERE user='#{@user.name}' AND date='#{key}' AND tdiv='#{tdiv}';" )
         if res.first
-          $DB.query( "UPDATE #{$MYSQL_TB_KOYOMI} SET koyomi='#{@solid[key][tdiv]}', freeze='#{@fz_bit[key][tdiv]}', fzcode='#{@fz_code[key][tdiv]}' WHERE user='#{@user.name}' AND date='#{key}' AND tdiv='#{tdiv}';" )
+          $DB.query( "UPDATE #{$TB_KOYOMI} SET koyomi='#{@solid[key][tdiv]}', freeze='#{@fz_bit[key][tdiv]}', fzcode='#{@fz_code[key][tdiv]}' WHERE user='#{@user.name}' AND date='#{key}' AND tdiv='#{tdiv}';" )
         else
           next if @solid[key][tdiv].to_s.empty?
-          $DB.query( "INSERT INTO #{$MYSQL_TB_KOYOMI} SET  koyomi='#{@solid[key][tdiv]}', freeze='#{@fz_bit[key][tdiv]}', fzcode='#{@fz_code[key][tdiv]}', user='#{@user.name}', date='#{key}', tdiv='#{tdiv}';" )
+          $DB.query( "INSERT INTO #{$TB_KOYOMI} SET  koyomi='#{@solid[key][tdiv]}', freeze='#{@fz_bit[key][tdiv]}', fzcode='#{@fz_code[key][tdiv]}', user='#{@user.name}', date='#{key}', tdiv='#{tdiv}';" )
         end
       end
     end
@@ -891,6 +891,6 @@ class Koyomi
   end
 
   def delete_empty_db()
-    $DB.query( "DELETE FROM #{$MYSQL_TB_KOYOMI} WHERE user='#{@user.name}' AND freeze=0 AND ( koyomi='' OR koyomi IS NULL OR DATE IS NULL );" ) unless @user.barrier
+    $DB.query( "DELETE FROM #{$TB_KOYOMI} WHERE user='#{@user.name}' AND freeze=0 AND ( koyomi='' OR koyomi IS NULL OR DATE IS NULL );" ) unless @user.barrier
   end
 end
