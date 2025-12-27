@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul Japanese pack 0.3.1 (2025/08/11)
+#Nutrition browser 2020 soul Japanese pack 0.3.2 (2025/12/27)
 
 #==============================================================================
 # STATIC
@@ -28,7 +28,6 @@
 @fct_frct = {'FG'=>nil,     'FN'=>nil,        'SID'=>nil,       'Tagnames'=>nil,      'REFUSE'=>nil,     'ENERC'=>0,              'ENERC_KCAL'=>0,                'WATER'=>1,     'PROTCAA'=>1,                       'PROT'=>1,           'PROTV'=>1,               'FAT'=>1,      'FATNLEA'=>1,                      'FATV'=>1,         'FASAT'=>2,            'FAMS'=>2,                'FAPU'=>2,                 'FAPUN3'=>2,                      'FAPUN6'=>2,                     'CHOLE'=>0,           'CHOCDF'=>1,          'CHOAVLM'=>1,                         'CHOAVL'=>1,                         'CHOAVLDF'=>1,                         'CHOV'=>1,              'FIB'=>1,             'FIBTG'=>1,                'FIBSOL'=>1,                 'FIBINS'=>1,                  'FIBTDF'=>1,                'FIBSDFS'=>1,                        'FIBSDFP'=>1,                         'FIBIDF'=>1,                  'STARES'=>1,                 'POLYL'=>1,           'ASH'=>1,      'NA'=>0,         'K'=>0,       'CA'=>0,         'MG'=>0,           'P'=>0,      'FE'=>1,     'ZN'=>1,      'CU'=>2,    'MN'=>2,       'ID'=>0,       'SE'=>0,      'CR'=>0,      'MO'=>0,         'RETOL'=>0,         'CARTA'=>0,         'CARTB'=>0,          'CRYPXB'=>0,                'CARTBEQ'=>0,             'VITA_RAE'=>0,                'VITD'=>1,        'TOCPHA'=>1,             'TOCPHB'=>1,             'TOCPHG'=>1,             'TOCPHD'=>1,             'VITK'=>0,        'THIA'=>2,         'RIBF'=>2,         'NIA'=>1,         'NE'=>1,              'VITB6A'=>2,         'VITB12'=>1,           'FOL'=>0,      'PANTAC'=>2,          'BIOT'=>1,       'VITC'=>0,        'OA'=>1,        'ALC'=>1,        'NACL_EQ'=>1,            'Notice'=>nil}
 
 @palette_default_name = %w( 簡易表示用 基本の5成分 基本の12成分 基本の21成分 全て )
-$PALETTE_DEFAULT_NAME = { 'jp' => @palette_default_name }
 @palette_default = %w( 00000010001001000000000010000000000000000000000000000000000000000000000001 00000010001001000000000010000000000000000000000000000000000000000000000001 00000010001001000000000011000000000001100100000000000001000001100000000001 00000010001001000000000011000000000001110111000000000001000001101111001011 00001111111111111111111111111111111111111111111111111111111111111111111111 )
 
 $PALETTE_DEFAULT = { 'jp' => @palette_default }
@@ -56,6 +55,8 @@ $DAUGHTER = 6
 
 #             0                1                   2                 3                4             5                 6                7                     8              9               10                   11                  12                  13                14               15                   16                     17                     18             19             20             21             22             23
 @kex_std = { '身長'=>'cm', '体重'=>'kg', 'BMI'=>'', '体脂肪率'=>'%', '腹囲'=>'cm', 'ブリストルスケール'=>'','歩数'=>'歩', 'METs'=>'', 'Δエネルギー'=>'kcal', '収縮期血圧'=>'mmHg', '拡張期血圧'=>'mmHg', '空腹時血糖'=>'mg/dl', 'HbA1c'=>'%', '中性脂肪'=>'mg/dL', '総コレステロール'=>'mg/dL', 'LDL'=>'mg/dL', 'HDL'=>'mg/dL', '尿酸'=>'mg/dL',  'AST'=>'IU/L',  'ALT'=>'IU/L',  'ALP'=>'IU/L',  'LDH'=>'IU/L',  'γ-GTP'=>'IU/L' }
+@kex_presets = Hash.new
+@kex_presets['体格管理'] = '{"kexu":{"体重":"kg","体脂肪率":"%","Δエネルギー":"kcal"},"kexa":{"体重":"1","体脂肪率":"1","Δエネルギー":"1"},"kexg":{},"kexup":{},"kexbtm":{}}'
 
 #
 @something = {'?--'=>'何か食べた（微盛）', '?-'=>'何か食べた（小盛）', '?='=>'何か食べた（並盛）', '?+'=>'何か食べた（大盛）', '?++'=>'何か食べた（特盛）', '?0'=>'何も食べない', '?P'=>'写真のみ'}
