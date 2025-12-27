@@ -217,7 +217,7 @@ def html_nav( user, l, db )
     sum_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initCB( 'init' )\">#{cb}</button>"
     recipe_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"recipeList( 'init' )\">#{l[:recipel]}</button>"
     menu_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initMT( 'init' )\">#{mb}</button>"
-    set_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"menuList( 'init' )\">#{l[:menul]}</button>"
+    mtray_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"intMTL( 'init' )\">#{l[:menul]}</button>"
     config_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"configInit( 'init' )\">#{l[:gear]}</button>"
   else
     cb = "#{l[:cboard]} <span class='badge badge-pill badge-secondary' id='CBN'>#{cb_num}</span>"
@@ -227,7 +227,7 @@ def html_nav( user, l, db )
     sum_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{cb}</button></a>"
     recipe_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:recipel]}</button></a>"
     menu_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{mb}</button></a>"
-    set_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:menul]}</button></a>"
+    mtray_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:menul]}</button></a>"
     config_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:gear]}</button></a>"
   end
 
@@ -272,7 +272,7 @@ html = <<-"HTML"
     #{sum_button}
     #{recipe_button}
     #{menu_button}
-    #{set_button}
+    #{mtray_button}
     <button type="button" class="btn btn-outline-secondary btn-sm nav_button" onclick="bookOpen( 'books/books.html', 1 )">#{l[:book]}</button>
     #{config_button}
 </nav>

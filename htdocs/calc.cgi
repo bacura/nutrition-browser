@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser magic calc 0.0.9 (2025/02/18)
+#Nutrition browser magic calc 0.1.0 (2025/12/27)
 
 #==============================================================================
 #STATIC
@@ -12,7 +12,7 @@ fct_num = 14
 #==============================================================================
 #LIBRARY
 #==============================================================================
-require './probe'
+require './soul'
 require './brain'
 
 #==============================================================================
@@ -53,8 +53,8 @@ user = User.new( @cgi )
 db = Db.new( user, @debug, false )
 l = language_pack( user.language )
 
-r = db.query( "SELECT icalc FROM cfg WHERE user='#{user.name}';", false )
-fct_num = r.first['icalc'].to_i unless r.first['icalc'].to_i == 0
+res = db.query( "SELECT icalc FROM cfg WHERE user=?", false, [user.name] )&.first
+fct_num = res['icalc'].to_i unless res['icalc'].to_i == 0
 
 
 #### Getting POST data
@@ -65,10 +65,10 @@ frct_mode = @cgi['frct_mode']
 frct_accu = @cgi['frct_accu']
 palette_ = @cgi['palette']
 
-if ew_mode == nil || ew_mode == ''
-	r = db.query( "SELECT calcc FROM #{$TB_CFG} WHERE user='#{user.name}';",false )
-	if r.first && r.first['calcc'] != nil
-		a = r.first['calcc'].split( ':' )
+if ew_mode.to_s.empty?
+	res = db.query( "SELECT calcc FROM #{$TB_CFG} WHERE user=?",false, [user.name] )&.first
+	unless res['calcc']&.to_s.empty?
+		a = res['calcc'].split( ':' )
 		palette_ = a[0]
 		ew_mode = a[1].to_i
 		frct_mode = a[2].to_i
@@ -80,7 +80,6 @@ if ew_mode == nil || ew_mode == ''
 		frct_accu = 1
 	end
 end
-
 
 ew_mode = ew_mode.to_i
 frct_mode = frct_mode.to_i
@@ -97,25 +96,25 @@ end
 
 
 puts 'Extracting SUM data <br>' if @debug
-r = db.query( "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user='#{user.name}';", false )
-recipe_name = r.first['name']
-code = r.first['code']
-food_no, food_weight, total_weight = extract_sum( r.first['sum'], r.first['dish'].to_i, ew_mode )
-
+res = db.query( "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
+if res
+	recipe_name = res['name']
+	code = res['code']
+	food_no, food_weight, total_weight = extract_sum( res['sum'], res['dish'].to_i, ew_mode )
+else
+	puts 'S(x_x)UM'
+	exit
+end
 
 puts 'Setting palette <br>' if @debug
 palette = Palette.new( user )
-palette_ = @palette_default_name[1] if palette_ == nil || palette_ == '' || palette_ == '0'
+palette_ = @palette_default_name.first if palette_.to_s.empty? || palette_ == '0'
 palette.set_bit( palette_ )
 
 
 puts 'HTMLパレットの生成 <br>' if @debug
 palette_html = ''
-palette.sets.each_key do |k|
-	s = ''
-	s = 'SELECTED' if palette_ == k
-	palette_html << "<option value='#{k}' #{s}>#{k}</option>"
-end
+palette.sets.each_key do |k| palette_html << "<option value='#{k}' #{$SELECT[palette_ == k]}>#{k}</option>" end
 
 
 puts 'FCT Calc<br>' if @debug
@@ -196,7 +195,7 @@ end
 
 
 puts 'HTML <br>' if @debug
-html = <<-"HTML"
+html = <<~"HTML"
 <div class='container-fluid'>
 	<div class='row'>
 		<div class='col' id='calc'><h5>#{l[:calc]}: #{recipe_name}</h5></div>
@@ -232,7 +231,7 @@ html = <<-"HTML"
 
 		<div class='col-2'></div>
 		<div class='col-1'>
-			<a href='plain-calc.cgi?uname=#{user.name}&code=#{code}&palette=#{palette_}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:raw]}</a>
+			<a href='calc-txt.cgi?uname=#{user.name}&code=#{code}&palette=#{palette_}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:raw]}</a>
 		</div>
     </div>
 </div>
@@ -249,7 +248,7 @@ puts html
 #==============================================================================
 
 puts 'Updating Calculation option <br>' if @debug
-db.query( "UPDATE #{$TB_CFG} SET calcc='#{palette_}:#{ew_mode}:#{frct_mode}:#{frct_accu}' WHERE user='#{user.name}';", true )
+db.query( "UPDATE #{$TB_CFG} SET calcc=? WHERE user=?", true, ["#{palette_}:#{ew_mode}:#{frct_mode}:#{frct_accu}", user.name] )
 
 #==============================================================================
 # FRONT SCRIPT START
@@ -258,22 +257,14 @@ if command == 'init'
 	js = <<-"JS"
 <script type='text/javascript'>
 
-var postReqCalc = ( command, data, successCallback ) => {
-	$.post( '#{myself}', { command, ...data })
-		.done( successCallback )
-		.fail(( jqXHR, textStatus, errorThrown ) => {
-			console.error( "Request failed: ", textStatus, errorThrown );
-			alert( "An error occurred. Please try again." );
-		});
-};
-
-// 成分計算表の再計算ボタンを押してL2にリストを表示
+// Recalc
 var recalcView = ( code ) => {
-	const palette = $( "#palette" ).val();
-	const frct_mode = $( "#frct_mode" ).val();
-	const frct_accu = $( "#frct_accu" ).prop( "checked" ) ? 1 : 0;
-	const ew_mode   = $( "#ew_mode" ).prop( "checked" ) ? 1 : 0;
-	postReqCalc( 'view', { code, palette, frct_mode, frct_accu, ew_mode }, data => $( "#L2" ).html( data ));
+	const palette = document.getElementById( 'palette' ).value;
+	const frct_mode = document.getElementById( 'frct_mode' ).value;
+	const frct_accu = document.getElementById( "frct_accu" ).checked ? 1 : 0;
+	const ew_mode = document.getElementById( "ew_mode" ).checked ? 1 : 0;
+
+	postLayer( '#{myself}', 'view', true, 'L2', { code, palette, frct_mode, frct_accu, ew_mode });
 };
 
 </script>

@@ -234,7 +234,7 @@ end
 
 
 class FCT
-  attr_accessor :items, :names, :units, :frcts, :solid, :total, :fns, :foods, :weights, :refuses, :total_weight, :zname
+  attr_accessor :items, :names, :units, :frcts, :solid, :total, :fns, :foods, :foods_, :weights, :refuses, :total_weight, :zname
 
   def initialize( user, item_, name_, unit_, frct_, frct_accu = 1, frct_mode = 0 )
     @user = user
@@ -248,6 +248,7 @@ class FCT
     @frcts = []
     @fns = []
     @foods = []
+    @foods_ = []
     @weights = []
     @refuses = []
     @solid = []
@@ -313,22 +314,23 @@ class FCT
           q = "SELECT * from #{$TB_FCT} WHERE FN='#{e}';"
           qq = "SELECT * from #{$TB_TAG} WHERE FN='#{e}';"
         end
-        res = $DB.query( q )
-        if res.first
+        res = $DB.query( q )&.first
+        if res
 
           @fns << e
           a = []
           @items.each do |ee|
             if ee != 'REFUSE'
-              a << res.first[ee]
+              a << res[ee]
             else
-              @refuses << res.first[ee]
+              @refuses << res[ee]
             end
           end
 
           @solid << Marshal.load( Marshal.dump( a ))
-          res2 = $DB.query( qq )
-          @foods << bind_tags( res2 )
+          res2 = $DB.query( qq )&.first
+          @foods << tagnames( res2 )
+          @foods_ << res2['name']
           @weights << food_weight[c]
         else
           c -= 1

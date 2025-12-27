@@ -23,18 +23,18 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		:meal 		=> "お膳",\
-		:reset 		=> "お片付け",\
-		:command 	=> "操作",\
-		:photo	 	=> "写真",\
-		:name 		=> "献立名",\
-		:tag 		=> "属性",\
-		:edit 		=> "献立編集",\
-		:calc 		=> "栄養計算",\
-		:analysis 	=> "基本解析",\
-		:up 		=> "<img src='bootstrap-dist/icons/chevron-up.svg' style='height:1.5em; width:1.5em;'>",\
-		:down 		=> "<img src='bootstrap-dist/icons/chevron-down.svg' style='height:1.5em; width:1.5em;'>",\
-		:eraser 	=> "<img src='bootstrap-dist/icons/eraser.svg' style='height:1.8em; width:1.8em;'>",\
+		meal: 		"お膳",
+		reset: 		"お片付け",
+		command: 	"操作",
+		photo:	 	"写真",
+		name: 		"献立名",
+		tag: 		"属性",
+		edit: 		"献立編集",
+		calc: 		"栄養計算",
+		analysis: 	"基本解析",
+		up: 		"<img src='bootstrap-dist/icons/chevron-up.svg' style='height:1.5em; width:1.5em;'>",
+		down: 		"<img src='bootstrap-dist/icons/chevron-down.svg' style='height:1.5em; width:1.5em;'>",
+		eraser: 	"<img src='bootstrap-dist/icons/eraser.svg' style='height:1.8em; width:1.8em;'>"
 	}
 
 	return l[language]
@@ -168,8 +168,8 @@ end
 html << "	<br>"
 html << "	<div class='row'>"
 html << "		<div class='col-2'><button type='button' class='btn btn-primary btn-sm' onclick=\"initMenu( '#{mt.code}' )\">#{l[:edit]}</button></div>"
-html << "		<div class='col-2'><button type='button' class='btn btn-primary btn-sm' onclick=\"initCalcMenu( '#{mt.code}' )\">#{l[:calc]}</button></div>"
-html << "		<div class='col-2'><button type='button' class='btn btn-primary btn-sm' onclick=\"menuAnalysis( '#{mt.code}' )\">#{l[:analysis]}</button></div>"
+html << "		<div class='col-2'><button type='button' class='btn btn-primary btn-sm' onclick=\"initTMCalc( '#{mt.code}' )\">#{l[:calc]}</button></div>"
+html << "		<div class='col-2'><button type='button' class='btn btn-primary btn-sm' onclick=\"initMTAnalysis( '#{mt.code}' )\">#{l[:analysis]}</button></div>"
 html << "	</div>"
 html << "	<div class='code'>#{mt.code}</div>"
 html << "</div>"
@@ -187,23 +187,14 @@ mt.update_db
 # FRONT SCRIPT START
 #==============================================================================
 if command == 'init' || command == 'load'
-	js = <<-"JS"
+	js = <<~"JS"
 <script type='text/javascript'>
-
-var postReq = ( command, data, successCallback ) => {
-	$.post( '#{myself}', { command, ...data })
-		.done( successCallback )
-		.fail(( jqXHR, textStatus, errorThrown ) => {
-			console.error( "Request failed: ", textStatus, errorThrown );
-			alert( "An error occurred. Please try again." );
-		});
-};
 
 //
 var clearMT = ( order, code ) => {
 	if( order == 'all'){
 		if( document.getElementById( 'meal_all_check' ).checked ){
-			postReq( 'clear', { order:'all', code }, data => $( "#L1" ).html( data ));
+			postLayer( '#{myself}', 'clear', true, 'L1', { order:'all', code });
 			addingMT( '' );
 
 			displayVIDEO( 'Menu cleared' );
@@ -214,19 +205,19 @@ var clearMT = ( order, code ) => {
 			displayVIDEO( 'Check! (>_<)' );
 		}
 	} else{
-		postReq( 'clear', { order, code }, data => $( "#L1" ).html( data ));
+		postLayer( '#{myself}', 'clear', true, 'L1', { order, code });
 		addingMT( '' );
 	}
 };
 
 //
 var upperMT = ( order, code ) => {
-	postReq( 'upper', { order, code }, data => $( "#L1" ).html( data ));
+	postLayer( '#{myself}', 'upper', true, 'L1', { order, code });
 };
 
 //
 var lowerMT = ( order, code ) => {
-	postReq( 'lower', { order, code }, data => $( "#L1" ).html( data ));
+	postLayer( '#{myself}', 'lower', true, 'L1', { order, code });
 };
 
 </script>

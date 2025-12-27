@@ -38,7 +38,7 @@ general_ = '';
 // Paging /////////////////////////////////////////////////////////////////////////
 
 // initialization
-window.onload = function(){
+window.onload = () => {
 	if( !!document.getElementById( "L1" )){
 		world = document.getElementById( "WORLD" );
 		bwl1 = document.getElementById( "L1" );
@@ -58,7 +58,7 @@ window.onload = function(){
 
 // Closing browse windows
 // This feature will be discontinued in the future.
-closeBroseWindows = function( num ){
+const closeBroseWindows = ( num ) => {
 	switch( Number( num )){
 	case 0: document.getElementById( "L1" ).style.display = 'none';
 	case 1: document.getElementById( "L2" ).style.display = 'none';
@@ -71,7 +71,7 @@ closeBroseWindows = function( num ){
 
 
 // Reopening browse windows
-displayBW = function(){
+const displayBW = () => {
 	if( dl1 ){ bwl1.style.display = 'block'; }else{ bwl1.style.display = 'none'; }
 	if( dl2 ){ bwl2.style.display = 'block'; }else{ bwl2.style.display = 'none'; }
 	if( dl3 ){ bwl3.style.display = 'block'; }else{ bwl3.style.display = 'none'; }
@@ -83,7 +83,7 @@ displayBW = function(){
 
 
 // Resetting level status
-flashBW = function(){
+const flashBW = () => {
 	dl1 = false;
 	dl2 = false;
 	dl3 = false;
@@ -95,7 +95,7 @@ flashBW = function(){
 
 
 // Pushing level status to hide
-pushBW = function(){
+const pushBW = () => {
 	hl1 = dl1;
 	hl2 = dl2;
 	hl3 = dl3;
@@ -107,7 +107,7 @@ pushBW = function(){
 
 
 // Pulling level status from hide
-pullBW = function(){
+const pullBW = () => {
 	dl1 = hl1;
 	dl2 = hl2;
 	dl3 = hl3;
@@ -120,7 +120,7 @@ pullBW = function(){
 
 // Opning menu LINE
 // This feature will be discontinued in the future.
-displayLINE = function( msg ){
+const displayLINE = ( msg ) => {
 	if( msg == 'on' ){
 		line.style.display = 'block';
 	}else if( msg == 'off' ){
@@ -133,7 +133,7 @@ displayLINE = function( msg ){
 
 
 // Displaying message on VIDEO
-displayVIDEO = function( msg ){
+const displayVIDEO = ( msg ) => {
 	video.innerHTML = msg;
 	video.style.display = 'block';
 	video.style.color = 'lime';
@@ -146,7 +146,7 @@ displayVIDEO = function( msg ){
 
 
 // Displaying message on VIDEO rec mode
-displayREC = function(){
+const displayREC = () => {
 	video.innerHTML = "●";
 	video.style.display = 'block';
 	video.style.color = 'orangered';
@@ -159,7 +159,7 @@ displayREC = function(){
 
 
 // Exchanging menu sets
-changeMenu = function( user_status ){
+const changeMenu = ( user_status ) => {
 	switch( menu_status ){
 		case 0:
 			document.getElementById( "guild_menu" ).style.display = 'inline';
@@ -190,7 +190,7 @@ changeMenu = function( user_status ){
 
 
 // changing help to
-toHelp = function( page ){
+const toHelp = ( page ) => {
 	if( page==null ){
 		help.innerHTML = "<a href='https://bacura.jp/?page_id=" + help_tp + "' target='manual'><img src='bootstrap-dist/icons/question-circle-gray.svg' style='height:3em; width:2em;'></a>";
 	}else{
@@ -203,7 +203,7 @@ toHelp = function( page ){
 /////////////////////////////////////////////////////////////////////////////////
 // Photo to modal /////////////////////////////////////////////////////////////////////////
 
-const modalPhoto = function( code ){
+const modalPhoto = ( code ) => {
 	$.post( "photo.cgi", { command:'modal_body', code:code }, function( data ){
 		$( "#modal_body" ).html( data );
 		$.post( "photo.cgi", { command:'modal_label', code:code }, function( data ){
@@ -216,6 +216,7 @@ const modalPhoto = function( code ){
 
 /////////////////////////////////////////////////////////////////////////////////
 // Post to layler /////////////////////////////////////////////////////////////////////////
+//の簡易ポスト用、javascriptが無視されるので注意。javascriptを活かす場合は$.post()を使え
 
 const postLayer = async ( script, command, transition, layer, requestData, successCallback ) => {
     try {
@@ -243,7 +244,7 @@ const postLayer = async ( script, command, transition, layer, requestData, succe
 
 
 // Get all DOM fields
-const getDOMdata = function( fieldList, prefix ){
+const getDOMdata = ( fieldList, prefix ) => {
 	let data = {};
 	fieldList.forEach( field => {
 		data[field] = document.getElementById( prefix + field ).value;
@@ -856,10 +857,10 @@ const refreshMT = function(){
 
 /////////////////////////////////////////////////////////////////////////////////
 // Food tray interface ////////////////////////////////////////////////////////////////////////
-
-const initMT = function( com, code ){
+const initMT = ( com, code ) => {
 	$.post( "mtray.cgi", { command:com, code:code }, function( data ){
 		$( "#L1" ).html( data );
+
 		if( com == 'init' ){
 			flashBW();
 			dl1 = true;
@@ -887,11 +888,9 @@ const initMenu = function( code ){
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Set menu list ////////////////////////////////////////////////////////////////////////
-
-// まな板のレシピ読み込みボタンを押してL1に献立リストを表示
-var menuList = function( com ){
-	$.post( "menul.cgi", { command:com }, function( data ){
+// meal tray list ////////////////////////////////////////////////////////////////////////
+const intMTL = ( com ) => {
+	$.post( "mtrayl.cgi", { command:com }, function( data ){
 		$( "#L1" ).html( data );
 
 		flashBW();
@@ -902,11 +901,9 @@ var menuList = function( com ){
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-// Calculation of menu ////////////////////////////////////////////////////////////////////////
-
-// Calculation of menu
-const initCalcMenu = function( code ){
-	$.post( "menu-calc.cgi", { command:'init', code:code }, function( data ){
+// Calculation of meal tray ////////////////////////////////////////////////////////////////////////
+const initTMCalc = ( code ) => {
+	$.post( "mtray-calc.cgi", { command:'init', code:code }, function( data ){
 		$( "#L2" ).html( data );
 
 		flashBW();
@@ -918,11 +915,9 @@ const initCalcMenu = function( code ){
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-// Analysis of menu ////////////////////////////////////////////////////////////////////////
-
-// Analysis of menu
-const menuAnalysis = function( code ){
-	$.post( "menu-analysis.cgi", { command:'init', code:code }, function( data ){
+// Analysis of meal tray ////////////////////////////////////////////////////////////////////////
+const initMTAnalysis = ( code ) => {
+	$.post( "mtray-analysis.cgi", { command:'init', code:code }, function( data ){
 		$( "#L2" ).html( data );
 
 		flashBW();
