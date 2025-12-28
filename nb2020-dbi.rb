@@ -81,7 +81,7 @@ def db_create_rr_user()
 		$DBA.query( query )
 		query = "GRANT SELECT, UPDATE ON #{$MYSQL_DB}.#{$TB_MEMORY} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		puts "#{$MYSQL_USER} has been created."
+		puts "#{$MYSQL_USERR} has been created."
 	end
 end
 

@@ -137,48 +137,44 @@ when 'init', 'weight', 'cb', 'cbp'
 
 	# 正規食品
 	sub_query = class_no.to_i != 0 ? " AND class#{class_no}='#{class_name}'" : ''
-	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND status='9'#{sub_query};", false )
-	if r.first
-		r.each do |e|
-			food_no_list << e['FN']
-			food_name_list << e['name']
-			tag1_list << e['tag1']
-			tag2_list << e['tag2']
-			tag3_list << e['tag3']
-			tag4_list << e['tag4']
-			tag5_list << e['tag5']
-		end
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG=? AND name=? AND status='9'#{sub_query};", false, [fg_key, food_name] )
+	r.each do |e|
+		food_no_list << e['FN']
+		food_name_list << e['name']
+		tag1_list << e['tag1']
+		tag2_list << e['tag2']
+		tag3_list << e['tag3']
+		tag4_list << e['tag4']
+		tag5_list << e['tag5']
 	end
 
 
 	# 擬似食品
 	sub_query = class_no.to_i != 0 ? " AND class#{class_no}='#{class_name}'" : ''
-	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG='#{fg_key}' AND name='#{food_name}' AND (( user='#{user.name}' AND status='1' ) OR status='2' OR status='3' )#{sub_query};", false )
-	if r.first
-		r.each do |e|
-			food_no_list << e['FN']
-			food_name_list << e['name']
-			tag1_list << e['tag1']
-			tag2_list << e['tag2']
-			tag3_list << e['tag3']
-			tag4_list << e['tag4']
-			tag5_list << e['tag5']
-		end
+	r = db.query( "SELECT * FROM #{$TB_TAG} WHERE FG=? AND name=? AND (( user=? AND status='1' ) OR status='2' OR status='3' )#{sub_query};", false, [fg_key, food_name, user.name] )
+	r.each do |e|
+		food_no_list << e['FN']
+		food_name_list << e['name']
+		tag1_list << e['tag1']
+		tag2_list << e['tag2']
+		tag3_list << e['tag3']
+		tag4_list << e['tag4']
+		tag5_list << e['tag5']
 	end
 
  	# 簡易表示の項目
  	fc_items = []
 	fc_items_html = ''
 
-	r = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE user='#{user.name}' AND name='簡易表示用';", false )
-	if r.first
-		palette = r.first['palette']
+	res = db.query( "SELECT * FROM #{$TB_PALETTE} WHERE user=? AND name=?", false, [user.name, @palette_default_name.first] )&.first
+	if res
+		palette = res['palette']
 		palette.size.times do |c|
 			fc_items << @fct_item[c] if palette[c] == '1'
 		end
 	else
-		$PALETTE_DEFAULT[user.language][0].size.times do |c|
-			fc_items << @fct_item[c] if $PALETTE_DEFAULT[user.language][0][c] == '1'
+		@palette_default.first.size.times do |c|
+			fc_items << @fct_item[c] if @palette_default.first[c] == '1'
 		end
 	end
 	fc_items.each do |e| fc_items_html << "<th align='right'>#{@fct_name[e]}</th>" end
@@ -190,29 +186,27 @@ when 'init', 'weight', 'cb', 'cbp'
 		pseudo_flag = false
 		# 栄養素の一部を取得
 		if /U/ =~ food_no_list[c]
-			query = "SELECT * FROM #{$TB_FCTP} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';"
+			res = db.query( "SELECT * FROM #{$TB_FCTP} WHERE FN=? AND user=?", false, [food_no_list[c], user.name] )&.first
 			pseudo_flag = true
 		elsif /P|C/ =~ food_no_list[c]
-			query = "SELECT * FROM #{$TB_FCTP} WHERE FN='#{food_no_list[c]}';"
+			res = db.query( "SELECT * FROM #{$TB_FCTP} WHERE FN=?", false, [food_no_list[c]] )&.first
 			pseudo_flag = true
 		else
-			query = "SELECT * FROM #{$TB_FCT} WHERE FN='#{food_no_list[c]}';"
+			res = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN=?", false, [food_no_list[c]] )&.first
 		end
-		p query if @debug
 
-		res = db.query( query, false )
-		unless res.first
+		unless res
 			puts "<span class='error'>[FCTP load]ERROR!!<br>"
 			puts "code:#{food_no_list[c]}</span><br>"
-			db.query( "DELETE FROM #{$TB_TAG} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
-			db.query( "DELETE FROM #{$TB_EXT} WHERE FN='#{food_no_list[c]}' AND user='#{user.name}';", true )
+			db.query( "DELETE FROM #{$TB_TAG} WHERE FN=? AND user=?", true, [food_no_list[c], user.name] )
+			db.query( "DELETE FROM #{$TB_EXT} WHERE FN=? AND user=?", true, [food_no_list[c], user.name] )
 			exit()
 		end
 
 		sub_components = ''
 		fc_items.each do |e|
-			if res.first[e] != nil
-				t = num_opt( res.first[e], food_weight, frct_mode, @fct_frct[e] )
+			if res[e] != nil
+				t = num_opt( res[e], food_weight, frct_mode, @fct_frct[e] )
 				sub_components << "<td align='center'>#{t}</td>"
 			else
 				sub_components << "<td align='center'><span class='error'>[FCTP load]ERROR!!</td>"
@@ -241,16 +235,16 @@ when 'init', 'weight', 'cb', 'cbp'
 		gm_dic = ''
 
 		if user.status >= 8
-			res = db.query( "SELECT * FROM #{$TB_EXT} WHERE FN='#{food_no_list[c]}';", false )
-			if res.first
-				bc = res.first['unit'] != '{"g":1}' ? 'btn-outline-danger' : 'btn-outline-secondary'
+			res = db.query( "SELECT * FROM #{$TB_EXT} WHERE FN=?", false, [food_no_list[c]] )&.first
+			if res
+				bc = res['unit'] != '{"g":1}' ? 'btn-outline-danger' : 'btn-outline-secondary'
 				gm_unitc = "<button type='button' class='btn #{bc} btn-sm' onclick=\"directUnit( '#{food_no_list[c]}' )\">#{l[:unit]}</button>"
 #				gm_color = "<button type='button' class='btn btn-outline-danger btn-sm' onclick=\"directColor( '#{food_no_list[c]}' )\">#{l[:color]}</button>"
 
-				bc = res.first['allergen'].to_i > 0 ? 'btn-outline-danger' : 'btn-outline-secondary'
+				bc = res['allergen'].to_i > 0 ? 'btn-outline-danger' : 'btn-outline-secondary'
 				gm_allergen = "<button type='button' class='btn btn #{bc} btn-sm' onclick=\"directAllergen( '#{food_no_list[c]}' )\">#{l[:allergen]}</button>"
 
-				bc = res.first['shun1s'] == 0 || res.first['shun1s'] == ''|| res.first['shun1s'] == nil ? 'btn-outline-secondary' : 'btn-outline-danger'
+				bc = res['shun1s'] == 0 || res['shun1s'] == ''|| res['shun1s'] == nil ? 'btn-outline-secondary' : 'btn-outline-danger'
 				gm_shun = "<button type='button' class='btn #{bc} btn-sm' onclick=\"directShun( '#{food_no_list[c]}' )\">#{l[:shun]}</button>"
 
 				gm_dic = "<button type='button' class='btn btn-outline-info btn-sm' onclick=\"initDic( 'direct', '#{fg_key}', '#{food_name}', '#{food_no_list[c]}' )\">#{l[:dic]}</button>"
