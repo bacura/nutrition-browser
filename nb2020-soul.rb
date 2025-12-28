@@ -15,7 +15,7 @@ require 'json'
 $GM = 'gODoFnUTRITION'
 
 $NBURL = 'https://bacura.jp/nb/'
-$MYURL = 'https://eiyo-b.com/'
+$MYURL = 'https://bacura.jp/nb/'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
