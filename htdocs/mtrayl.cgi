@@ -1,14 +1,14 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 menu list 0.0.6 (2025/01/04)
+#Nutrition browser 2020 menu list 0.0.7 (2025/12/29)
 
 
 #==============================================================================
 #STATIC
 #==============================================================================
-page_limit = 20
 @debug = false
 myself = File.basename( __FILE__ )
+page_limit = 20
 
 #==============================================================================
 #LIBRARY
@@ -81,24 +81,9 @@ def label_html( db, label, l )
 		end
 	end
 
-	school_flavor = ''
-	if db.user.status >= 5 && db.user.status != 6
-		school_label_c = 0
-		r = db.query( "SELECT label FROM #{$TB_SCHOOLM} WHERE user='#{db.user.name}';", false )
-		r.each do |e|
-			if e['label'] != nil
-				school_flavor = 'btn-info'
-				a = e['label'].split( "\t" )
-				a.each do |ee|
-					school_label_c += 1
-					html << "<option value='#{ee}' id='school_label_list#{school_label_c}' style='display:none' #{$SELECT[ee == label]}>#{ee}</option>"
-				end
-			end
-		end
-	end
 	html << '</select>'
 
-	return html, normal_label_c, school_label_c, school_flavor
+	return html, normal_label_c
 end
 
 
@@ -138,9 +123,9 @@ user = User.new( @cgi )
 l = language_pack( user.language )
 db = Db.new( user, @debug, false )
 
-r = db.query( "SELECT icache, menul FROM cfg WHERE user='#{user.name}';", false )
-if r.first
-	if r.first['icache'].to_i == 1
+res = db.query( "SELECT icache, menul FROM cfg WHERE user=?", false, [user.name] )&.first
+if res
+	if res['icache'].to_i == 1
 		html_init_cache( nil )
 	else
 		html_init( nil )
@@ -169,18 +154,18 @@ end
 #### Getting page
 case command
 when 'init'
-	r = db.query( "SELECT menul FROM #{$TB_CFG} WHERE user='#{user.name}';", false )
-	if r.first
-		if r.first['menul'] != nil
-			a = r.first['menul'].split( ':' )
-			page = a[0].to_i
-			range = a[1].to_i
-			label = a[2]
-		end
+	res = db.query( "SELECT menul FROM #{$TB_CFG} WHERE user=?", false, [user.name] )&.first
+
+	unless res['menul'].to_s.empty?
+		a = res['menul'].split( ':' )
+		page = a[0].to_i
+		range = a[1].to_i
+		label = a[2]
 	end
+
 when 'delete'
 	puts 'Deleting menu' if @debug
-	r = db.query( "SELECT code FROM #{$TB_MEDIA} WHERE user='#{user.name}' and orign='#{code}';", false )
+	r = db.query( "SELECT code FROM #{$TB_MEDIA} WHERE user=? and orign=?", false, [user.name, code] )
 	r.each do |e|
 		File.unlink "#{$PHOTO_PATH}/#{e.code}-tns.jpg" if File.exist?( "#{$PHOTO_PATH}/#{e.code}-tns.jpg" )
 		File.unlink "#{$PHOTO_PATH}/#{e.code}-tn.jpg" if File.exist?( "#{$PHOTO_PATH}/#{e.code}-tn.jpg" )
@@ -203,9 +188,9 @@ when 'import'
 #### 献立のインポート
 #### 不完全
 	# インポート元の読み込み
-	r = db.query( "SELECT * FROM #{$TB_MENU} WHERE code='#{code}';", false )
+	res = db.query( "SELECT * FROM #{$TB_MENU} WHERE code=?", false, [code] )&.first
 
-	if r.first
+	if res
 		#レシピデータベースのの更新(新規)
 		new_code = generate_code( user.name, 'm' )
 #		db.query("INSERT INTO #{$TB_MENU} SET code='#{new_code}', user='#{user.name}', public='0', name='*#{r.first['name']}', type='#{r.first['type']}', role='#{r.first['role']}', tech='#{r.first['tech']}', time='#{r.first['time']}', cost='#{r.first['cost']}', sum='#{r.first['sum']}', protocol='#{r.first['protocol']}', fig1='0', fig2='0', fig3='0', date='#{$DATETIME}';", false, @debug )
@@ -235,7 +220,7 @@ html_range = range_html( range, l )
 
 
 puts "HTML label<br>" if @debug
-html_label, normal_label_c, school_label_c, school_flavor = label_html( db, label, l )
+html_label, normal_label_c = label_html( db, label, l )
 
 
 puts "Menu list<br>" if @debug
@@ -343,7 +328,6 @@ html = <<-"HTML"
 		</div>
 		<div class='col-4'>
 			<div class="input-group input-group-sm">
-				<label class="input-group-text #{school_flavor}" id='label_groupl' onclick="switchLabelsetl( '#{normal_label_c}', '#{school_label_c}' )">#{l[:label]}</label>
 				#{html_label}
 			</div>
 		</div>
@@ -388,7 +372,7 @@ puts html
 #==============================================================================
 puts 'Saving menul config<br>' if @debug
 menul = "#{page}:#{range}:#{label}"
-db.query( "UPDATE #{$TB_CFG} SET menul='#{menul}' WHERE user='#{user.name}';", true )
+db.query( "UPDATE #{$TB_CFG} SET menul=? WHERE user=?", true, [menul, user.name] )
 
 
 #==============================================================================
@@ -435,33 +419,6 @@ var menuImport = ( code ) => {
 		displayVIDEO( code );
 	});
 };
-
-
-// Changing label set
-var switchLabelsetl = ( normal_label_c, school_label_c ) => {
-	const label_status = $( '#normal_label_list0' ).css( 'display' );
-
-	if ( school_label_c > 0 ) {
-		if ( label_status === 'inline' ) {
-			for ( let i = 0; i <= normal_label_c; i++ ) {
-				$( `#normal_label_list${i}` ).hide();
-			}
-			for (let i = 1; i <= school_label_c; i++) {
-				$( `#school_label_list${i}` ).css( 'display', 'inline' );
-			}
-			$( '#label_list' ).prop( 'selectedIndex', normal_label_c + 1 );
-		} else {
-			for ( let i = 0; i <= normal_label_c; i++ ) {
-				$(`#normal_label_list${i}`).css('display', 'inline');
-			}
-			for ( let i = 1; i <= school_label_c; i++ ) {
-				$( `#school_label_list${i}` ).hide();
-			}
-			$( '#label_list' ).prop( 'selectedIndex', 0 );
-		}
-	}
-};
-
 
 </script>
 

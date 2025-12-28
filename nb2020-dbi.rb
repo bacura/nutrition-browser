@@ -688,7 +688,7 @@ def cfg_init()
 	if res.first
 		puts 'cfg table already exists.'
 	else
-		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), fcze VARCHAR(128), media VARCHAR(128), school VARCHAR(512), allergen VARCHAR(3));'
+		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), fcze VARCHAR(128), media VARCHAR(128), allergen VARCHAR(3));'
 		$DB.query( query )
 		puts 'cfg table has been created.'
 	end

@@ -67,7 +67,7 @@ palette_ = @cgi['palette']
 
 if ew_mode.to_s.empty?
 	res = db.query( "SELECT calcc FROM #{$TB_CFG} WHERE user=?",false, [user.name] )&.first
-	unless res['calcc']&.to_s.empty?
+	unless res['calcc'].to_s.empty?
 		a = res['calcc'].split( ':' )
 		palette_ = a[0]
 		ew_mode = a[1].to_i
