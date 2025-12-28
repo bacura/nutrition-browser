@@ -25,7 +25,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		save:       "保存",
 		delete:     "削除",
 		food_name:  "食品名",
@@ -70,7 +70,7 @@ def generate_food_no( db, food_group, prefix, food_base_no )
 	food_status = 2 if prefix[0, 1] == 'C'
 	food_status = 3 if prefix[0, 1] == 'P'
 
-	query = "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE FG=? AND FN=? AND status=?"
+	query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND FN=? AND status=?"
 	condition = [food_group, food_no, food_status]
 	if food_status == 1
 		query += " AND user=?"
@@ -78,7 +78,7 @@ def generate_food_no( db, food_group, prefix, food_base_no )
 	end
 
 	unless db.query( query, false, condition )&.first
-		select_query = "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE FG=? AND status=?"
+		select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
 		select_condition = [food_group, food_status]
 		if food_status == 1
 			select_query += " AND user=?"
@@ -194,7 +194,7 @@ puts "Loading tag<br>" if @debug
 tag_user = nil
 if food_no != ''
 	if command == 'init'
-		res = db.query( "select * from #{$MYSQL_TB_TAG} WHERE FN=? AND ( user=? OR user=? )", false, [food_no, user.name, $GM] )&.first
+		res = db.query( "select * from #{$TB_TAG} WHERE FN=? AND ( user=? OR user=? )", false, [food_no, user.name, $GM] )&.first
 		if res
 			tag_user = res['user']
 			class1 = res['class1']
@@ -209,7 +209,7 @@ if food_no != ''
 		end
 
 	elsif command == 'save' || command == 'switch'
-		res = db.query(  "select * from #{$MYSQL_TB_TAG} WHERE FN=? AND user=?", false, [food_no, user.name] )&.first
+		res = db.query(  "select * from #{$TB_TAG} WHERE FN=? AND user=?", false, [food_no, user.name] )&.first
 		tag_user = res['user'] if res
 	end
 end
@@ -262,22 +262,22 @@ if command == 'save'
 	move_flag = true if food_no_new != food_no && food_no != ''
 
 	puts 'Checking Food number<br>' if @debug
-	if db.query(  "select FN from #{$MYSQL_TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$MYSQL_TB_TAG} SET FG=?,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
+	if db.query(  "select FN from #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+		db.query(  "UPDATE #{$TB_TAG} SET FG=?,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
 	else
-		db.query(  "INSERT INTO #{$MYSQL_TB_TAG} SET FG=?,SID='',name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=?,FN=?,user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
+		db.query(  "INSERT INTO #{$TB_TAG} SET FG=?,SID='',name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=?,FN=?,user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
 	end
 
-	if db.query(  "select FN from #{$MYSQL_TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$MYSQL_TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
+	if db.query(  "select FN from #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+		db.query(  "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
 	else
-		db.query(  "INSERT INTO #{$MYSQL_TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
+		db.query(  "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
 	end
 
-	if db.query(  "select FN from #{$MYSQL_TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$MYSQL_TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
+	if db.query(  "select FN from #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+		db.query(  "UPDATE #{$TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
 	else
-		db.query(  "INSERT INTO #{$MYSQL_TB_EXT} SET  color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
+		db.query(  "INSERT INTO #{$TB_EXT} SET  color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
 	end
 
 	food_weight = 100
@@ -288,12 +288,12 @@ end
 puts "Deleting pseudo food<br>" if @debug
 if command == 'delete' || move_flag
 	puts "DELETE<br>" if @debug
-	res = db.query( "SELECT FG, name FROM #{$MYSQL_TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-	db.query(  "DELETE FROM #{$MYSQL_TB_DIC} WHERE user=? AND FG=? AND org_name", true, [user.name, res['FG'], res['name'] ) if res
+	res = db.query( "SELECT FG, name FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+	db.query(  "DELETE FROM #{$TB_DIC} WHERE user=? AND FG=? AND org_name", true, [user.name, res['FG'], res['name']] ) if res
 
-	db.query(  "DELETE FROM #{$MYSQL_TB_TAG} WHERE user=? AND FN=?", true, [user.name, food_no] )
-	db.query(  "DELETE FROM #{$MYSQL_TB_FCTP} WHERE user=? AND FN=?", true, [user.name, food_no] )
-	db.query(  "DELETE FROM #{$MYSQL_TB_EXT} WHERE user=? AND FN=?", true, [user.name, food_no] )
+	db.query(  "DELETE FROM #{$TB_TAG} WHERE user=? AND FN=?", true, [user.name, food_no] )
+	db.query(  "DELETE FROM #{$TB_FCTP} WHERE user=? AND FN=?", true, [user.name, food_no] )
+	db.query(  "DELETE FROM #{$TB_EXT} WHERE user=? AND FN=?", true, [user.name, food_no] )
 
 	unless move_flag
 		prefix = ''

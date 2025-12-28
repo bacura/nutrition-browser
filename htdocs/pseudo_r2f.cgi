@@ -23,7 +23,7 @@ def language_pack( language )
 	l = Hash.new
 
 	#Japanese
-	l['jp'] = {
+	l['ja'] = {
 		save:		"保存",
 		food_name:	"食品名",
 		food_group:	"食品群",
@@ -42,7 +42,7 @@ def generate_food_no( db, food_group, prefix, food_base_no )
 	food_status = 2 if prefix[0, 1] == 'C'
 	food_status = 3 if prefix[0, 1] == 'P'
 
-	query = "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE FG=? AND FN=? AND status=?"
+	query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND FN=? AND status=?"
 	condition = [food_group, food_no, status]
 	if status == 1
 		query += " AND user=?"
@@ -50,7 +50,7 @@ def generate_food_no( db, food_group, prefix, food_base_no )
 	end
 
 	unless db.query( query, false, condition )&.first
-		select_query = "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE FG=? AND status=?"
+		select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
 		select_condition = [food_group, status]
 		if status == 1
 			select_query += " AND user=?"
@@ -113,7 +113,7 @@ end
 
 
 puts 'Extracting SUM<br>' if @debug
-res = db.query(  "SELECT code, name, sum, dish from #{$MYSQL_TB_SUM} WHERE user=?", false, [user.name] )&.first
+res = db.query(  "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
 if res
 	food_name = res['name'] if food_name == ''
 	recipe_code = res['code']
@@ -218,22 +218,22 @@ if command == 'save'
 		status = 3 if prefix[0, 1] == 'P'
 
 
-		if db.query(  "select FN from #{$MYSQL_TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$MYSQL_TB_TAG} SET FG=?, name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
+		if db.query(  "select FN from #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+			db.query(  "UPDATE #{$TB_TAG} SET FG=?, name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
 		else
-			db.query(  "INSERT INTO #{$MYSQL_TB_TAG} SET FG=?, SID='', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
+			db.query(  "INSERT INTO #{$TB_TAG} SET FG=?, SID='', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
 	 	end
 
-		if db.query(  "select FN from #{$MYSQL_TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$MYSQL_TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
+		if db.query(  "select FN from #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+			db.query(  "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
 		else
-			db.query(  "INSERT INTO #{$MYSQL_TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
+			db.query(  "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
 		end
 
-		if db.query(  "select FN from #{$MYSQL_TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$MYSQL_TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
+		if db.query(  "select FN from #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
+			db.query(  "UPDATE #{$TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
 		else
-			db.query(  "INSERT INTO #{$MYSQL_TB_EXT} SET  color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
+			db.query(  "INSERT INTO #{$TB_EXT} SET  color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
 		end
 	end
 end
