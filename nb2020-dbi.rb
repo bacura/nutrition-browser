@@ -656,10 +656,10 @@ def user_init()
 		$DB.query( query )
 		puts 'user in ext has been created.'
 
-		$DB.query( "INSERT INTO user SET user='#{$GM}', pass='', status='9', language='#{$DEFAULT_LP}', astral=0;" )
+		$DB.query( "INSERT INTO user SET user='#{$GM}', passh='', status='9', language='#{$DEFAULT_LP}', astral=0;" )
 
 		['guest', 'guest2', 'guest3'].each do |e|
-			$DB.query( "INSERT INTO user SET user='#{e}', pass='', status='3', language='#{$DEFAULT_LP}', astral=0;" )
+			$DB.query( "INSERT INTO user SET user='#{e}', passh='', status='3', language='#{$DEFAULT_LP}', astral=0;" )
 		end
 
 		puts 'GM & guests have been registed.'
@@ -801,7 +801,7 @@ def palette_init()
 
 		[$GM, 'guest', 'guest2', 'guest3'].each do |e|
 			0.upto( 3 ) do |i|
-				query = "INSERT INTO palette SET user='#{e}', name='#{$PALETTE_DEFAULT_NAME[$DEFAULT_LP][i]}', palette='#{$PALETTE_DEFAULT[$DEFAULT_LP][i]}';"
+				query = "INSERT INTO palette SET user='#{e}', name='#{@palette_default_name[i]}', palette='#{@palette_default[i]}';"
 				$DB.query( query )
 			end
 		end
@@ -1213,6 +1213,10 @@ $DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}
 db_create_nb()
 db_create_rr()
 
+db_create_nb_user()
+db_create_rr_user()
+
+$DBA.query( "FLUSH PRIVILEGES;" )
 $DBA.close
 
 #==============================================================================
@@ -1268,12 +1272,3 @@ ref_its_init( ref_intake )
 ref_para_init( ref_parallel )
 
 $DB.close
-
-#==============================================================================
-$DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}", :password => "#{admin_pass}", :encoding => "utf8" )
-
-db_create_nb_user()
-db_create_rr_user()
-
-$DBA.query( "FLUSH PRIVILEGES;" )
-$DBA.close
