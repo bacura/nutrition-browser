@@ -24,7 +24,7 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		basic:		"基本解析",
+		basic:		"食品構成表（単献立）",
 		precision: 	"精密合計",
 		weight_ex: 	"予想摂取g",
 		fract: 		"端数",
@@ -103,17 +103,16 @@ puts 'Preparing calc <br>' if @debug
 palette = Palette.new( user )
 palette.set_bit( @palette_default_name[1] )
 
-mt = Tray.new( user )
-recipe = Recipe.new( user )
-
 fct = FCT.new( user, @fct_item, @fct_name, @fct_unit, @fct_frct, frct_accu, frct_mode )
 fct.load_palette( palette.bit )
 
 
 puts 'Calculation<br>' if @debug
+mt = Tray.new( user )
+recipe = Recipe.new( user )
 mt.recipes.each do |e|
 	recipe.load_db( e, true )
-	food_no, food_weight, total_weight = extract_sum( recipe.sum, recipe.dish, ew_mode )
+	food_no, food_weight, dummy = extract_sum( recipe.sum, recipe.dish, ew_mode )
 	fct.set_food( food_no, food_weight, false )
 end
 fct.calc
@@ -123,17 +122,17 @@ fct.digit
 puts 'Counting E<br>' if @debug
 animal_protein = BigDecimal( 0 )
 grain_energy = BigDecimal( 0 )
-fct.fns.size.times do |c|
-	fg = fct.fns[c].sub( /P|U/, '' ).slice( 0, 2 ).to_i
+fct.fns.each.with_index do |e, i|
+	fg = e.sub( /[PUC]/, '' ).slice( 0, 2 ).to_i
 	# 動物性たんぱく質カウント
-	animal_protein += fct.solid[c][1] if fg >= 10 && fg <= 13
+	animal_protein += fct.solid[i][1] if fg >= 10 && fg <= 13
 	# 穀類エネルギーカウント
-	grain_energy += fct.solid[c][0] if fg == 1
+	grain_energy += fct.solid[i][0] if fg == 1
 end
 
 
 puts 'Counting food composition<br>' if @debug
-fch = Hash[ ('01'..'18').map do |key| [key, 0] end ]
+fch = Hash[ ('00'..'18').map do |key| [key, 0] end ]
 wcv = 0
 gycv = 0
 milk_liquid = 0
@@ -143,44 +142,44 @@ miso = 0
 shoyu = 0
 seasoning = 0
 
-fct.fns.size.times do |c|
-	food_group = fct.fns[c].sub( /P|U/, '' ).slice( 0, 2 )
-	fch[food_group] += fct.weights[c]
+fct.fns.each.with_index do |e, i|
+	food_group = e.sub( /[PUC]/, '' ).slice( 0, 2 )
+	fch[food_group] += fct.weights[i]
 
 	case food_group
 	when '06'
 		# 緑黄色野菜の判定
-		res = db.query( "SELECT gycv FROM #{$TB_EXT} WHERE FN=?", false, [fct.fns[c]] )&.first
+		res = db.query( "SELECT gycv FROM #{$TB_EXT} WHERE FN=?", false, [e] )&.first
 		if res['gycv'] == 1
-			gycv += fct.weights[c]
+			gycv += fct.weights[i]
 		else
-			wcv += fct.weights[c]
+			wcv += fct.weights[i]
 		end
 	when '13'
 		# 牛乳と乳製品の判定
-		if fct.fns[c].to_i >= 13001 && fct.fns[c].to_i <= 13006
-			milk_liquid += fct.weights[c]
+		if e.to_i >= 13001 && e.to_i <= 13006
+			milk_liquid += fct.weights[i]
 		else
-			milk_product += fct.weights[c]
+			milk_product += fct.weights[i]
 		end
 	when '17'
 		# 液体だしの乾燥重量化
-		if fct.fns[c].to_i >= 17019 && fct.fns[c].to_i <= 17025
-			fct.weights[c] = fct.weights[c] / 100 * 1.0
-		elsif fct.fns[c].to_i == 17026
-			fct.weights[c] = fct.weights[c] / 100 * 2.5
+		if e.to_i >= 17019 && e.to_i <= 17025
+			fct.weights[i] = fct.weights[i] / 100 * 1.0
+		elsif e.to_i == 17026
+			fct.weights[i] = fct.weights[i] / 100 * 2.5
 		end
 		# 塩の判定
-		if ( fct.fns[c].to_i >= 17012 && fct.fns[c].to_i <= 17014 ) || fct.fns[c].to_i == 17089
-			salt += fct.weights[c]
+		if ( e.to_i >= 17012 && e.to_i <= 17014 ) || e.to_i == 17089
+			salt += fct.weights[i]
 		# 味噌の判定
-		elsif ( fct.fns[c].to_i >= 17044 && fct.fns[c].to_i <= 17050 ) || fct.fns[c].to_i == 17119 || fct.fns[c].to_i == 17120
-			miso += fct.weights[c]
+		elsif ( e.to_i >= 17044 && e.to_i <= 17050 ) || e.to_i == 17119 || e.to_i == 17120
+			miso += fct.weights[i]
 		# 醤油の判定
-		elsif ( fct.fns[c].to_i >= 17007 && fct.fns[c].to_i <= 17011 ) || ( fct.fns[c].to_i >= 17086 && fct.fns[c].to_i <= 17088 )
-			shoyu += fct.weights[c]
+		elsif ( e.to_i >= 17007 && e.to_i <= 17011 ) || ( e.to_i >= 17086 && e.to_i <= 17088 )
+			shoyu += fct.weights[i]
 		else
-			seasoning += fct.weights[c]
+			seasoning += fct.weights[i]
 		end
 	end
 end
@@ -236,7 +235,7 @@ html = <<-"HTML"
 
 		<div class='col-4'></div>
 		<div class='col-1'>
-			<a href='plain-menu-analysis.cgi?uname=#{user.name}&code=#{code}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:download]}</a>
+			<a href='mtray-analysis-txt.cgi?uname=#{user.name}&code=#{code}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:download]}</a>
 		</div>
     </div>
 </div>

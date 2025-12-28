@@ -71,15 +71,15 @@ def db_create_rr_user()
 		$DBA.query( query )
 		query = "GRANT ALL ON #{$MYSQL_DBR}.* TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$MYSQL_TB_TAG} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
+		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$TB_TAG} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$MYSQL_TB_DIC} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
+		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$TB_DIC} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$MYSQL_TB_RECIPE} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
+		query = "GRANT SELECT ON #{$MYSQL_DB}.#{$TB_RECIPE} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		query = "GRANT SELECT, INSERT, UPDATE, DELETE ON #{$MYSQL_DB}.#{$MYSQL_TB_RECIPEI} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
+		query = "GRANT SELECT, INSERT, UPDATE, DELETE ON #{$MYSQL_DB}.#{$TB_RECIPEI} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
-		query = "GRANT SELECT, UPDATE ON #{$MYSQL_DB}.#{$MYSQL_TB_MEMORY} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
+		query = "GRANT SELECT, UPDATE ON #{$MYSQL_DB}.#{$TB_MEMORY} TO '#{$MYSQL_USERR}'@'#{$MYSQL_HOST}';"
 		$DBA.query( query )
 		puts "#{$MYSQL_USER} has been created."
 	end
@@ -126,7 +126,7 @@ def fcts_init( base_file, sub_files )
 		else
 			items = e.force_encoding( 'UTF-8' ).chomp.split( "\t" )
 			begin
-				query = "INSERT INTO #{$MYSQL_TB_FCTS} SET FN ='#{items[1]}';"
+				query = "INSERT INTO #{$TB_FCTS} SET FN ='#{items[1]}';"
 				$DB.query( query )
 			rescue
 			end
@@ -143,7 +143,7 @@ def fcts_init( base_file, sub_files )
 				label = false
 			else
 				items = ee.force_encoding( 'UTF-8' ).chomp.split( "\t" )
-				query = "UPDATE #{$MYSQL_TB_FCTS} SET"
+				query = "UPDATE #{$TB_FCTS} SET"
 				item_names.size.times do |c|
 					query << " #{item_names[c]}='#{items[c]}',"
 				end
@@ -187,11 +187,11 @@ def fct_init( source_file, plus_fct )
 			label = false
 		else
 			items = e.force_encoding( 'UTF-8' ).chomp.split( "\t" )
-			query = "INSERT INTO #{$MYSQL_TB_FCT} SET"
+			query = "INSERT INTO #{$TB_FCT} SET"
 
 			item_names.size.times do |c| query << " #{item_names[c]}='#{items[c]}'," end
 
-			plus_res = $DB.query( "SELECT #{plus_fct_sql} FROM #{$MYSQL_TB_FCTS} WHERE FN='#{items[1]}';" )
+			plus_res = $DB.query( "SELECT #{plus_fct_sql} FROM #{$TB_FCTS} WHERE FN='#{items[1]}';" )
 			plus_fct.each do |e| query << " #{e}='#{plus_res.first[e]}'," end
 
 			query.chop!
@@ -216,7 +216,7 @@ def fct_init( source_file, plus_fct )
 		chov = r['CHOAVL']
 		chov = r['CHOAVLDF'] if r['CHOAVL'] == '-' || r['CHOAVLM_'] == ''
 
-		query = "UPDATE #{$MYSQL_TB_FCT} SET PROTV='#{protv}', FATV='#{fatv}', CHOV='#{chov}' WHERE FN='#{r['FN']}';"
+		query = "UPDATE #{$TB_FCT} SET PROTV='#{protv}', FATV='#{fatv}', CHOV='#{chov}' WHERE FN='#{r['FN']}';"
 		$DB.query( query )
 	end
 
@@ -231,10 +231,10 @@ def fct_pseudo_init( plus_fct )
 	if res.first
 		puts 'fctp table already exists.'
 		plus_fct.each do |e|
-			query = "DESCRIBE #{$MYSQL_TB_FCTP} #{e};"
+			query = "DESCRIBE #{$TB_FCTP} #{e};"
 			res = $DB.query( query )
 			unless res.first
-				query = "ALTER TABLE #{$MYSQL_TB_FCTP} add column #{e} VARCHAR(16);"
+				query = "ALTER TABLE #{$TB_FCTP} add column #{e} VARCHAR(16);"
 				$DB.query( query )
 				puts "#{e} has added into fctp."
 			end
@@ -333,16 +333,16 @@ def tag_init( source_file )
 			end
 		end
 
-		query = "SELECT FN FROM #{$MYSQL_TB_TAG} WHERE FN='#{items[1]}';"
+		query = "SELECT FN FROM #{$TB_TAG} WHERE FN='#{items[1]}';"
 		res = $DB.query( query ) 
 		if res.first
-			sql_query_tag = "UPDATE #{$MYSQL_TB_TAG} SET"
+			sql_query_tag = "UPDATE #{$TB_TAG} SET"
 			sql_query_tag << " SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',status='9' WHERE FN='#{items[1]}';"
 
 			$DB.query( sql_query_tag ) unless label
 			label = false
 		else
-			sql_query_tag = "INSERT INTO #{$MYSQL_TB_TAG} SET"
+			sql_query_tag = "INSERT INTO #{$TB_TAG} SET"
 			sql_query_tag << " FG='#{items[0]}',FN='#{items[1]}',SID='#{items[2]}',SN='#{sn}',name='#{name_}',class1='#{class1}',class2='#{class2}',class3='#{class3}',tag1='#{tag1}',tag2='#{tag2}',tag3='#{tag3}',tag4='#{tag4}',tag5='#{tag5}',status='9';"
 
 			$DB.query( sql_query_tag ) unless label
@@ -373,20 +373,20 @@ def ext_init( gycv_file, shun_file, unit_file )
 		$DB.query( query )
 	end
 
-#	query = "SELECT FN FROM #{$MYSQL_TB_TAG};"
+#	query = "SELECT FN FROM #{$TB_TAG};"
 #	res = $DB.query( query )
 #	res.each do |e|
-#		query = "UPDATE #{$MYSQL_TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0' WHERE FN='#{e['FN']}';"
+#		query = "UPDATE #{$TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0' WHERE FN='#{e['FN']}';"
 #		$DB.query( query )
 #	end
 
-	query = "SELECT FN FROM #{$MYSQL_TB_FCT};"
+	query = "SELECT FN FROM #{$TB_FCT};"
 	res = $DB.query( query )
 	res.each do |r|
-		query = "SELECT FN FROM #{$MYSQL_TB_EXT} WHERE FN='#{r['FN']}';"
+		query = "SELECT FN FROM #{$TB_EXT} WHERE FN='#{r['FN']}';"
 		res2 = $DB.query( query ) 
 		unless res2.first
-			query = "INSERT INTO #{$MYSQL_TB_EXT} SET FN='#{r['FN']}';"
+			query = "INSERT INTO #{$TB_EXT} SET FN='#{r['FN']}';"
 			$DB.query( query )
 		end
 	end
@@ -402,7 +402,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 		elsif gycv_flag == true
 			food_no = e.chomp
 
-			query = "UPDATE #{$MYSQL_TB_EXT} SET gycv='1' WHERE FN='#{food_no}';"
+			query = "UPDATE #{$TB_EXT} SET gycv='1' WHERE FN='#{food_no}';"
 			$DB.query( query )
 		end
 	end
@@ -428,7 +428,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 			shun2s = 0 if shun2s == nil || shun2s == ''
 			shun2e = 0 if shun2e == nil || shun2e == ''
 
-			query = "UPDATE #{$MYSQL_TB_EXT} SET shun1s=#{shun1s}, shun1e=#{shun1e}, shun2s=#{shun2s}, shun2e=#{shun2e} WHERE FN='#{food_no}';"
+			query = "UPDATE #{$TB_EXT} SET shun1s=#{shun1s}, shun1e=#{shun1e}, shun2s=#{shun2s}, shun2e=#{shun2e} WHERE FN='#{food_no}';"
 			$DB.query( query )
 		end
 	end
@@ -445,19 +445,19 @@ def ext_init( gycv_file, shun_file, unit_file )
 		elsif unit_flag
 			a = e.force_encoding( 'UTF-8' ).chomp.split( "\t" )
 
-			query = "UPDATE #{$MYSQL_TB_EXT} SET unit='#{a[1]}' WHERE FN='#{a[0]}';"
+			query = "UPDATE #{$TB_EXT} SET unit='#{a[1]}' WHERE FN='#{a[0]}';"
 			$DB.query( query )
 		end
 	end
 	f.close
 
 	unith = Hash.new
-	query = "SELECT FN, ENERC_KCAL FROM #{$MYSQL_TB_FCT};"
+	query = "SELECT FN, ENERC_KCAL FROM #{$TB_FCT};"
 	res = $DB.query( query )
 	res.each do |e|
 		unith.clear
 
-		query = "SELECT unit FROM #{$MYSQL_TB_EXT} WHERE FN='#{e['FN']}';"
+		query = "SELECT unit FROM #{$TB_EXT} WHERE FN='#{e['FN']}';"
 		res2 = $DB.query( query )
 		if res2.first
 			unith = JSON.parse( res2.first['unit'] ) if res2.first['unit'] != nil
@@ -466,7 +466,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 		unith['kcal'] = ( 100 / e['ENERC_KCAL'].to_f ).round( 2 ) if e['ENERC_KCAL'] != 0
 
 		unit_ = JSON.generate( unith )
-		query = "UPDATE #{$MYSQL_TB_EXT} SET unit='#{unit_}' WHERE FN='#{e['FN']}';"
+		query = "UPDATE #{$TB_EXT} SET unit='#{unit_}' WHERE FN='#{e['FN']}';"
 		$DB.query( query )
 	end
 
@@ -485,7 +485,7 @@ def dic_init()
 		$DB.query( query )
 		puts 'dic table has been created.'
 
-		res = $DB.query( "SELECT * FROM #{$MYSQL_TB_TAG};" )
+		res = $DB.query( "SELECT * FROM #{$TB_TAG};" )
 		names = []
 		sgh = Hash.new
 		res.each do |e|
@@ -507,7 +507,7 @@ def dic_init()
 		names.uniq!
 
 		names.each do |e|
-			sql_query_dic = "INSERT INTO #{$MYSQL_TB_DIC} SET FG='#{sgh[e]}', org_name='#{e}',alias='#{e}', user='#{$GM}';"
+			sql_query_dic = "INSERT INTO #{$TB_DIC} SET FG='#{sgh[e]}', org_name='#{e}',alias='#{e}', user='#{$GM}';"
 			$DB.query( sql_query_dic )
 		end
 
@@ -720,7 +720,7 @@ def sum_init()
 		$DB.query( query )
 
 		[$GM, 'guest', 'guest2', 'guest3'].each do |e|
-			$DB.query( "INSERT INTO #{$MYSQL_TB_SUM} SET user='#{e}', sum='';" )
+			$DB.query( "INSERT INTO #{$TB_SUM} SET user='#{e}', sum='';" )
 		end
 
 		puts 'sum table has been created.'
@@ -767,7 +767,7 @@ def meal_init()
 		$DB.query( query )
 
 		[$GM, 'guest', 'guest2', 'guest3'].each do |e|
-			$DB.query( "INSERT INTO #{$MYSQL_TB_MEAL} SET user='#{e}', meal='';" )
+			$DB.query( "INSERT INTO #{$TB_MEAL} SET user='#{e}', meal='';" )
 		end
 
 		puts 'meal table has been created.'
@@ -971,10 +971,10 @@ def fcz_init( plus_fct )
 	if res.first
 		puts 'fcz already exists.'
 		plus_fct.each do |e|
-			query = "DESCRIBE #{$MYSQL_TB_FCZ} #{e};"
+			query = "DESCRIBE #{$TB_FCZ} #{e};"
 			res = $DB.query( query )
 			unless res.first
-				query = "ALTER TABLE #{$MYSQL_TB_FCZ} add column #{e} VARCHAR(16);"
+				query = "ALTER TABLE #{$TB_FCZ} add column #{e} VARCHAR(16);"
 				$DB.query( query )
 				puts "#{e} has added into fctp."
 			end

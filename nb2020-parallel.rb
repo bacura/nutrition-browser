@@ -35,7 +35,7 @@ end
 fctsn = [] 
 
 #データ読み込み
-res = $DB.query( "SELECT FCT.FN, ENERC_KCAL, NAME, #{@fct_para.join( ',' )} FROM #{$MYSQL_TB_FCT} AS FCT LEFT JOIN #{$MYSQL_TB_TAG} AS TAG ON FCT.FN=TAG.FN;" )
+res = $DB.query( "SELECT FCT.FN, ENERC_KCAL, NAME, #{@fct_para.join( ',' )} FROM #{$TB_FCT} AS FCT LEFT JOIN #{$TB_TAG} AS TAG ON FCT.FN=TAG.FN;" )
 res.each do |e|
 	fn << e['FN']
 	energy = BigDecimal( convert_zero( e['ENERC_KCAL'] ))

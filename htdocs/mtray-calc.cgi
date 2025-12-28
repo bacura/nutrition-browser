@@ -88,10 +88,8 @@ end
 
 puts 'Preparing calc <br>' if @debug
 palette = Palette.new( user )
-palette_ = @palette_default_name[1] if palette_.nil? || palette_.empty?
+palette_ = @palette_default_name.first if palette_.to_s.empty?
 palette.set_bit( palette_ )
-
-mt = Tray.new( user )
 
 total_fct = FCT.new( user, @fct_item, @fct_name, @fct_unit, @fct_frct, frct_accu, frct_mode )
 total_fct.load_palette( palette.bit )
@@ -103,6 +101,8 @@ recipe_name = []
 fct_html = []
 total_total_weight = 0
 fct_width = ( 70 / fct_num ).to_f
+
+mt = Tray.new( user )
 mt.recipes.each do |e|
 	p e if @debug
 	res = db.query( "SELECT name, sum, dish from #{$TB_RECIPE} WHERE code=?", false, [e] )&.first
@@ -239,10 +239,10 @@ html = <<-"HTML"
 				</select>
 				<span onclick="recalcMT('#{mt.code}')">#{l[:calculator]}</span>&nbsp;
 			</div>
-		</div>
+	X	</div>
 		<div class='col-2'></div>
 		<div class='col-1'>
-			<a href='plain-menu-calc.cgi?uname=#{user.name}&code=#{mt.code}&palette=#{palette_}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:download]}</a>
+			<a href='mtray-calc-txt.cgi?uname=#{user.name}&code=#{mt.code}&palette=#{palette_}&ew_mode=#{ew_mode}' download='#{dl_name}.txt'>#{l[:download]}</a>
 		</div>
     </div>
 </div>

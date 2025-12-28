@@ -265,12 +265,12 @@ class FCT
     @names = []
     @units = []
     @frcts = []
-    @item.size.times do |c|
-      if palette[c] == 1 && @item[c] != 'REFUSE'
-        @items << @item[c]
-        @names << @name[@item[c]]
-        @units << @unit[@item[c]]
-        @frcts << @frct[@item[c]]
+    @item.each.with_index do |e, i|
+      if palette[i] == 1 && e != 'REFUSE'
+        @items << e
+        @names << @name[e]
+        @units << @unit[e]
+        @frcts << @frct[e]
       end
     end
   end

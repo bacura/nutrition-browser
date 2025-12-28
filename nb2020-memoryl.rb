@@ -21,7 +21,7 @@ $MYSQL_HOST = 'localhost'
 $MYSQL_USER = 'user'
 $MYSQL_PW = 'password'
 $MYSQL_DB = 'nb2020'
-$MYSQL_TB_MEMORY = 'memory'
+$TB_MEMORY = 'memory'
 db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
 
 @debug = false
@@ -42,7 +42,7 @@ memory = []
 
 #### Lording all pointer
 puts "Lording all pointer.\n"
-r = db.query( "SELECT * FROM #{$MYSQL_TB_MEMORY};" )
+r = db.query( "SELECT * FROM #{$TB_MEMORY};" )
 r.each do |e|
 	pointer_list << e['pointer']
 	category_list << e['category']
@@ -77,7 +77,7 @@ r.each do |e|
 	end
 	memory.gsub!( '{{{{', '{{' )
 	memory.gsub!( '}}}}', '}}' )
-	db.query( "UPDATE #{$MYSQL_TB_MEMORY} SET content='#{memory}' WHERE category='#{e['category']}' AND pointer='#{e['pointer']}';" )
+	db.query( "UPDATE #{$TB_MEMORY} SET content='#{memory}' WHERE category='#{e['category']}' AND pointer='#{e['pointer']}';" )
 end
 
 #### Evaluating Rank
@@ -92,13 +92,13 @@ end
 #c = 0
 #r.each do |e|
 #	trank = 11 - ( total_rank[c].to_f / total_rank.size * 10 ).ceil
-#	db.query( "UPDATE #{$MYSQL_TB_MEMORY} SET total_rank='#{trank}' WHERE category='#{e['category']}' AND pointer='#{e['pointer']}';" )
+#	db.query( "UPDATE #{$TB_MEMORY} SET total_rank='#{trank}' WHERE category='#{e['category']}' AND pointer='#{e['pointer']}';" )
 #	c += 1
 #end
 
 #puts "Evaluating category rank.\n"
 #category_list.each do |e|
-#	rr = db.query( "SELECT * FROM #{$MYSQL_TB_MEMORY} WHERE category='#{e}';" )
+#	rr = db.query( "SELECT * FROM #{$TB_MEMORY} WHERE category='#{e}';" )
 #
 #	each_count = []
 #	rr.each do |e| each_count << ( e['know'].to_f / e['count'].to_f ) end
@@ -109,7 +109,7 @@ end
 #	c = 0
 #	rr.each do |ee|
 #		rank = 11 - ( category_rank[c].to_f / category_rank.size * 10 ).ceil
-#		db.query( "UPDATE #{$MYSQL_TB_MEMORY} SET rank='#{rank}' WHERE category='#{ee['category']}' AND pointer='#{ee['pointer']}';" )
+#		db.query( "UPDATE #{$TB_MEMORY} SET rank='#{rank}' WHERE category='#{ee['category']}' AND pointer='#{ee['pointer']}';" )
 #		c += 1
 #	end
 #end

@@ -220,7 +220,7 @@ html = <<-"HTML"
 			#{fract_html}
 		</div>
 		<div class="col" align="right">
-			<a href='plain-text.cgi?food_no=#{food_no}&food_weight=#{food_weight}&frct_mode=#{frct_mode}&lg=#{user.language}' download='detail_#{fct_opt['FN']}.txt'><span>#{l[:downlord]}</span></a>
+			<a href='plain-txt.cgi?food_no=#{food_no}&food_weight=#{food_weight}&frct_mode=#{frct_mode}&lg=#{user.language}' download='detail_#{fct_opt['FN']}.txt'><span>#{l[:downlord]}</span></a>
 		</div>
 	</div>
 </div>

@@ -74,19 +74,19 @@ case txt_class
 when 'dic'
 	#FG org_name alias user def_fn
 	if import_solid[0].size == 5
-		$DB.query( "DELETE FROM #{$MYSQL_TB_DIC};" ) if opt == 'xx'
+		$DB.query( "DELETE FROM #{$TB_DIC};" ) if opt == 'xx'
 
 		import_solid.each do |e|
 			print "#{count}\r"
 
 			begin
-				res = $DB.query( "SELECT * FROM #{$MYSQL_TB_DIC} WHERE FG='#{e[0]}' AND org_name='#{e[1]}' AND alias='#{e[2]}';" )
+				res = $DB.query( "SELECT * FROM #{$TB_DIC} WHERE FG='#{e[0]}' AND org_name='#{e[1]}' AND alias='#{e[2]}';" )
 
 				if res.first
-					$DB.query( "UPDATE #{$MYSQL_TB_DIC} SET user='#{e[3]}', def_fn='#{e[4]}' WHERE FG='#{e[0]}'AND org_name='#{e[1]}' AND alias='#{e[2]}';" ) if opt == 'ow'
+					$DB.query( "UPDATE #{$TB_DIC} SET user='#{e[3]}', def_fn='#{e[4]}' WHERE FG='#{e[0]}'AND org_name='#{e[1]}' AND alias='#{e[2]}';" ) if opt == 'ow'
 				else
 
-					$DB.query( "INSERT INTO #{$MYSQL_TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{e[3]}', def_fn='#{e[4]}';" )
+					$DB.query( "INSERT INTO #{$TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{e[3]}', def_fn='#{e[4]}';" )
 				end
 
 			rescue
