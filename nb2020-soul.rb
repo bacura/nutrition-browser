@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.13.1 (2025/09/17)
+#Nutrition browser 2020 soul 1.13.1 (2025/12/13)
 
 #==============================================================================
 # LIBRARY
@@ -12,69 +12,73 @@ require 'json'
 #==============================================================================
 #STATIC
 #==============================================================================
-$GM = 'gm'
+$GM = 'xxxxxxxxxx'
 
 $NBURL = 'https://bacura.jp/nb/'
 $MYURL = 'https://bacura.jp/nb/'
+
+$HOST = 'localhost'
+$DB = 'nb2020'
+$DBR = 'rr2020'
+$USER = 'user'
+$USERR = 'ruser'
+$PW = 'password'
+
+$TB_CFG = 'cfg'
+$TB_DIC = 'dic'
+$TB_EXT = 'ext'
+$TB_FCT = 'fct'
+$TB_FCTP = 'fctp'
+$TB_FCTS = 'fcts'
+$TB_FCZ = 'fcz'
+$TB_HIS = 'his'
+$TB_KOYOMI = 'koyomi'
+$TB_KOYOMIEX = 'koyomiex'
+$TB_MEAL = 'meal'
+$TB_MEDIA = 'media'
+$TB_MEMORY = 'memory'
+$TB_MENU = 'menu'
+$TB_METS = 'mets'
+$TB_METST = 'metst'
+$TB_MODJ = 'modj'
+$TB_NOTE = 'note'
+$TB_PAG = 'pag'
+$TB_PALETTE = 'palette'
+$TB_PARA = 'ref_para'
+$TB_PRICE = 'price'
+$TB_PRICEM = 'pricem'
+$TB_RECIPE = 'recipe'
+$TB_RECIPEI = 'recipei'
+$TB_REFITS = 'ref_its'
+$TB_SCHOOLK = 'schoolk'
+$TB_SCHOOLM = 'schoolm'
+$TB_SCHOOLC = 'schoolc'
+$TB_SLOGF = 'slogf'
+$TB_SLOGR = 'slogr'
+$TB_SLOGM = 'slogm'
+$TB_SUM = 'sum'
+$TB_TAG = 'tag'
+$TB_TENSEI = 'tensei'
+$TB_USER = 'user'
+$TB_EXU = 'exu'
 
 $JQUERY = '<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>'
 $BS_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">' 
 $BS_JS = '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>' 
 
 $SERVER_PATH = '/var/www'
-$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs"
+$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs/nb"
 $TMP_PATH = '/tmp'
-
-$COOKIE_UID = 'UID2020'
-
-$MYSQL_HOST = 'localhost'
-$MYSQL_DB = 'nb2020'
-$MYSQL_DBR = 'rr2020'
-$MYSQL_USER = 'user'
-$MYSQL_USERR = 'userr'
-$MYSQL_PW = 'password'
-$MYSQL_TB_CFG = 'cfg'
-$MYSQL_TB_DIC = 'dic'
-$MYSQL_TB_EXT = 'ext'
-$MYSQL_TB_FCT = 'fct'
-$MYSQL_TB_FCTP = 'fctp'
-$MYSQL_TB_FCTS = 'fcts'
-$MYSQL_TB_FCZ = 'fcz'
-$MYSQL_TB_HIS = 'his'
-$MYSQL_TB_KOYOMI = 'koyomi'
-$MYSQL_TB_KOYOMIEX = 'koyomiex'
-$MYSQL_TB_MEAL = 'meal'
-$MYSQL_TB_MEDIA = 'media'
-$MYSQL_TB_MEMORY = 'memory'
-$MYSQL_TB_MENU = 'menu'
-$MYSQL_TB_METS = 'mets'
-$MYSQL_TB_METST = 'metst'
-$MYSQL_TB_MODJ = 'modj'
-$MYSQL_TB_NOTE = 'note'
-$MYSQL_TB_PAG = 'pag'
-$MYSQL_TB_PALETTE = 'palette'
-$MYSQL_TB_PARA = 'ref_para'
-$MYSQL_TB_PRICE = 'price'
-$MYSQL_TB_PRICEM = 'pricem'
-$MYSQL_TB_RECIPE = 'recipe'
-$MYSQL_TB_RECIPEI = 'recipei'
-$MYSQL_TB_REFITS = 'ref_its'
-$MYSQL_TB_SCHOOLK = 'schoolk'
-$MYSQL_TB_SCHOOLM = 'schoolm'
-$MYSQL_TB_SCHOOLC = 'schoolc'
-$MYSQL_TB_SLOGF = 'slogf'
-$MYSQL_TB_SLOGR = 'slogr'
-$MYSQL_TB_SLOGM = 'slogm'
-$MYSQL_TB_SUM = 'sum'
-$MYSQL_TB_TAG = 'tag'
-$MYSQL_TB_TENSEI = 'tensei'
-$MYSQL_TB_USER = 'user'
-$MYSQL_TB_EXU = 'exu'
+$JS_PATH = 'js'
+$CSS_PATH = 'scss'
+$BOOK_PATH = 'books'
 
 $PHOTO = 'photo_'
 $SPHOTO = 'sphoto_'
+$QR = 'qr_'
 $PHOTO_PATH = "#{$HTDOCS_PATH}/#{$PHOTO}"
 $SPHOTO_PATH = "#{$SERVER_PATH}/#{$SPHOTO}"
+$QR_PATH = "#{$HTDOCS_PATH}/#{$QR}"
 $SIZE_MAX = 20000000
 $TN_SIZE = 400
 $TNS_SIZE = 40
@@ -82,41 +86,45 @@ $PHOTO_SIZE_MAX = 2000
 
 $TOKEN_SIZE = 64 #max 128
 
-$JS_PATH = 'js'
-$CSS_PATH = 'scss'
-$BOOK_PATH = 'books'
+$COOKIE_UID = 'UID2020'
 
 $SELECT = { true => 'SELECTED', false => '', 1 => 'SELECTED', 0 => '', '1' => 'SELECTED', '0' => ''}
 $CHECK = { true => 'CHECKED', false => '', 1 => 'CHECKED', 0 => '', '1' => 'CHECKED', '0' => ''}
 $DISABLE = { true => 'DISABLED', false => '', 1 => 'DISABLED', 0 => '', '1' => 'DISABLED', '0' => ''}
 
 begin
-  $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
+  $DB = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USER}", :password => "#{$PW}", :database => "#{$DB}", :encoding => "utf8" )
 rescue
-  $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :encoding => "utf8" )
+  begin
+    $DB = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USER}", :password => "#{$PW}", :encoding => "utf8" )
+  rescue
+    puts 'D(x_x)B'
+  end
 end
 
 $DEBUG = false
 
 #==============================================================================
-# CORE LANGAGE & CGI
+# CGI & LANGAGE
 #==============================================================================
-$LP = ['jp']
-$DEFAULT_LP = $LP[0]
 @cgi = CGI.new
 
-soul_language = $DEFAULT_LP
+$LP = %w[ja en]
+
 uname = @cgi.cookies['NAME']&.first
 uid = @cgi.cookies[$COOKIE_UID]&.first
+tmp_language = nil
 
 if uname && uid
-  res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_USER} WHERE user=? AND cookie=? AND status > 0" ).execute( uname, uid )
-  soul_language = res.first['language'] if res&.first
+  res = $DB.prepare( "SELECT * FROM #{$TB_USER} WHERE user=? AND cookie=? AND status > 0" ).execute( uname, uid )&.first
+  tmp_language = res['language'] if res
 end
-soul_language ||= $DEFAULT_LP
+tmp_language = ENV['HTTP_ACCEPT_LANGUAGE']&.split(',')&.first&.split(';')&.first unless tmp_language
 
-require "#{$SERVER_PATH}/nb2020-local-#{soul_language}"
+$DEFAULT_LP = $LP.include?( tmp_language ) ? tmp_language : $LP[0]
 
+require "#{$SERVER_PATH}/nb2020-local-#{$DEFAULT_LP}"
+#require "#{$SERVER_PATH}/nb-local-#{$DEFAULT_LP}"
 
 #==============================================================================
 #DEFINITION
@@ -167,7 +175,7 @@ end
 def mdb( query, html_opt, debug )
   puts "<span class='dbq'>[mdb]#{query}</span><br>" if debug
   begin
-    db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
+    db = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USER}", :password => "#{$PW}", :database => "#{$DB}", :encoding => "utf8" )
     t = query.chop
     if /[\;\$]/ =~ t
         puts "<span class='error'>[mdb]ERROR!!</span><br>"
@@ -191,7 +199,7 @@ def add_his( user, code )
   return if user.barrier
 
   his_max = 200
-  res = $DB.prepare( "SELECT history FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( user.name )
+  res = $DB.prepare( "SELECT history FROM #{$TB_CFG} WHERE user=?" ).execute( user.name )
   if res.first
     if res.first['history'] != nil && res.first['history'] != ''
       history = JSON.parse( res.first['history'] )
@@ -201,7 +209,7 @@ def add_his( user, code )
   his_max = 200 if his_max < 200 || his_max > 1000
 
   current_his = []
-  res = $DB.prepare( "SELECT his FROM #{$MYSQL_TB_HIS} WHERE user=?" ).execute( user.name )
+  res = $DB.prepare( "SELECT his FROM #{$TB_HIS} WHERE user=?" ).execute( user.name )
   current_his = res.first['his'].split( "\t" ) if res.first
 
   current_his.unshift( code )
@@ -209,38 +217,49 @@ def add_his( user, code )
   current_his.uniq!
   new_his = current_his.take( his_max ).join( "\t" )
   
-  $DB.prepare( "UPDATE #{$MYSQL_TB_HIS} SET his=? WHERE user=?" ).execute( new_his, user.name )
+  $DB.prepare( "UPDATE #{$TB_HIS} SET his=? WHERE user=?" ).execute( new_his, user.name )
 end
 
 
 #### コードの生成
-def generate_code( uname, c )
+def generate_code( uname, attribute )
   skip = false
-  code = uname[0, 2]
+  code = nil
 
+  if attribute.to_s == '' || uname.to_s.size < 5
+    puts "Code(x_x)Gen Pre"
+    exit
+  end
+
+  code_sub = uname[0, 3].downcase
   10.times do
-    code = "#{code}-#{c}-#{SecureRandom.alphanumeric( 20 )}"
+    code = "#{code_sub}-#{attribute}-#{SecureRandom.alphanumeric( 20 )}"
     query = ''
-    case c
+    case attribute
     when 'm'
-      query = "SELECT * FROM #{$MYSQL_TB_MENU} WHERE code='#{code}';"
+      query = "SELECT * FROM #{$TB_MENU} WHERE code=?"
     when 'n'
-      query = "SELECT * FROM #{$MYSQL_TB_NOTE} WHERE code='#{code}';"
+      query = "SELECT * FROM #{$TB_NOTE} WHERE code=?"
     when 'p', 'png', 'pdf'
-      query = "SELECT * FROM #{$MYSQL_TB_MEDIA} WHERE code='#{code}';"
+      query = "SELECT * FROM #{$TB_MEDIA} WHERE code=?"
     when 'r'
-      query = "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code='#{code}';"
+      query = "SELECT * FROM #{$TB_RECIPE} WHERE code=?"
     when 'z'
-      query = "SELECT * FROM #{$MYSQL_TB_FCZ} WHERE code='#{code}';"
+      query = "SELECT * FROM #{$TB_FCZ} WHERE code=?"
     else
       skip = true
       break;
     end
 
     unless skip
-      r = $DB.query( query )
+      r = $DB.prepare( query ).execute( code )
       break unless r.first
     end
+  end
+
+  unless code
+    puts "Code(x_x)Gen Post"
+    exit
   end
 
   return code
@@ -248,6 +267,7 @@ end
 
 
 #### TAG要素の結合
+#将来的に廃止
 def bind_tags( res_tag )
     tags = res_tag.first
     sub_class = ''
@@ -259,6 +279,16 @@ def bind_tags( res_tag )
     return tags
 end
 
+#### TAG要素の結合
+def tagnames( res_tag )
+    sub_class = ''
+    sub_class << res_tag['class1'].sub( '+', '' ) if /\+$/ =~ res_tag['class1']
+    sub_class << res_tag['class2'].sub( '+', '' ) if /\+$/ =~ res_tag['class2']
+    sub_class << res_tag['class3'].sub( '+', '' ) if /\+$/ =~ res_tag['class3']
+    tags = "<span class='tagc'>#{sub_class}</span> #{res_tag['name']} <span class='tag1'>#{res_tag['tag1']}</span> <span class='tag2'>#{res_tag['tag2']}</span> <span class='tag3'>#{res_tag['tag3']}</span> <span class='tag4'>#{res_tag['tag4']}</span> <span class='tag5'>#{res_tag['tag5']}</span>"
+
+    return tags
+end
 
 #### 特殊数値変換
 def convert_zero( t )
@@ -423,14 +453,14 @@ class User
     @barrier = false
     @token  = nil
 
-    res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_USER} WHERE user=? AND cookie=? AND status>0" ).execute( @name, @uid )
+    res = $DB.prepare( "SELECT * FROM #{$TB_USER} WHERE user=? AND cookie=? AND status>0" ).execute( @name, @uid )
 
     if res.first
       if res.first['status'].to_i == $ASTRAL
         entity_name = @name.sub( '~', '' )
         @barrier = true
 
-        res2 = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_USER} WHERE user=? AND astral=1 AND status>0" ).execute( entity_name )
+        res2 = $DB.prepare( "SELECT * FROM #{$TB_USER} WHERE user=? AND astral=1 AND status>0" ).execute( entity_name )
 
         if res2.first
           @name = entity_name
@@ -480,7 +510,7 @@ class User
       @astral = 0
       @language = $DEFAULT_LP
       @barrier = true
-     end
+    end
   end
 
   def load_lp( script )
@@ -510,12 +540,22 @@ class Config
   def initialize( user, base )
     @user = user
     @base = base.to_s
-    @base = 'global' if @base == ''
+    @base = 'global' if @base.to_s.empty?
+    @elements = {}
 
-    res = $DB.prepare( "SELECT cfgj FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( @user.name )
-    @elements = JSON.parse( res.first['cfgj'] ) if res.first['cfgj'].to_s != '' if res.first
-    @elements[@base] = {} if @elements[@base].nil?
-    @val = @elements[@base].nil? ? {} : @elements[@base]
+    res = $DB.prepare( "SELECT cfgj FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )&.first
+    if res
+      begin
+        @elements = JSON.parse( res['cfgj'] ) unless res['cfgj'].to_s.empty?
+      rescue JSON::ParserError => e
+        puts "J(x_x)pE: #{e.message}<br>"
+      end     
+    else
+      $DB.prepare( "INSERT INTO #{$TB_CFG} SET user=?" ).execute( @user.name ) unless @user.barrier
+    end
+
+    @elements[ @base ] ||= {}
+    @val = @elements[ @base ]
   end
 
   def base( base )
@@ -540,12 +580,38 @@ class Config
   def update()
     @elements[@base] = @val
     elements_ = JSON.generate( @elements )
-    res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_CFG} WHERE user=?" ).execute( @user.name )
-    if res.first
-      $DB.prepare( "UPDATE #{$MYSQL_TB_CFG} SET cfgj=? WHERE user=?" ).execute( elements_, @user.name ) unless @user.barrier
+    res = $DB.prepare( "SELECT * FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )
+    $DB.prepare( "UPDATE #{$TB_CFG} SET cfgj=? WHERE user=?" ).execute( elements_, @user.name ) unless @user.barrier
+  end
+end
+
+
+class MODj
+  def initialize( user, mod )
+    @user = user
+    @mod = mod.to_s
+    @json = Hash.new
+
+    res = $DB.prepare( "SELECT json FROM #{$TB_MODJ} WHERE user=? AND module=?" ).execute( @user.name, @mod )&.first
+    if res
+      begin
+        @json = JSON.parse( res['json'] )
+      rescue JSON::ParserError => e
+        puts "J(x_x)pE: #{e.message}<br>"
+      end     
     else
-      $DB.prepare( "INSERT INTO #{$MYSQL_TB_CFG} SET user=?, cfgj=?" ).execute( @user.name, elements_ ) unless @user.barrier
+      $DB.prepare( "INSERT INTO #{$TB_MODJ} SET user=?, module=?" ).execute( @user.name, @mod ) if @user.name.to_s != '' && @mod != ''
     end
+  end
+
+  def extract()
+    return @json
+  end
+
+  def permeate( json )
+    @json = json
+    json_ = JSON.generate( @json )
+    $DB.prepare( "UPDATE #{$TB_MODJ} SET json=? WHERE user=? AND module=?" ).execute( json_, @user.name, @mod ) unless @user.barrier
   end
 end
 
@@ -577,7 +643,7 @@ class Food
     return false if @code.to_s.empty?
 
     opt = @fup == 'U' ? " AND user='#{@user.name}';" : ''
-    res = $DB.query( "SELECT * FROM #{$MYSQL_TB_TAG} WHERE FN='#{code}'#{opt};" )
+    res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{code}'#{opt};" )
     if res.first
       @name = res.first['name']
       @classes[0] = res.first['class1']
@@ -638,7 +704,7 @@ class Sum
   end
 
   def load_recipe( code )
-    res = $DB.prepare( "SELECT code, name, sum, dish, protect FROM #{$MYSQL_TB_RECIPE} WHERE code=?" ).execute( code )
+    res = $DB.prepare( "SELECT code, name, sum, dish, protect FROM #{$TB_RECIPE} WHERE code=?" ).execute( code )
 
     @code = res.first['code']
     @name = res.first['name']
@@ -667,7 +733,7 @@ class Sum
   end
 
   def update_db()
-    $DB.prepare( "UPDATE #{$MYSQL_TB_SUM} SET code=?, name=?, dish=?, meal=?, protect=?, fn=?, weight=?, unit=?, unitv=?, check=?, init=?, rr=?, ew=? WHERE user=?" ).execute( @code, @name, @dish, @meal, @protect, @fn, @weight, @unit, @unitv, @check, @init, @rr, @ew, @user ) unless @user.barrier
+    $DB.prepare( "UPDATE #{$TB_SUM} SET code=?, name=?, dish=?, meal=?, protect=?, fn=?, weight=?, unit=?, unitv=?, check=?, init=?, rr=?, ew=? WHERE user=?" ).execute( @code, @name, @dish, @meal, @protect, @fn, @weight, @unit, @unitv, @check, @init, @rr, @ew, @user ) unless @user.barrier
 
   end
 
@@ -736,7 +802,7 @@ class Recipe
     if mode
       return false if code.to_s.empty?
 
-      res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_RECIPE} WHERE code=?" ).execute( code )
+      res = $DB.prepare( "SELECT * FROM #{$TB_RECIPE} WHERE code=?" ).execute( code )
 
       if res.first
         res = res.first
@@ -787,7 +853,7 @@ class Recipe
     @name.gsub!( ';', '' )
     @protocol.gsub!( ';', '' )
     @date = @date.strftime( "%Y-%m-%d %H:%M:%S" ) unless @date.kind_of?( String )
-    $DB.prepare( "INSERT INTO #{$MYSQL_TB_RECIPE} SET code=?, user=?, dish=?, branch=?, root=?, favorite=?, draft=?, protect=?, public=?, name=?, type=?, role=?, tech=?, time=?, cost=?, sum=?, protocol=?, date=?" ).execute( @code, @user.name, @dish, @branch, @root, @favorite, @draft, @protect, @public, @name, @type, @role, tech, @time, @cost, @sum, @protocol, @date ) unless @user.barrier
+    $DB.prepare( "INSERT INTO #{$TB_RECIPE} SET code=?, user=?, dish=?, branch=?, root=?, favorite=?, draft=?, protect=?, public=?, name=?, type=?, role=?, tech=?, time=?, cost=?, sum=?, protocol=?, date=?" ).execute( @code, @user.name, @dish, @branch, @root, @favorite, @draft, @protect, @public, @name, @type, @role, tech, @time, @cost, @sum, @protocol, @date ) unless @user.barrier
 
   end
 
@@ -795,20 +861,20 @@ class Recipe
     @name.gsub!( ';', '' )
     @protocol.gsub!( ';', '' )
     @date = @date.strftime( "%Y-%m-%d %H:%M:%S" ) unless @date.kind_of?( String )
-    $DB.prepare( "UPDATE #{$MYSQL_TB_RECIPE} SET name=?, dish=?, branch=?, root=?, type=?, role=?, tech=?, time=?, cost=?, sum=?, protocol=?, public=?, favorite=?, protect=?, draft=?, date=? WHERE user=? AND code=?" ).execute( @name, @dish, @branch, @root, @type, @role, @tech, @time, @cost, @sum, @protocol, @public, @favorite, @protect, @draft, @date, @user.name, @code ) unless @user.barrier
+    $DB.prepare( "UPDATE #{$TB_RECIPE} SET name=?, dish=?, branch=?, root=?, type=?, role=?, tech=?, time=?, cost=?, sum=?, protocol=?, public=?, favorite=?, protect=?, draft=?, date=? WHERE user=? AND code=?" ).execute( @name, @dish, @branch, @root, @type, @role, @tech, @time, @cost, @sum, @protocol, @public, @favorite, @protect, @draft, @date, @user.name, @code ) unless @user.barrier
 
   end
 
   def load_media()
-    res = $DB.prepare( "SELECT code FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND origin=? ORDER BY zidx" ).execute( @user.name, @code )
+    res = $DB.prepare( "SELECT code FROM #{$TB_MEDIA} WHERE user=? AND origin=? ORDER BY zidx" ).execute( @user.name, @code )
 
     @media = []
     res.each do |e| @media << e['code'] end
   end
 
   def delete_db()
-    $DB.prepare( "DELETE FROM #{$MYSQL_TB_RECIPE} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
-    $DB.prepare( "DELETE FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
+    $DB.prepare( "DELETE FROM #{$TB_RECIPE} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
+    $DB.prepare( "DELETE FROM #{$TB_MEDIA} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
   end
 
   def tag()
@@ -872,7 +938,7 @@ class Tray
     @protect = 0
     @recipes = []
 
-    res = $DB.prepare( "SELECT * from #{$MYSQL_TB_MEAL} WHERE user=?;" ).execute( @user.name )
+    res = $DB.prepare( "SELECT * from #{$TB_MEAL} WHERE user=?;" ).execute( @user.name )
 
     if res.first
       @code = res.first['code'].to_s
@@ -887,7 +953,7 @@ class Tray
   def load_menu( code )
     @code = code
 
-    res = $DB.prepare( "SELECT * from #{$MYSQL_TB_MENU} WHERE code=?;" ).execute( code )
+    res = $DB.prepare( "SELECT * from #{$TB_MENU} WHERE code=?;" ).execute( code )
     if res.first
       @name = res.first['name'].to_s
       @name = res.first['name'].to_s
@@ -913,7 +979,7 @@ class Tray
   end
 
   def update_db()
-    $DB.prepare( "UPDATE #{$MYSQL_TB_MEAL} set code=?, name=?, meal=?, protect=? WHERE user=?;" ).execute( @code, @name, @meal, @protect, @user.name ) unless @user.barrier
+    $DB.prepare( "UPDATE #{$TB_MEAL} set code=?, name=?, meal=?, protect=? WHERE user=?;" ).execute( @code, @name, @meal, @protect, @user.name ) unless @user.barrier
   end
 
   def debug()
@@ -962,7 +1028,7 @@ class Menu
       return false if code.to_s.empty?
 
       # DB
-      res = $DB.prepare( "SELECT * FROM #{$MYSQL_TB_MENU} WHERE code=? AND user=?" ).execute( code, @user.name )
+      res = $DB.prepare( "SELECT * FROM #{$TB_MENU} WHERE code=? AND user=?" ).execute( code, @user.name )
       res = res.first
     else
       res = code
@@ -988,26 +1054,26 @@ class Menu
   end
 
   def load_media()
-    res = $DB.prepare( "SELECT code FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND origin=?" ).execute( @user.name, @origin )
+    res = $DB.prepare( "SELECT code FROM #{$TB_MEDIA} WHERE user=? AND origin=?" ).execute( @user.name, @origin )
 
     @media = []
     res.each do |e| @media << e['code'] end
   end
 
   def insert_db()
-    $DB.prepare( "INSERT INTO #{$MYSQL_TB_MENU} SET code=?, user=?, public=?, protect=?, label=?, name=?, meal=?, memo=?" ).execute( @code, @user.name, @public, @protect, @label, @name, @meal, @memo ) unless @user.barrier
+    $DB.prepare( "INSERT INTO #{$TB_MENU} SET code=?, user=?, public=?, protect=?, label=?, name=?, meal=?, memo=?" ).execute( @code, @user.name, @public, @protect, @label, @name, @meal, @memo ) unless @user.barrier
 
   end
 
   def update_db()
-    $DB.query( "UPDATE #{$MYSQL_TB_MENU} SET public='#{@public}', protect='#{@protect}', label='#{@label}', name='#{@name}', meal='#{@meal}', memo='#{@memo}' WHERE user='#{@user.name}' and code='#{@code}';" ) unless @user.barrier
-    $DB.prepare( "UPDATE #{$MYSQL_TB_MENU} SET public=?, protect=?, label=?, name=?, meal=?, memo=? WHERE user=? AND code=?" ).execute( @public, @protect, @label, @name, @meal, @memo, @user.name, @code ) unless @user.barrier
+    $DB.query( "UPDATE #{$TB_MENU} SET public='#{@public}', protect='#{@protect}', label='#{@label}', name='#{@name}', meal='#{@meal}', memo='#{@memo}' WHERE user='#{@user.name}' and code='#{@code}';" ) unless @user.barrier
+    $DB.prepare( "UPDATE #{$TB_MENU} SET public=?, protect=?, label=?, name=?, meal=?, memo=? WHERE user=? AND code=?" ).execute( @public, @protect, @label, @name, @meal, @memo, @user.name, @code ) unless @user.barrier
 
   end
 
   def delete_db()
-    $DB.prepare( "DELETE FROM #{$MYSQL_TB_MENU} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
-    $DB.prepare( "DELETE FROM #{$MYSQL_TB_MEDIA} WHERE user=? AND origin=?" ).execute( @user.name, @code ) unless @user.barrier
+    $DB.prepare( "DELETE FROM #{$TB_MENU} WHERE user=? AND code=?" ).execute( @user.name, @code ) unless @user.barrier
+    $DB.prepare( "DELETE FROM #{$TB_MEDIA} WHERE user=? AND origin=?" ).execute( @user.name, @code ) unless @user.barrier
 
   end
 
