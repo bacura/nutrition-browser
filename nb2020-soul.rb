@@ -12,17 +12,17 @@ require 'json'
 #==============================================================================
 #STATIC
 #==============================================================================
-$GM = 'xxxxxxxxxx'
+$GM = 'gODoFnUTRITION'
 
 $NBURL = 'https://bacura.jp/nb/'
-$MYURL = 'https://bacura.jp/nb/'
+$MYURL = 'https://eiyo-b.com/'
 
-$HOST = 'localhost'
-$DB = 'nb2020'
-$DBR = 'rr2020'
-$USER = 'user'
-$USERR = 'ruser'
-$PW = 'password'
+$MYSQL_HOST = 'localhost'
+$MYSQL_DB = 'nb2020'
+$MYSQL_DBR = 'rr2020'
+$MYSQL_USER = 'nbuser'
+$MYSQL_USERR = 'rruser'
+$MYSQL_PW = 'nagamitae'
 
 $TB_CFG = 'cfg'
 $TB_DIC = 'dic'
@@ -67,7 +67,7 @@ $BS_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/boo
 $BS_JS = '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>' 
 
 $SERVER_PATH = '/var/www'
-$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs/nb"
+$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs"
 $TMP_PATH = '/tmp'
 $JS_PATH = 'js'
 $CSS_PATH = 'scss'
@@ -93,10 +93,10 @@ $CHECK = { true => 'CHECKED', false => '', 1 => 'CHECKED', 0 => '', '1' => 'CHEC
 $DISABLE = { true => 'DISABLED', false => '', 1 => 'DISABLED', 0 => '', '1' => 'DISABLED', '0' => ''}
 
 begin
-  $DB = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USER}", :password => "#{$PW}", :database => "#{$DB}", :encoding => "utf8" )
+  $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
 rescue
   begin
-    $DB = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USER}", :password => "#{$PW}", :encoding => "utf8" )
+    $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :encoding => "utf8" )
   rescue
     puts 'D(x_x)B'
   end
