@@ -12,7 +12,7 @@ require 'json'
 #==============================================================================
 #STATIC
 #==============================================================================
-$GM = 'gODoFnUTRITION'
+$GM = 'gm'
 
 $NBURL = 'https://bacura.jp/nb/'
 $MYURL = 'https://bacura.jp/nb/'
@@ -20,9 +20,9 @@ $MYURL = 'https://bacura.jp/nb/'
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
 $MYSQL_DBR = 'rr2020'
-$MYSQL_USER = 'nbuser'
-$MYSQL_USERR = 'rruser'
-$MYSQL_PW = 'nagamitae'
+$MYSQL_USER = 'user'
+$MYSQL_USERR = 'ruser'
+$MYSQL_PW = 'password'
 
 $TB_CFG = 'cfg'
 $TB_DIC = 'dic'

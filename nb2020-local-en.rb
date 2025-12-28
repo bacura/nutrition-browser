@@ -160,17 +160,6 @@ end
 #==============================================================================
 def tracking()
   code = <<-"CODE"
-<script src="//accaii.com/bacura/script.js" async></script><noscript><img src="//accaii.com/bacura/script?guid=on"></noscript>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HKNQHH8RH9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-HKNQHH8RH9');
-</script>
 
 CODE
 
@@ -179,19 +168,6 @@ end
 
 def adsense_info()
   code = <<-"CODE"
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4873824995474205"
-     crossorigin="anonymous"></script>
-<!-- 栄養ブラウザ表紙 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4873824995474205"
-     data-ad-slot="9558272424"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
 
 CODE
 
@@ -200,19 +176,6 @@ end
 
 def adsense_printv()
   code = <<-"CODE"
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4873824995474205"
-     crossorigin="anonymous"></script>
-<!-- レシピ横 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4873824995474205"
-     data-ad-slot="2795355273"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
 
 CODE
 
