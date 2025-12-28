@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.1.0 (2025/12/15)
+# Nutrition browser 2020 login 0.1.1 (2025/12/29)
 
 #==============================================================================
 # STATIC
@@ -77,9 +77,13 @@ end
 
 def validate_user( db, cgi, l )
   res = db.query( "SELECT user, passh, status, cookie FROM #{$TB_USER} WHERE user=? AND status>'0'", false, [cgi['id']] )&.first
-
-  if BCrypt::Password.new( res['passh']) == cgi['pass']
+  #for initial empty password
+  if res['passh'].empty? && cgi['pass'].empty?
     update_user_data( db, res, cgi )
+
+  elsif BCrypt::Password.new( res['passh'] ) == cgi['pass']
+    update_user_data( db, res, cgi )
+
   else
     html_init( nil )
     html_head( nil, 0, nil )
@@ -98,18 +102,19 @@ def update_user_data( db, user_data, cgi )
   html_init( cookie )
   html_head( 'refresh', status, nil )
   puts '</span></body></html>'
+
   initialize_user_config( db, cgi, status ) unless status == 7
 end
 
 def initialize_user_config( db, cgi, status )
   res = db.query( "SELECT user FROM #{$TB_HIS} WHERE user=?", false, [cgi['id']] )&.first
-  db.query( "INSERT INTO #{$TB_HIS} SET user=?, his='';", true, [[cgi['id']]] ) unless res
+  db.query( "INSERT INTO #{$TB_HIS} SET user=?, his='';", true, [cgi['id']] ) unless res
 
   res = db.query( "SELECT user FROM #{$TB_SUM} WHERE user=?", false, [cgi['id']] )&.first
-  db.query( "INSERT INTO #{$TB_SUM} SET user=?, sum='';", true, [[cgi['id']]] ) unless res
+  db.query( "INSERT INTO #{$TB_SUM} SET user=?, sum='';", true, [cgi['id']] ) unless res
 
   res = db.query( "SELECT user FROM #{$TB_MEAL} WHERE user=?", false, [cgi['id']] )&.first
-  db.query( "INSERT INTO #{$TB_MEAL} SET user=?, meal='';", true, [[cgi['id']]] ) unless res
+  db.query( "INSERT INTO #{$TB_MEAL} SET user=?, meal='';", true, [cgi['id']] ) unless res
 end
 
 def handle_family_login( db, get_data )
