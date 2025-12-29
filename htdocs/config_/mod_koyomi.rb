@@ -53,10 +53,11 @@ def config_module( cgi, db )
 		end
 	end
 
- 
+
 	puts 'LOAD MODj<br>' if @debug
 	modj = MODj.new( db.user, 'koyomi' )
 	user_preset = modj.extract
+
 
 	case step
 	when 'kstart'

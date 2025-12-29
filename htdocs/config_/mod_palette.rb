@@ -10,9 +10,9 @@ def listing( db, l )
 	r.each do |e|
 		count = e['palette'].count( '1' )
 		list_body << "<tr><td>#{e['name']}</td><td>#{count}</td>"
-		list_body << "<td><button class='btn btn-outline-primary btn-sm' type='button' onclick='palette_cfg( \"edit_palette\", \"#{e['name']}\" )'>#{l['edit']}</button></td>"
+		list_body << "<td><button class='btn btn-outline-primary btn-sm' type='button' onclick='palette_cfg( \"edit_palette\", \"#{e['name']}\" )'>#{l[:edit]}</button></td>"
 		list_body << "<td>"
-		list_body << "<input type='checkbox' id=\"#{e['name']}\">&nbsp;<button class='btn btn-outline-danger btn-sm' type='button' onclick='palette_cfg( \"delete_palette\", \"#{e['name']}\" )'>#{l['delete']}</button></td></tr>\n" unless e['name'] == '簡易表示用'
+		list_body << "<input type='checkbox' id=\"#{e['name']}\">&nbsp;<button class='btn btn-outline-danger btn-sm' type='button' onclick='palette_cfg( \"delete_palette\", \"#{e['name']}\" )'>#{l[:delete]}</button></td></tr>\n" unless e['name'] == '簡易表示用'
 		list_body << "</td></tr>"
 	end
 
@@ -20,18 +20,18 @@ def listing( db, l )
 	html = <<-"HTML"
 <div class='container-fluid'>
 	<div class='row'>
-		<div class='col-8'><h5>#{l['palette_list']}</h5></div>
-		<div class='col-2'><button class="btn btn-outline-primary btn-sm" type="button" onclick="palette_cfg( 'new_palette', '' )">#{l['new_palette']}</button></div>
-		<div class='col-2'><button class="btn btn-outline-danger btn-sm" type="button" onclick="palette_cfg( 'reset_palette', '' )">#{l['reset']}</button></div>
+		<div class='col-8'><h5>#{l[:palette_list]}</h5></div>
+		<div class='col-2'><button class="btn btn-outline-primary btn-sm" type="button" onclick="palette_cfg( 'new_palette', '' )">#{l[:new_palette]}</button></div>
+		<div class='col-2'><button class="btn btn-outline-danger btn-sm" type="button" onclick="palette_cfg( 'reset_palette', '' )">#{l[:reset]}</button></div>
 	</div>
 	<br>
 
 	<table class="table table-sm table-hover">
 	<thead>
 		<tr>
-			<td>#{l['palette_name']}</td>
-			<td>#{l['fc_num']}</td>
-			<td>#{l['operation']}</td>
+			<td>#{l[:palette_name]}</td>
+			<td>#{l[:fc_num]}</td>
+			<td>#{l[:operation]}</td>
 			<td></td>
 		</tr>
 	</thead>
@@ -83,12 +83,12 @@ def config_module( cgi, db )
 		<div class="row">
 			<div class="col-6">
 				<div class="input-group mb-3">
-  					<span class="input-group-text">#{l['palette_name']}</span>
+  					<span class="input-group-text">#{l[:palette_name]}</span>
   					<input type="text" class="form-control" id="palette_name" value="#{cgi['palette_name']}" maxlength="60">
   				</div>
 			</div>
 			<div class="col-5"></div>
-			<div class="col-1"><button class="btn btn-outline-primary btn-sm" type="button" onclick="palette_cfg( 'regist' )">#{l['regist']}</button></div>
+			<div class="col-1"><button class="btn btn-outline-primary btn-sm" type="button" onclick="palette_cfg( 'regist' )">#{l[:regist]}</button></div>
 		</div>
 		<br>
 		<div class="row">

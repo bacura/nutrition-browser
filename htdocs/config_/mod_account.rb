@@ -9,12 +9,11 @@ def config_module( cgi, db )
 	module_js()
 	l = module_lp( db.user.language )
 	step = cgi['step']
-
-	res = db.query( "SELECT pass, mail, aliasu FROM #{$TB_USER} WHERE user=? AND cookie=?", false, [db.user.name, db.user.uid] )&.first
+	res = db.query( "SELECT passh, mail, aliasu FROM #{$TB_USER} WHERE user=? AND cookie=?", false, [db.user.name, db.user.uid] )&.first
 	if res
 		aliasu = res['aliasu']
 		mail = res['mail']
-		pass = res['pass']
+		passh = res['passh']
 		language = res['language']
 	end
 
@@ -26,15 +25,17 @@ def config_module( cgi, db )
 		new_password2 = cgi['new_password2']
 		language = cgi['language']
 
-		if pass == old_password || pass == ''
+		if passh == BCrypt::Password.new( old_password ) || passh.empty?
+
 			mail = new_mail if new_mail.to_s != ''
 			aliasu = new_aliasu if new_aliasu.to_s != ''
+
 			if new_password1 == new_password2
-				pass = new_password1 if new_password1.to_s != ''
+				passh = BCrypt::Password.create( new_password1 ) if new_password1.to_s != ''
 			end
 
 			# Updating acount information
-			db.query( "UPDATE #{$TB_USER} SET pass=?, mail=?, aliasu=?, language=? WHERE user=? AND cookie=?", true, [pass, mail, aliasu, language, db.user.name, db.user.uid] )
+			db.query( "UPDATE #{$TB_USER} SET passh=?, mail=?, aliasu=?, language=? WHERE user=? AND cookie=?", true, [passh, mail, aliasu, language, db.user.name, db.user.uid] )
 		else
 			puts "<span class='msg_small_red'>#{l[:no_save]}</span><br>"
 		end

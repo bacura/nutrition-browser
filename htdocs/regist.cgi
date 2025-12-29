@@ -201,7 +201,9 @@ when 'finish'
   mail = @cgi['mail']&.strip.downcase
   mail ||= ''
 
-  db.query( "INSERT INTO #{$TB_USER} SET user=?, mail=?, pass=?, aliasu=?, status=1, language=?, reg_date=?", true, @cgi['id'], mail, @cgi['pass'], aliasu, @cgi['language'], @datetime )
+  passh = BCrypt::Password.new( @cgi['pass'] )
+
+  db.query( "INSERT INTO #{$TB_USER} SET user=?, mail=?, passh=?, aliasu=?, status=1, language=?, reg_date=?", true, @cgi['id'], mail, passh, aliasu, @cgi['language'], @datetime )
 
   # Inserting standard palettes
   3.times do |c|

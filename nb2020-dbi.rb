@@ -652,7 +652,7 @@ def user_init()
 	if res.first
 		puts 'user table already exists.'
 	else
-		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, passh VARCHAR(256), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
+		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, mail VARCHAR(64), passh VARCHAR(256), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
 		$DB.query( query )
 		puts 'user in ext has been created.'
 
@@ -663,20 +663,6 @@ def user_init()
 		end
 
 		puts 'GM & guests have been registed.'
-	end
-end
-
-
-#### Making extra user table.
-def exu_init()
-	query = "SHOW TABLES LIKE 'exu';"
-	res = $DB.query( query )
-	if res.first
-		puts 'exu table already exists.'
-	else
-		query = 'CREATE TABLE exu (user VARCHAR(32) NOT NULL PRIMARY KEY, hdpass VARCHAR(256), org VARCHAR(64), mail VARCHAR(64), info VARCHAR(128), token VARCHAR(128));'
-		$DB.query( query )
-		puts 'exu table has been created.'
 	end
 end
 
@@ -1213,11 +1199,7 @@ $DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}
 db_create_nb()
 db_create_rr()
 
-db_create_nb_user()
-db_create_rr_user()
 
-$DBA.query( "FLUSH PRIVILEGES;" )
-$DBA.close
 
 #==============================================================================
 $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
@@ -1231,7 +1213,6 @@ ext_init( gycv_file, shun_file, unit_file )
 dic_init()
 
 user_init()
-exu_init()
 cfg_init()
 his_init()
 sum_init()
@@ -1271,4 +1252,6 @@ ref_eer_init( ref_eer )
 ref_its_init( ref_intake )
 ref_para_init( ref_parallel )
 
-$DB.close
+db_create_nb_user()
+db_create_rr_user()
+$DBA.query( "FLUSH PRIVILEGES;" )

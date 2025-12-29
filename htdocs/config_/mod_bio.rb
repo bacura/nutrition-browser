@@ -11,7 +11,7 @@ def config_module( cgi, db )
 	step = cgi['step']
 
 	res = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user=?", false, [db.user.name] )&.first
-	unless res['bio']&.to_s.empty?
+	unless res['bio'].to_s.empty?
 
 		begin
 			bio = JSON.parse( res['bio'] )
