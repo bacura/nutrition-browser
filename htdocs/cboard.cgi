@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 cutting board 0.4.1 (2025/04/01)
+#Nutrition browser 2020 cutting board 0.4.2 (2025/12/29)
 
 #==============================================================================
 #STATIC
@@ -877,8 +877,9 @@ food_list.each do |e|
   	unless e.fn == '-' || e.fn == '+'
 		res = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN=?", false, [e.fn] )&.first
 		if res
-			unith = JSON.parse( res['unit'] )
+			unith = JSON.parse( res['unit'] ) unless res['unit'].to_s.empty?
 			unith.each do |k, v|
+				unit_set << k
 				unit_select << $SELECT[k == e.unit] unless k == 'note'
 			end
 		end

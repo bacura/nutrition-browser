@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 recipe list 0.4.7 (2025/07/06)
+#Nutrition browser 2020 recipe list 0.4.8 (2025/12/29)
 	
 
 #==============================================================================
@@ -218,7 +218,7 @@ def referencing( words, db, sql_where_ij )
 		db.query( "INSERT INTO #{$TB_SLOGR} SET user=?, words=?, date=?", true, [db.user.name, e, @datetime] )
 		res = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias=?", false, [e] )&.first
 		if res
-			res2 = db.query( "SELECT * FROM #{$TB_TAG} WHERE class1=? OR class2=? OR class3=?", false, [res['org_name'], res['org_name'], res['org_name']] )&.first
+			res2 = db.query( "SELECT * FROM #{$TB_TAG} WHERE class1=? OR class2=? OR class3=?", false, [res['org_name'], res['org_name'], res['org_name']] )
 			if res2
 				res2.each do |ee| true_query << ee['name'] end
 			else

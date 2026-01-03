@@ -24,7 +24,7 @@ def language_pack( language )
 
   #Japanese
   l['ja'] = {
-    nb: '栄養ブラウザ',
+    nb: '栄養ブ',
     login: 'ログイン',
     logout: 'ログアウト',
     regist: '登録',

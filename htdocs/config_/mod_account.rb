@@ -1,4 +1,4 @@
-# Nutorition browser 2020 Config module for acount 0.1.0 (2025/08/10)
+# Nutorition browser 2020 Config module for acount 0.1.1 (2025/12/30)
 #encoding: utf-8
 
 require 'bcrypt'
@@ -24,15 +24,19 @@ def config_module( cgi, db )
 		new_password1 = cgi['new_password1']
 		new_password2 = cgi['new_password2']
 		language = cgi['language']
+		pass_confirm = false
 
-		if passh == BCrypt::Password.new( old_password ) || passh.empty?
+		mail = new_mail if new_mail.to_s != ''
+		aliasu = new_aliasu if new_aliasu.to_s != ''
 
-			mail = new_mail if new_mail.to_s != ''
-			aliasu = new_aliasu if new_aliasu.to_s != ''
+		if passh.empty? && new_password1 == new_password2
+			pass_confirm = true
+		else
+			pass_confirm = true if BCrypt::Password.new( passh ) == old_password && new_password1 == new_password2
+		end
 
-			if new_password1 == new_password2
-				passh = BCrypt::Password.create( new_password1 ) if new_password1.to_s != ''
-			end
+		if pass_confirm
+			passh = BCrypt::Password.create( new_password1 ) if new_password1.to_s != ''
 
 			# Updating acount information
 			db.query( "UPDATE #{$TB_USER} SET passh=?, mail=?, aliasu=?, language=? WHERE user=? AND cookie=?", true, [passh, mail, aliasu, language, db.user.name, db.user.uid] )
@@ -161,11 +165,11 @@ var accountCfg = function( step ){
 };
 
 var accountCfgTensei = function( step ){
-	tensei1 = document.getElementById( "tensei1" ).value;
-	tensei2 = document.getElementById( "tensei2" ).value;
-	tensei3 = document.getElementById( "tensei3" ).value;
-	tensei4 = document.getElementById( "tensei4" ).value;
-	tensei5 = document.getElementById( "tensei5" ).value;
+	const tensei1 = document.getElementById( "tensei1" ).value;
+	const tensei2 = document.getElementById( "tensei2" ).value;
+	const tensei3 = document.getElementById( "tensei3" ).value;
+	const tensei4 = document.getElementById( "tensei4" ).value;
+	const tensei5 = document.getElementById( "tensei5" ).value;
 
 	postLayer( "config.cgi", '', true, 'L1', { mod:'account', step, tensei1, tensei2, tensei3, tensei4, tensei5 });
 }
