@@ -97,14 +97,6 @@ def html_head( interrupt, status, sub_title )
   <meta name="robots" content="index,follow">
   <meta name="author" content="ばきゅら京都Lab">
 
-  <!-- Twitter card -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@ho_meow" />
-  <meta name="twitter:title" content="栄養ブラウザ" />
-  <meta name="twitter:description" content="栄養者のユビキタスツール" />
-  <meta name='twitter:image' content='https://bacura.jp/nb/#{$PHOTO}/nb.png' />
-  <meta name="twitter:image:alt" content="栄養ブラウザロゴ" />
-
   <!-- Jquery -->
   #{$JQUERY}
   <!-- <script type="text/javascript" src="./jquery-3.6.0.min.js"></script> -->
@@ -159,6 +151,16 @@ end
 def tracking()
   code = <<-"CODE"
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CS1XHNZWY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1CS1XHNZWY');
+</script>
+
 CODE
 
   return code
@@ -197,16 +199,9 @@ def html_title()
       下記のゲストアカウントを使えばお試しで登録後の状態を体験できます。<br>
       <br>
 
-      <h4>お知らせ (20241012)</h4>
+      <h4>お知らせ (20260101)</h4>
       <ul>
-        <li>公開レシピが1221品になりました。</li>
-        <br>
-        <li>利用規定を一部変更しました。</li>
-        <li>3Dレシピ検索機能を実装しました。</li>
-        <li>パラレル食品機能を実装しました。</li>
-        <li>幽体アカウントを実装しました。</li>
-        <li>食品成分データを2021年12月27日版に更新しました。</li>
-        <li>日本人の食事摂取基準を2020年に更新しました。</li>
+        <li>サイトが移転しました。</li>
       </ul>
       <hr>
 
@@ -248,7 +243,7 @@ def html_title()
 
       <h4>ローカルでの使用</h4>
       <ul>
-        <li>栄養ブラウザは<a href='https://github.com/bacura/nb2020/'>Github</a>で全てのソースが公開されています。</li>
+        <li>栄養ブラウザは<a href='https://github.com/bacura/nutrition-browser/'>Github</a>で全てのソースが公開されています。</li>
         <li>その気になればローカルでサービス自体を稼働させることが出来ますがインストーラー、ドキュメント類が整備されておりません。</li>
         <li>動かしてみたい人は吉山（ばきゅら京都Lab）info@bacura.jpまでご連絡ください。</li>
       </ul>
@@ -296,4 +291,3 @@ end
 #==============================================================================
 # MEDIA
 #==============================================================================
-$WM_FONT = 'さざなみゴシック'
