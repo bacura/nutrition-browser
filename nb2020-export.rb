@@ -84,7 +84,8 @@ when 'fctp'
 when 'tagp'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_TAG} INNER JOIN #{$TB_FCTP} ON #{$TB_TAG}.FN = #{$TB_FCTP}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
-	r.each do |e| export << "#{e['FG']}\t#{e['FN']}\t#{e['SID']}\t#{e['SN']}\t#{e['user']}\t#{e['name']}\t#{e['class1']}\t#{e['class2']}\t#{e['class3']}\t#{e['tag1']}\t#{e['tag2']}\t#{e['tag3']}\t#{e['tag4']}\t#{e['tag5']}\t#{e['status']}\n" end
+	r.each do |e|export << "#{e['FG']}\t#{e['FN']}\t#{e['SID']}\t#{e['SN']}\t#{e['user']}\t#{e['name']}\t#{e['class1']}\t#{e['class2']}\t#{e['class3']}\t#{e['tag1']}\t#{e['tag2']}\t#{e['tag3']}\t#{e['tag4']}\t#{e['tag5']}\t#{e['status']}\n" end
+
 	puts "NB2020 [tagp] data (#{ARGV[1]}) #{@date}\n"
 	puts "FG\tFN\tSID\tSN\tuser\tname\tclass1\tclass2\tclass3\ttag1\ttag2\ttag3\ttag4\ttag5\tstatus\n"
 	puts export.force_encoding( 'UTF-8' )
@@ -93,21 +94,38 @@ when 'extp'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_FCTP} ON #{$TB_EXT}.FN = #{$TB_FCTP}.FN WHERE #{$TB_EXT}.user='#{ARGV[1]}';" )
 	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv']}\t#{e['allergen1']}\t#{e['allergen2']}\t#{e['unit']}\t#{e['color1']}\t#{e['color2']}\t#{e['color1h']}\t#{e['color2h']}\t#{e['shun1s']}\t#{e['shun1e']}\t#{e['shun2s']}\t#{e['shun2e']}\n" end
+
 	puts "NB2020 [extp] data (#{ARGV[1]}) #{@date}\n"
 	puts "FN\tuser\tgycv\tallergen1\tallergen2\tunit\tcolor1\tcolor2\tcolor1h\tcolor2h\tshun1s\tshun1e\tshun2s\tshun2e\n"
+	puts export.force_encoding( 'UTF-8' )
+
+when 'recipe'
+	export = ''
+	r = $DB.query( "SELECT * FROM #{$TB_RECIPE} WHERE user='#{ARGV[1]}';" )
+	r.each do |e|
+		plotocol = e['protocol'].gsub( "\n", "<n>" )
+		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{e['sum']}\t#{plotocol}\t#{e['date']}\n"
+	end
+
+	puts "NB2020 [recipe] data (#{ARGV[1]}) #{@date}\n"
+	puts "code\tuser\troot\tbranch\tpublic\tprotect\tdraft\tfavorite\tname\tdish\ttype\trole\ttech\ttime\tcost\tsum\tprotocol\tdate\n"
+	puts export.force_encoding( 'UTF-8' )
+
+when 'media'
+	export = ''
+	r = $DB.query( "SELECT * FROM #{$TB_MEDIA} WHERE user='#{ARGV[1]}';" )
+	r.each do |e|
+		alt = e['alt'].gsub( "\n", "<n>" )
+		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx']}\t#{alt}\n"
+	end
+
+	puts "NB2020 [media] data (#{ARGV[1]}) #{@date}\n"
+	puts "user\tcode\torigin\tbase\ttype\tdate\tzidx\talt\n"
 	puts export.force_encoding( 'UTF-8' )
 
 else
 	puts 'Nutrition browser 2020 export 0.0.2 (2024/10/14)'
 	puts '[Usage]ruby nb2020-export.rb Exportable data [user]> nb2020-dic.txt'
 	puts 'Exportable data list..'
-	puts 'unit'
-	puts 'gycv'
-	puts 'shun'
-	puts 'allergen'
-	puts 'dic'
-	puts 'memory'
-	puts 'fctp'
-	puts 'tagp'
-	puts 'extp'
+	puts 'unit, gycv, shun, allergen, dic, memory, fctp, tagp, extp, recipe, media'
 end

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 import 0.1.0 (2024/10/14)
+#Nutrition browser 2020 import 0.2.0 (2025/01/07)
 
 #==============================================================================
 #STATIC
@@ -17,6 +17,35 @@ require './nb2020-soul'
 #DEFINITION
 #==============================================================================
 
+def set_query_num( query, values, items, skips, nums )
+	q = query
+	items.each.with_index do |e, i|
+		unless skips.include?( e )
+			if nums.include?( e )
+				q << " #{e}='#{values[i].to_i}',"
+			else
+				q << " #{e}='#{values[i]}',"
+			end
+		end
+	end
+	
+	return q.chop!
+end
+
+def set_query_str( query, values, items, skips, strs )
+	q = query
+	items.each.with_index do |e, i|
+		unless skips.include?( e )
+			unless strs.include?( e )
+				q << " #{e}='#{values[i].to_i}',"
+			else
+				q << " #{e}='#{values[i]}',"
+			end
+		end
+	end
+	
+	return q.chop!
+end
 
 #==============================================================================
 # Main
@@ -67,7 +96,7 @@ File.open( data_file, 'r' ) do |f|
 		end
 	end
 end
-puts "[#{txt_class}]"
+puts "[#{txt_class}]#{opt}"
 puts items
 
 if import_solid.size == 0
@@ -115,34 +144,32 @@ when 'fctp'
 	if true #items.size == 14
 		$DB.query( "DELETE FROM #{$TB_FCTP};" ) if opt == 'xx'
  
+ 		nums = %w( REFUSE ENERC ENERC_KCAL )
 		import_solid.each do |e|
-			a = Array.new( 100 )
-			a = e.dup
+			values = Array.new( 100 )
+			values = e.dup
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_FCTP} WHERE user='#{a[0]}' AND FN='#{a[2]}';" )
+				res = $DB.query( "SELECT * FROM #{$TB_FCTP} WHERE user='#{values[0]}' AND FN='#{values[2]}';" )
 				if res.first
 					if opt == 'ow'
 						query = "UPDATE #{$TB_FCTP} SET"
-						items.each.with_index do |e, i|
-							query << " #{e}='#{a[i]}'," unless e == 'SID' || i == 1 || i == 4
-						end
-						query.chop!
-						query<< " WHERE user='#{a[0]}' AND FN='#{a[2]}';"
+						skips = %w( user FN SID )
+						query = set_query_num( query, values, items, skips, nums )
+						query<< " WHERE user='#{values[0]}' AND FN='#{values[2]}';"
+
 						$DB.query( query )
 					else
-						puts "[SKIP]#{a}"
+						puts "[SKIP]#{values}"
 					end
 				else
 					query = "INSERT INTO #{$TB_FCTP} SET"
-					items.each.with_index do |e, i|
-						query << " #{e}='#{a[i]}'," unless e == 'SID'
-					end
-					query.chop!
+					skips = %w( SID )
+					query = set_query_num( query, values, items, skips, nums )
 					query<< ";"
 
-					$DB.query( query ) unless a[2].to_s.empty?
+					$DB.query( query ) unless values[2].to_s.empty?
 				end
 			rescue
 				puts "[ERROR]#{e}"
@@ -155,25 +182,36 @@ when 'fctp'
 	puts "#{count} data have imported."
 
 when 'tagp'
-	# FG, FN, SID, SN, user, name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5
-	if items.size == 14
-		$DB.query( "DELETE FROM #{$TB_TAG};" ) if opt == 'xx'
+	# FG, FN, SID, SN, user, name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status
+	if items.size == 15
+#		$DB.query( "DELETE FROM #{$TB_TAG};" ) if opt == 'xx'
+ 		nums = %w( SN status )
 
 		import_solid.each do |e|
-			a = Array.new( 20 )
-			a = e.dup
+			values = Array.new( 20 )
+			values = e.dup
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{a[1]}' AND user='#{a[4]}';" )
+				res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{values[1]}' AND user='#{values[4]}';" )
 				if res.first
 					if opt == 'ow'
-						$DB.query( "UPDATE #{$TB_TAG} SET FG='#{a[0]}', SID='#{a[2]}', SN='0', name='#{a[5]}', class1='#{a[6]}', class2='#{a[7]}', class3='#{a[8]}', tag1='#{a[9]}', tag2='#{a[10]}', tag3='#{a[11]}', tag4='#{a[12]}', tag5='#{a[13]}' WHERE FN='#{a[1]}'AND user='#{a[4]}';" )
+						query = "UPDATE #{$TB_TAG} SET"
+						skips = %w( FN user )
+						query = set_query_num( query, values, items, skips, strs )
+						query << " WHERE FN='#{values[1]}' AND user='#{values[4]}';"
+
+						$DB.query( query )
 					else
-						puts "[SKIP]#{a}"
+						puts "[SKIP]#{values}"
 					end
 				else
-					$DB.query( "INSERT INTO #{$TB_TAG} SET FG='#{a[0]}', FN='#{a[1]}', SID='#{a[2]}', SN='0', user='#{a[4]}', name='#{a[5]}', class1='#{a[6]}', class2='#{a[7]}', class3='#{a[8]}', tag1='#{a[9]}', tag2='#{a[10]}', tag3='#{a[11]}', tag4='#{a[12]}', tag5='#{a[13]}';" ) unless a[1].to_s.empty?
+					query = "INSERT INTO #{$TB_TAG} SET"
+					skips = %w( dummy )
+					query = set_query_num( query, values, items, skips, strs )
+					query << ";"
+
+					$DB.query( query ) unless values[1].to_s.empty? || values[4].to_s.empty?
 				end
 			rescue
 				puts "[ERROR]#{e}"
@@ -188,23 +226,81 @@ when 'tagp'
 when 'extp'
 	# FN, user, gycv, allergen1, allergen2, unit, color1, color2, color1h, color2h, shun1s, shun1e, shun2s, shun2e
 	if items.size == 14
-		$DB.query( "DELETE FROM #{$TB_EXT};" ) if opt == 'xx'
+#		$DB.query( "DELETE FROM #{$TB_EXT};" ) if opt == 'xx'
+ 		strs = %w( unit )
 
 		import_solid.each do |e|
-			a = Array.new( 20 )
-			a = e.dup
+			values = Array.new( 20 )
+			values = e.dup
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_EXT} WHERE FN='#{a[0]}' AND user='#{a[1]}';" )
+				res = $DB.query( "SELECT * FROM #{$TB_EXT} WHERE FN='#{values[0]}' AND user='#{values[1]}';" )
 				if res.first
 					if opt == 'ow'
-						$DB.query( "UPDATE #{$TB_EXT} SET gycv='#{a[2].to_i}', allergen1='#{a[3].to_i}', allergen2='#{a[4].to_i}', unit='#{a[5]}', color1=0, color2=0, color1h=0, color2h=0, shun1s='#{a[10].to_i}', shun1e='#{a[11].to_i}', shun2s='#{a[12].to_i}', shun2e='#{a[13].to_i}' WHERE FN='#{a[0]}'AND user='#{a[1]}';" )
+						query = "UPDATE #{$TB_EXT} SET"
+						skips = %w( FN user )
+						query = set_query_str( query, values, items, skips, strs )
+						query << " WHERE FN='#{values[0]}' AND user='#{values[1]}';"
+
+						$DB.query( query )
 					else
-						puts "[SKIP]#{a}"
+						puts "[SKIP]#{values}"
 					end
 				else
-					$DB.query( "INSERT INTO #{$TB_EXT} SET FN='#{a[0]}', user='#{a[1]}', gycv='#{a[2].to_i}', allergen1='#{a[3].to_i}', allergen2='#{a[4].to_i}', unit='#{a[5]}', color1=0, color2=0, color1h=0, color2h=0, shun1s='#{a[10].to_i}', shun1e='#{a[11].to_i}', shun2s='#{a[12].to_i}', shun2e='#{a[13].to_i}';" ) unless a[0].to_s.empty?
+					query = "INSERT INTO #{$TB_TAG} SET"
+					skips = %w( dummy )
+					query = set_query_str( query, values, items, skips, strs )
+					query << ";"
+
+					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
+				end
+			rescue
+				puts "[ERROR]#{e}"
+			end
+			count += 1
+		end
+	else
+		puts 'Incomplete extp data.'
+	end
+	puts "#{count} data have imported."
+
+when 'recipe'
+	# code, user, root, branch, public, protect, draft, favorite, name, dish, type, role, tech, time, cost, sum, protocol, date
+
+	if items.size == 14
+#		$DB.query( "DELETE FROM #{$TB_EXT};" ) if opt == 'xx'
+ 		strs = %w( code user root name protocol sum date )
+
+		import_solid.each do |e|
+			values = Array.new( 20 )
+			values = e.dup
+
+			print "#{count}\r"
+			begin
+				res = $DB.query( "SELECT * FROM #{$TB_RECIPE} WHERE code='#{values[0]}' AND user='#{values[1]}';" )
+				if res.first
+					if opt == 'ow'
+						query = "UPDATE #{$TB_EXT} SET"
+						skips = %w( code user protocol )
+						query = set_query_str( query, values, items, skips, strs )
+
+						plotocol = values[16].gsub( '<n>', "\n"  )
+						query << ", protocol='#{plotocol}' WHERE FN='#{values[0]}' AND user='#{values[1]}';"
+
+#						$DB.query( query )
+					else
+						puts "[SKIP]#{values}"
+					end
+				else
+					query = "INSERT INTO #{$TB_RECIPE} SET"
+					skips = %w( protocol )
+					query = set_query_str( query, values, items, skips, strs )
+
+					plotocol = values[16].gsub( '<n>', "\n"  )
+					query << ", protocol='#{plotocol}';"
+
+#					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
 				end
 			rescue
 				puts "[ERROR]#{e}"
