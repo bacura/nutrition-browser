@@ -1,4 +1,4 @@
-NB2020 [tagp] data (yossy) 2026-01-06
+NB2020 [tagp] data (yossy) 2026-01-10
 FG	FN	SID	SN	user	name	class1	class2	class3	tag1	tag2	tag3	tag4	tag5	status
 00	P00001	0		yossy	水									3
 13	P13001	0		yossy	乳飲料			液状乳類	低脂肪					3

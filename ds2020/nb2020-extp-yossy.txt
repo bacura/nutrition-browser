@@ -1,4 +1,4 @@
-NB2020 [extp] data (yossy) 2026-01-05
+NB2020 [extp] data (yossy) 2026-01-10
 FN	user	gycv	allergen1	allergen2	unit	color1	color2	color1h	color2h	shun1s	shun1e	shun2s	shun2e
 P00001	yossy	0			{"g":1.0,"ml":1.0,"大さじ":15.0,"小さじ":5.0,"カップ":200.0,"合":180.0,"note":""}	0	0	0	0	0	0	0	0
 P13001	yossy	0	1		{"g":1,"kcal":0}	0	0	0	0	0	0	0	0

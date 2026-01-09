@@ -74,7 +74,13 @@ when 'fctp'
 	r = $DB.query( "SELECT * FROM #{$TB_FCTP} WHERE user='#{ARGV[1]}';" )
 	r.each do |e|
 		export << "#{e['user']}"
-		@fct_item.each do |item| export << "\t#{e[item]}" end
+		@fct_item.each do |item|
+			if %w( REFUSE ENERC ENERC_KCAL).include?( item )
+				export << "\t#{e[item]}"
+			else
+				export << "\t#{e[item].to_i}"
+			end
+		end
 		export << "\n"
 	end
 	puts "NB2020 [fctp] data (#{ARGV[1]}) #{@date}\n"
@@ -86,7 +92,7 @@ when 'fctp'
 when 'tagp'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_TAG} INNER JOIN #{$TB_FCTP} ON #{$TB_TAG}.FN = #{$TB_FCTP}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
-	r.each do |e|export << "#{e['FG']}\t#{e['FN']}\t#{e['SID']}\t#{e['SN']}\t#{e['user']}\t#{e['name']}\t#{e['class1']}\t#{e['class2']}\t#{e['class3']}\t#{e['tag1']}\t#{e['tag2']}\t#{e['tag3']}\t#{e['tag4']}\t#{e['tag5']}\t#{e['status']}\n" end
+	r.each do |e|export << "#{e['FG']}\t#{e['FN']}\t#{e['SID']}\t#{e['SN'].to_i}\t#{e['user']}\t#{e['name']}\t#{e['class1']}\t#{e['class2']}\t#{e['class3']}\t#{e['tag1']}\t#{e['tag2']}\t#{e['tag3']}\t#{e['tag4']}\t#{e['tag5']}\t#{e['status'].to_i}\n" end
 
 	puts "NB2020 [tagp] data (#{ARGV[1]}) #{@date}\n"
 	puts "FG\tFN\tSID\tSN\tuser\tname\tclass1\tclass2\tclass3\ttag1\ttag2\ttag3\ttag4\ttag5\tstatus\n"
@@ -95,7 +101,7 @@ when 'tagp'
 when 'extp'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_FCTP} ON #{$TB_EXT}.FN = #{$TB_FCTP}.FN WHERE #{$TB_EXT}.user='#{ARGV[1]}';" )
-	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv']}\t#{e['allergen1']}\t#{e['allergen2']}\t#{e['unit']}\t#{e['color1']}\t#{e['color2']}\t#{e['color1h']}\t#{e['color2h']}\t#{e['shun1s']}\t#{e['shun1e']}\t#{e['shun2s']}\t#{e['shun2e']}\n" end
+	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv'].to_i}\t#{e['allergen1'].to_i}\t#{e['allergen2'].to_i}\t#{e['unit']}\t#{e['color1'].to_i}\t#{e['color2'].to_i}\t#{e['color1h'].to_i}\t#{e['color2h'].to_i}\t#{e['shun1s'].to_i}\t#{e['shun1e'].to_i}\t#{e['shun2s'].to_i}\t#{e['shun2e'].to_i}\n" end
 
 	puts "NB2020 [extp] data (#{ARGV[1]}) #{@date}\n"
 	puts "FN\tuser\tgycv\tallergen1\tallergen2\tunit\tcolor1\tcolor2\tcolor1h\tcolor2h\tshun1s\tshun1e\tshun2s\tshun2e\n"
@@ -108,7 +114,7 @@ when 'recipe'
 		sum_ = e['sum'].gsub( "\t", "<t>" )
 		plotocol_ = e['protocol'].gsub( "\n", "<n>" )
 		date_ = e['date'].strftime("%Y-%m-%d")
-		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{sum_}\t#{plotocol_}\t#{date_}\n"
+		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch'].to_i}\t#{e['public'].to_i}\t#{e['protect'].to_i}\t#{e['draft'].to_i}\t#{e['favorite'].to_i}\t#{e['name']}\t#{e['dish'].to_i}\t#{e['type'].to_i}\t#{e['role'].to_i}\t#{e['tech'].to_i}\t#{e['time'].to_i}\t#{e['cost'].to_i}\t#{sum_}\t#{plotocol_}\t#{date_}\n"
 	end
 
 	puts "NB2020 [recipe] data (#{ARGV[1]}) #{@date}\n"
@@ -120,7 +126,7 @@ when 'media'
 	r = $DB.query( "SELECT * FROM #{$TB_MEDIA} WHERE user='#{ARGV[1]}';" )
 	r.each do |e|
 		alt_ = e['alt'].gsub( "\n", "<n>" )
-		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx']}\t#{alt_}\n"
+		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx'].to_i}\t#{alt_}\n"
 	end
 
 	puts "NB2020 [media] data (#{ARGV[1]}) #{@date}\n"
