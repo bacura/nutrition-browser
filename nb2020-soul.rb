@@ -15,7 +15,7 @@ require 'json'
 $GM = 'gm'
 
 $NBURL = 'https://bacura.jp/nb/'
-$MYURL = 'https://bacura.jp/nb/'
+$MYURL = 'https://eiyo-b.com'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
@@ -50,9 +50,6 @@ $TB_PRICEM = 'pricem'
 $TB_RECIPE = 'recipe'
 $TB_RECIPEI = 'recipei'
 $TB_REFITS = 'ref_its'
-$TB_SCHOOLK = 'schoolk'
-$TB_SCHOOLM = 'schoolm'
-$TB_SCHOOLC = 'schoolc'
 $TB_SLOGF = 'slogf'
 $TB_SLOGR = 'slogr'
 $TB_SLOGM = 'slogm'
@@ -60,14 +57,13 @@ $TB_SUM = 'sum'
 $TB_TAG = 'tag'
 $TB_TENSEI = 'tensei'
 $TB_USER = 'user'
-$TB_EXU = 'exu'
 
 $JQUERY = '<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>'
 $BS_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">' 
 $BS_JS = '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>' 
 
 $SERVER_PATH = '/var/www'
-$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs"
+$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs/nb"
 $TMP_PATH = '/tmp'
 $JS_PATH = 'js'
 $CSS_PATH = 'scss'
@@ -595,7 +591,7 @@ class MODj
     res = $DB.prepare( "SELECT json FROM #{$TB_MODJ} WHERE user=? AND module=?" ).execute( @user.name, @mod )&.first
     if res
       begin
-        @json = JSON.parse( res['json'] )
+        @json = JSON.parse( res['json'] ) unless res['json'].to_s.empty?
       rescue JSON::ParserError => e
         puts "J(x_x)pE: #{e.message}<br>"
       end     
@@ -643,18 +639,18 @@ class Food
     return false if @code.to_s.empty?
 
     opt = @fup == 'U' ? " AND user='#{@user.name}';" : ''
-    res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{code}'#{opt};" )
-    if res.first
-      @name = res.first['name']
-      @classes[0] = res.first['class1']
-      @classes[1] = res.first['class2']
-      @classes[2] = res.first['class3']
-      @tags[0] = res.first['tag1']
-      @tags[1] = res.first['tag2']
-      @tags[2] = res.first['tag3']
-      @tags[3] = res.first['tag4']
-      @tags[4] = res.first['tag5']
-      @status = res.first['status'].to_i
+    res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN=? #{opt};" ).execute( code )&.first
+    if res
+      @name = res['name']
+      @classes[0] = res['class1']
+      @classes[1] = res['class2']
+      @classes[2] = res['class3']
+      @tags[0] = res['tag1']
+      @tags[1] = res['tag2']
+      @tags[2] = res['tag3']
+      @tags[3] = res['tag4']
+      @tags[4] = res['tag5']
+      @status = res['status'].to_i
 
       return true
     else

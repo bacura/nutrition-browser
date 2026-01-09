@@ -1,8 +1,10 @@
-#Nutrition browser 2020 local English pack 0.3.2 (2025/12/27)
+#Nutrition browser 2020 local English pack 0.3.3 (2026/01/07)
 
 #==============================================================================
 # STATIC
 #==============================================================================
+@title = 'Nutri browser'
+
 @category = %w( Special Grains Tubers_Stearch Sugars_Sweeteners Legumes Nuts Seeds Vegetables Fruits Mushrooms Algae Seafood Meat Eggs Dairy Fats_Oils Confectionery Beverages Seasonings Processed_Foods Special )
 @fg = %w( 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 )
 
@@ -103,9 +105,12 @@ def html_head( interrupt, status, sub_title )
   #{refresh}
   <title>Nutrition browser #{sub_title}</title>
   <meta charset="UTF-8">
-  <meta name="keywords" content="Nutritionist, Registered Dietitian, Dietitian, Free Nutrition Tools, Diet, Weight Loss, Healthy Eating, Meal Planning, Recipes, Food Database, Food Composition Table, Nutrition Calculator, Nutrition Tracking, Nutrition Analysis, Nutrition Counseling, Dietary Assessment, Food Informatics, Nutrition Informatics, Food Information Analysis, Web Service, Online Nutrition Tool">
-  <meta name="description" content="A free, ubiquitous nutrition tool that adapts to your needs. Nutritionists and registered dietitians can browse food composition data, calculate recipe nutrition, and manage recipes easily online.">
-  <meta name="robots" content="index,follow">
+<!--
+	<meta name="keywords" content="Nutritionist, Registered Dietitian, Dietitian, Free Nutrition Tools, Diet, Weight Loss, Healthy Eating, Meal Planning, Recipes, Food Database, Food Composition Table, Nutrition Calculator, Nutrition Tracking, Nutrition Analysis, Nutrition Counseling, Dietary Assessment, Food Informatics, Nutrition Informatics, Food Information Analysis, Web Service, Online Nutrition Tool">
+	<meta name="description" content="A free, ubiquitous nutrition tool that adapts to your needs. Nutritionists and registered dietitians can browse food composition data, calculate recipe nutrition, and manage recipes easily online.">
+	<meta name="robots" content="index,nofollow"> -->
+-->
+  <meta name="robots" content="noindex,nofollow">
   <meta name="author" content="Bacura KYOTO Lab">
 
   <!-- Jquery -->
@@ -138,7 +143,7 @@ end
 # HTML footer
 #==============================================================================
 def html_foot()
-    banner = "<a href='https://bacura.jp'><img src='https://bacura.jp/nb/photo_/BKL_banner_h125.png' alt='ばきゅら京都Lab'></a>"
+    banner = "<a href='https://bacura.jp'><img src='#{$PHOTO}/BKL_banner_h125.png' alt='Lab'></a>"
     html = <<-"HTML"
       <div align='center' class='koyomi_today' onclick="window.location.href='#top';"><img src='bootstrap-dist/icons/geo.svg' style='height:2em; width:2em;'></div>
       <br>
@@ -161,15 +166,6 @@ end
 #==============================================================================
 def tracking()
   code = <<-"CODE"
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CS1XHNZWY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-1CS1XHNZWY');
-</script>
 
 CODE
 
@@ -219,10 +215,6 @@ HTML
 
   return html
 end
-
-
-
-
 
 #==============================================================================
 # DATE & TIME

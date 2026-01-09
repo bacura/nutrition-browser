@@ -1,8 +1,10 @@
-#Nutrition browser 2020 soul Japanese pack 0.3.2 (2025/12/27)
+#Nutrition browser 2020 soul Japanese pack 0.3.3 (2026/01/07)
 
 #==============================================================================
 # STATIC
 #==============================================================================
+@title = '栄養ブラウザ'
+
 @category = %w( 特　殊 穀　類 いも・でん粉類 砂糖・甘味類 豆　類 種実類 野菜類 果実類 きのこ類 藻　類 魚介類 肉　類 卵　類 乳　類 油脂類 菓子類 し好飲料類 調味料・香辛料類 調理・流通食品類 特　殊 )
 @fg = %w( 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 )
 
@@ -90,12 +92,23 @@ def html_head( interrupt, status, sub_title )
 <!DOCTYPE html>
 <head>
   #{refresh}
-  <title>栄養ブラウザ #{sub_title}</title>
+  <title>栄養ブ #{sub_title}</title>
   <meta charset="UTF-8">
+  <!--
   <meta name="keywords" content="栄養士,管理栄養士,無料,フリー,ダイエット,減量,Webサービス,食品成分表.献立,レシピ,検索,食事,評価,記録,栄養計算,栄養指導,フードインフォマティクス,インフォマティクス,食品情報解析,栄養情報解析,nutrition,Nutritionist,food,informatics,diet">
   <meta name="description" content="*栄養者の慾を如意自在に同化するユビキタス栄養ツール、栄養士、管理栄養士が活動に必要な食品成分の閲覧、料理の栄養計算、レシピの管理などが無料できる">
-  <meta name="robots" content="index,follow">
+  <meta name="robots" content="index,nofollow">
+  -->
+  <meta name="robots" content="noindex,nofollow">
   <meta name="author" content="ばきゅら京都Lab">
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@ho_meow" />
+  <meta name="twitter:title" content="栄養ブラウザ" />
+  <meta name="twitter:description" content="栄養者のユビキタスツール" />
+  <meta name='twitter:image' content='https://bacura.jp/nb/#{$PHOTO}/nb.png' />
+  <meta name="twitter:image:alt" content="栄養ブラウザロゴ" />
 
   <!-- Jquery -->
   #{$JQUERY}
@@ -127,7 +140,7 @@ end
 # HTML footer
 #==============================================================================
 def html_foot()
-    banner = "<a href='https://bacura.jp'><img src='https://bacura.jp/nb/#{$PHOTO}/BKL_banner_h125.png' alt='ばきゅら京都Lab'></a>"
+    banner = "<a href='https://bacura.jp'><img src='#{$PHOTO}/BKL_banner_h125.png' alt='ばきゅら京都Lab'></a>"
     html = <<-"HTML"
       <div align='center' class='koyomi_today' onclick="window.location.href='#top';"><img src='bootstrap-dist/icons/geo.svg' style='height:2em; width:2em;'></div>
       <br>
@@ -150,16 +163,6 @@ end
 #==============================================================================
 def tracking()
   code = <<-"CODE"
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1CS1XHNZWY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-1CS1XHNZWY');
-</script>
 
 CODE
 
@@ -192,74 +195,8 @@ def html_title()
 <div class="container-fluid">
   <div class="row">
     <div class="col-6">
-
-      栄養ブラウザは栄養士・管理栄養士活動を支援するためのツールを提供するWebサービス群です。<br>
-      無料で食品成分の閲覧、料理の栄養計算、レシピの管理などが出来ます。<br>
-      大半の機能はユーザーごとに機能しますので、是非ユーザー登録して使ってみて下さい。<br>
-      下記のゲストアカウントを使えばお試しで登録後の状態を体験できます。<br>
-      <br>
-
-      <h4>お知らせ (20260101)</h4>
-      <ul>
-        <li>サイトが移転しました。</li>
-      </ul>
-      <hr>
-
-      <h4>既知のバグ・障害・機能しないもの</h4>
-      <ul>
-        <li>マニュアルは作りかけです。</li>
-        <li>レシピ帳の絞り込みがなんか怪しい。</li>
-        <li>ギルメン旬の機能は基本まともに動きません。</li>
-        <li>DB関連機能を逐次更新中につき、微妙に不安定さが増しています。</li>
-      </ul>
-      <hr>
-
-      <h4>利用環境</h4>
-      <ul>
-        <li>食品成分表ブラウザはインターネットへの接続が必須で、HTML5に対応したWebブラウザの使用を推奨します。</li>
-        <li>Javascript機能とCookie機能を使用していますので、どちらも有効にしてください。</li>
-        <li>Windows11でVivaldi、EdgeとAndroidのGoogle chromeで動作確認しています。</li>
-        <li>PCとタブレットでの利用を想定しています。スマホは細かすぎて見づらいと思います。</li>
-      </ul>
-      <hr>
-
-      <h4>ゲストアカウントについて</h4>
-      <ul>
-        <li>IDに"guest"、"guest2"、"guest3"、パスワード無しでゲストアカウントでログインできます。</li>
-        <li>複数ユーザーが同時に使用すると、勝手に設定の変更やログアウトが発生します。</li>
-        <li>予告なしで設定や保存内容が初期化されます。</li>
-        <li>気に入ったらアカウントの<a href="regist.cgi">登録</a>をお願いします。</li>
-      </ul>
-      <hr>
-
-      <h4>使用データ</h4>
-      <ul>
-        <li>栄養ブラウザで使用する食品成分データは、文部科学省が公開している「日本食品標準成分表2020年版（八訂）増補2023年」を使用しています。</li>
-        <li>データ中の()、Tr、-記号なども同様の意味で用いられています。また、当サイトで得たデータの使用については文部科学省の方針に従ってください。</li>
-        <li>一部の食品の区分や名称は元データがカオスなので、独自に変更を加えています。</li>
-        <li>詳しくは、<a href="http://www.mext.go.jp/a_menu/syokuhinseibun/index.htm">文部科学省　日本食品標準成分表・資源に関する取組</a>をご覧下さい。</li>
-        <li>一部の食品重量の単位変換は女子栄養大学出版部出版の「調理のためのベーシックデータ第4版、第6版」を参考にしています。</li>
-      </ul>
-
-      <h4>ローカルでの使用</h4>
-      <ul>
-        <li>栄養ブラウザは<a href='https://github.com/bacura/nutrition-browser/'>Github</a>で全てのソースが公開されています。</li>
-        <li>その気になればローカルでサービス自体を稼働させることが出来ますがインストーラー、ドキュメント類が整備されておりません。</li>
-        <li>動かしてみたい人は吉山（ばきゅら京都Lab）info@bacura.jpまでご連絡ください。</li>
-      </ul>
-
-
-      <h4>利用規程</h4>
-      <ol type="1" class="terms">
-        <li>本サービスとはばきゅら京都Labにより運営されている「栄養ブラウザ」を指します。</li>
-        <li>利用者とは本サービスを各自の端末から利用する者を指します。</li>
-        <li>利用者は本サービスを本規約の定めに従って利用しなければなりません。</li>
-        <li>本サービスに起因して利用者に生じたあらゆる損害について、ばきゅら京都Labは一切の責任を負いません。</li>
-        <li>利用者はメールアドレス以外の一切の個人情報を本サービスに入力することを禁止します。</li>
-        <li>利用者が本サービスに登録したデータは本サービスが自由に使用できるものとします。（でないと、保存したり表示させることが出来ません＞＜）</li>
-        <li>本サービスの運用に支障を与えるあらゆる行為を禁止します。</li>
-        <li>本利用規約は利用者に通知することなく変更できるものとします。</li>
-      </ol>
+      ここは超不安定な公開β版です<br>
+      正式版は<a href='https://eiyo-b.com/'>https://eiyo-b.com/</a>に移動しました<br>
     </div>
 
     <div class="col-6">
@@ -291,3 +228,4 @@ end
 #==============================================================================
 # MEDIA
 #==============================================================================
+$WM_FONT = 'さざなみゴシック'
