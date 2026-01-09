@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 export 0.1.0 (2026/01/04)
+#Nutrition browser 2020 export 0.1.1 (2026/01/09)
 
 #==============================================================================
 #STATIC
@@ -103,8 +103,9 @@ when 'recipe'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_RECIPE} WHERE user='#{ARGV[1]}';" )
 	r.each do |e|
-		plotocol = e['protocol'].gsub( "\n", "<n>" )
-		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{e['sum']}\t#{plotocol}\t#{e['date']}\n"
+		sum_ = e['sum'].gsub( "\t", "<t>" )
+		plotocol_ = e['protocol'].gsub( "\n", "<n>" )
+		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{sum_}\t#{plotocol_}\t#{e['date']}\n"
 	end
 
 	puts "NB2020 [recipe] data (#{ARGV[1]}) #{@date}\n"
@@ -115,8 +116,8 @@ when 'media'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_MEDIA} WHERE user='#{ARGV[1]}';" )
 	r.each do |e|
-		alt = e['alt'].gsub( "\n", "<n>" )
-		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx']}\t#{alt}\n"
+		alt_ = e['alt'].gsub( "\n", "<n>" )
+		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx']}\t#{alt_}\n"
 	end
 
 	puts "NB2020 [media] data (#{ARGV[1]}) #{@date}\n"
