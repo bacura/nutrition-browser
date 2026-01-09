@@ -12,40 +12,21 @@
 #LIBRARY
 #==============================================================================
 require './nb2020-soul'
+require 'date'
 
 #==============================================================================
 #DEFINITION
 #==============================================================================
 
-def set_query_num( query, values, items, skips, nums )
+def set_query( query, values, items, skips )
 	q = query
 	items.each.with_index do |e, i|
-		unless skips.include?( e )
-			if nums.include?( e )
-				q << " #{e}='#{values[i].to_i}',"
-			else
-				q << " #{e}='#{values[i]}',"
-			end
-		end
+		q << " #{e}='#{values[i]}'," unless skips.include?( e )
 	end
 	
 	return q.chop!
 end
 
-def set_query_str( query, values, items, skips, strs )
-	q = query
-	items.each.with_index do |e, i|
-		unless skips.include?( e )
-			unless strs.include?( e )
-				q << " #{e}='#{values[i].to_i}',"
-			else
-				q << " #{e}='#{values[i]}',"
-			end
-		end
-	end
-	
-	return q.chop!
-end
 
 #==============================================================================
 # Main
@@ -128,11 +109,10 @@ when 'dic'
 
 					$DB.query( "INSERT INTO #{$TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{e[3]}', def_fn='#{e[4]}';" )
 				end
-
+				count += 1
 			rescue
 				puts "[ERROR]#{e}"
 			end
-			count += 1
 		end
 	else
 		puts 'Incomplete dic data.'
@@ -140,23 +120,23 @@ when 'dic'
 	puts "#{count} data have imported."
 
 when 'fctp'
+	tb = $TB_FCTP
 	# user, @fct_item
 	if true #items.size == 14
-		$DB.query( "DELETE FROM #{$TB_FCTP};" ) if opt == 'xx'
+		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
  
- 		nums = %w( REFUSE ENERC ENERC_KCAL )
 		import_solid.each do |e|
 			values = Array.new( 100 )
 			values = e.dup
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_FCTP} WHERE user='#{values[0]}' AND FN='#{values[2]}';" )
+				res = $DB.query( "SELECT * FROM #{tb} WHERE user='#{values[0]}' AND FN='#{values[2]}';" )
 				if res.first
 					if opt == 'ow'
-						query = "UPDATE #{$TB_FCTP} SET"
+						query = "UPDATE #{tb} SET"
 						skips = %w( user FN SID )
-						query = set_query_num( query, values, items, skips, nums )
+						query = set_query( query, values, items, skips )
 						query<< " WHERE user='#{values[0]}' AND FN='#{values[2]}';"
 
 						$DB.query( query )
@@ -164,17 +144,17 @@ when 'fctp'
 						puts "[SKIP]#{values}"
 					end
 				else
-					query = "INSERT INTO #{$TB_FCTP} SET"
+					query = "INSERT INTO #{tb} SET"
 					skips = %w( SID )
-					query = set_query_num( query, values, items, skips, nums )
+					query = set_query( query, values, items, skips )
 					query<< ";"
 
 					$DB.query( query ) unless values[2].to_s.empty?
 				end
+				count += 1
 			rescue
 				puts "[ERROR]#{e}"
 			end
-			count += 1
 		end
 	else
 		puts 'Incomplete fctp data.'
@@ -182,10 +162,10 @@ when 'fctp'
 	puts "#{count} data have imported."
 
 when 'tagp'
+	tb = $TB_TAG
 	# FG, FN, SID, SN, user, name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status
 	if items.size == 15
-#		$DB.query( "DELETE FROM #{$TB_TAG};" ) if opt == 'xx'
- 		nums = %w( SN status )
+#		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
 			values = Array.new( 20 )
@@ -193,12 +173,12 @@ when 'tagp'
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN='#{values[1]}' AND user='#{values[4]}';" )
+				res = $DB.query( "SELECT * FROM #{tb} WHERE FN='#{values[1]}' AND user='#{values[4]}';" )
 				if res.first
 					if opt == 'ow'
-						query = "UPDATE #{$TB_TAG} SET"
-						skips = %w( FN user )
-						query = set_query_num( query, values, items, skips, strs )
+						query = "UPDATE #{tb} SET"
+						skips = %w( FN SN user )
+						query = set_query( query, values, items, skips )
 						query << " WHERE FN='#{values[1]}' AND user='#{values[4]}';"
 
 						$DB.query( query )
@@ -206,17 +186,17 @@ when 'tagp'
 						puts "[SKIP]#{values}"
 					end
 				else
-					query = "INSERT INTO #{$TB_TAG} SET"
-					skips = %w( dummy )
-					query = set_query_num( query, values, items, skips, strs )
+					query = "INSERT INTO #{tb} SET"
+					skips = %w( SN )
+					query = set_query( query, values, items, skips )
 					query << ";"
 
 					$DB.query( query ) unless values[1].to_s.empty? || values[4].to_s.empty?
 				end
+				count += 1
 			rescue
 				puts "[ERROR]#{e}"
 			end
-			count += 1
 		end
 	else
 		puts 'Incomplete tagp data.'
@@ -224,10 +204,10 @@ when 'tagp'
 	puts "#{count} data have imported."
 
 when 'extp'
+	tb = $TB_EXT
 	# FN, user, gycv, allergen1, allergen2, unit, color1, color2, color1h, color2h, shun1s, shun1e, shun2s, shun2e
 	if items.size == 14
-#		$DB.query( "DELETE FROM #{$TB_EXT};" ) if opt == 'xx'
- 		strs = %w( unit )
+#		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
 			values = Array.new( 20 )
@@ -235,12 +215,12 @@ when 'extp'
 
 			print "#{count}\r"
 			begin
-				res = $DB.query( "SELECT * FROM #{$TB_EXT} WHERE FN='#{values[0]}' AND user='#{values[1]}';" )
+				res = $DB.query( "SELECT * FROM #{tb} WHERE FN='#{values[0]}' AND user='#{values[1]}';" )
 				if res.first
 					if opt == 'ow'
-						query = "UPDATE #{$TB_EXT} SET"
+						query = "UPDATE #{tb} SET"
 						skips = %w( FN user )
-						query = set_query_str( query, values, items, skips, strs )
+						query = set_query( query, values, items, skips )
 						query << " WHERE FN='#{values[0]}' AND user='#{values[1]}';"
 
 						$DB.query( query )
@@ -248,17 +228,17 @@ when 'extp'
 						puts "[SKIP]#{values}"
 					end
 				else
-					query = "INSERT INTO #{$TB_TAG} SET"
+					query = "INSERT INTO #{tb} SET"
 					skips = %w( dummy )
-					query = set_query_str( query, values, items, skips, strs )
+					query = set_query( query, values, items, skips )
 					query << ";"
 
 					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
 				end
+				count += 1
 			rescue
 				puts "[ERROR]#{e}"
 			end
-			count += 1
 		end
 	else
 		puts 'Incomplete extp data.'
@@ -267,45 +247,50 @@ when 'extp'
 
 when 'recipe'
 	# code, user, root, branch, public, protect, draft, favorite, name, dish, type, role, tech, time, cost, sum, protocol, date
+	tb = $TB_RECIPE
 
-	if items.size == 14
-#		$DB.query( "DELETE FROM #{$TB_EXT};" ) if opt == 'xx'
- 		strs = %w( code user root name protocol sum date )
+	if items.size == 18
+		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
 			values = Array.new( 20 )
 			values = e.dup
 
 			print "#{count}\r"
-			begin
-				res = $DB.query( "SELECT * FROM #{$TB_RECIPE} WHERE code='#{values[0]}' AND user='#{values[1]}';" )
+#			begin
+				res = $DB.query( "SELECT * FROM #{tb} WHERE code='#{values[0]}' AND user='#{values[1]}';" )
 				if res.first
 					if opt == 'ow'
-						query = "UPDATE #{$TB_EXT} SET"
-						skips = %w( code user protocol )
-						query = set_query_str( query, values, items, skips, strs )
+						query = "UPDATE #{tb} SET"
+						skips = %w( code user sum protocol )
+						query = set_query( query, values, items, skips )
 
+						sum = values[15].gsub( '<t>', "\t"  )
 						plotocol = values[16].gsub( '<n>', "\n"  )
-						query << ", protocol='#{plotocol}' WHERE FN='#{values[0]}' AND user='#{values[1]}';"
 
-#						$DB.query( query )
+						date = DateTime.parse( values[17] ).to_date
+						query << ", sum='#{sum}', protocol='#{plotocol}' WHERE code='#{values[0]}' AND user='#{values[1]}';"
+
+						$DB.query( query )
 					else
 						puts "[SKIP]#{values}"
 					end
 				else
-					query = "INSERT INTO #{$TB_RECIPE} SET"
-					skips = %w( protocol )
-					query = set_query_str( query, values, items, skips, strs )
+					query = "INSERT INTO #{tb} SET"
+					skips = %w( sum protocol )
+					query = set_query( query, values, items, skips )
 
+					sum = values[15].gsub( '<t>', "\t"  )
 					plotocol = values[16].gsub( '<n>', "\n"  )
-					query << ", protocol='#{plotocol}';"
+					query << ", sum='#{sum}', protocol='#{plotocol}';"
 
-#					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
+					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
 				end
-			rescue
-				puts "[ERROR]#{e}"
-			end
-			count += 1
+				count += 1
+
+#			rescue
+#				puts "[ERROR]#{e}"
+#			end
 		end
 	else
 		puts 'Incomplete extp data.'

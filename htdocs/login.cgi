@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.1.1 (2025/12/29)
+# Nutrition browser 2020 login 0.1.3 (2026/01/09)
 
 #==============================================================================
 # STATIC
@@ -28,7 +28,6 @@ def language_pack( language )
     login:    "ログイン",
     error:    "IDとパスワードが一致しませんでした。<br>パスワードを忘れた方は再登録してください。",
     help:     "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:3em; width:2em;'>",
-    nb:       "栄養ブラウザ",
     regist:   "登録",
     empty:    "[空き地]"
   }
@@ -66,7 +65,7 @@ def render_top_login( l )
   top_login_html = <<-"HTML"
     <header class="navbar navbar-expand-lg navbar-dark bg-dark" id="header">
       <div class="container-fluid">
-        <a href="index.cgi" class="navbar-brand h1 text-secondary">#{l[:nb]}</a>
+        <a href="index.cgi" class="navbar-brand h1 text-secondary">#{@title}</a>
         <span class="navbar-text text-secondary login_msg h4"><a href="regist.cgi" class="text-secondary">#{l[:regist]}</a></span>
         <a href='https://bacura.jp/?page_id=543' target='manual'>#{l[:help]}</a>
       </div>
@@ -78,8 +77,16 @@ end
 def validate_user( db, cgi, l )
   res = db.query( "SELECT user, passh, status, cookie FROM #{$TB_USER} WHERE user=? AND status>'0'", false, [cgi['id']] )&.first
   #for initial empty password
+
   if res['passh'].empty? && cgi['pass'].empty?
     update_user_data( db, res, cgi )
+
+  elsif !cgi['pass'].empty? && res['passh'].empty?
+    html_init( nil )
+    html_head( nil, 0, nil )
+    render_top_login( l )
+    render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
+    html_foot()
 
   elsif BCrypt::Password.new( res['passh'] ) == cgi['pass']
     update_user_data( db, res, cgi )
@@ -87,6 +94,7 @@ def validate_user( db, cgi, l )
   else
     html_init( nil )
     html_head( nil, 0, nil )
+
     render_top_login( l )
     render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
     html_foot()

@@ -219,9 +219,9 @@ if command == 'save'
 
 
 		if db.query(  "select FN from #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$TB_TAG} SET FG=?, name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
+			db.query(  "UPDATE #{$TB_TAG} SET FG=?, SID='0', SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
 		else
-			db.query(  "INSERT INTO #{$TB_TAG} SET FG=?, SID='', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
+			db.query(  "INSERT INTO #{$TB_TAG} SET FG=?, SID='0',SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
 	 	end
 
 		if db.query(  "select FN from #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
@@ -231,9 +231,9 @@ if command == 'save'
 		end
 
 		if db.query(  "select FN from #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
+			db.query(  "UPDATE #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
 		else
-			db.query(  "INSERT INTO #{$TB_EXT} SET  color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
+			db.query(  "INSERT INTO #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
 		end
 	end
 end

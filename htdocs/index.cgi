@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-#Nutrition browser 2020 index page 0.5.1 (2025/08/11)
+#Nutrition browser 2020 index page 0.5.2 (2026/01/06)
 
 
 #==============================================================================
@@ -24,7 +24,6 @@ def language_pack( language )
 
   #Japanese
   l['ja'] = {
-    nb: '栄養ブ',
     login: 'ログイン',
     logout: 'ログアウト',
     regist: '登録',
@@ -162,7 +161,7 @@ def html_top( user, l, db )
 html = <<-"HTML"
 <header class="navbar navbar-expand-lg navbar-dark bg-dark" id="header">
   <div class="container-fluid">
-    <a href="index.cgi" class="navbar-brand h1 text-#{login_color}">#{l[:nb]}</a>
+    <a href="index.cgi" class="navbar-brand h1 text-#{login_color}">#{@title}</a>
     <span class="navbar-text text-#{login_color} login_msg h4">#{login}</span>
     <span id='HELP'></span>
     <span class="d-flex">

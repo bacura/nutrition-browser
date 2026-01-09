@@ -71,7 +71,7 @@ when 'memory'
 
 when 'fctp'
 	export = ''
-	r = $DB.query( "SELECT * FROM #{$TB_FCTP} WHERE user='#{ARGV[1]}';" )
+	r = $DB.query( "SELECT * FROM #{$TB_FCTP} INNER JOIN #{$TB_TAG} ON #{$TB_FCTP}.FN = #{$TB_TAG}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
 	r.each do |e|
 		export << "#{e['user']}"
 		@fct_item.each do |item|
@@ -91,7 +91,7 @@ when 'fctp'
 
 when 'tagp'
 	export = ''
-	r = $DB.query( "SELECT * FROM #{$TB_TAG} INNER JOIN #{$TB_FCTP} ON #{$TB_TAG}.FN = #{$TB_FCTP}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
+	r = $DB.query( "SELECT * FROM #{$TB_TAG} INNER JOIN #{$TB_FCTP} ON #{$TB_TAG}.FN = #{$TB_FCTP}.FN WHERE #{$TB_FCTP}.user='#{ARGV[1]}';" )
 	r.each do |e|export << "#{e['FG']}\t#{e['FN']}\t#{e['SID']}\t#{e['SN'].to_i}\t#{e['user']}\t#{e['name']}\t#{e['class1']}\t#{e['class2']}\t#{e['class3']}\t#{e['tag1']}\t#{e['tag2']}\t#{e['tag3']}\t#{e['tag4']}\t#{e['tag5']}\t#{e['status'].to_i}\n" end
 
 	puts "NB2020 [tagp] data (#{ARGV[1]}) #{@date}\n"
@@ -100,7 +100,7 @@ when 'tagp'
 
 when 'extp'
 	export = ''
-	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_FCTP} ON #{$TB_EXT}.FN = #{$TB_FCTP}.FN WHERE #{$TB_EXT}.user='#{ARGV[1]}';" )
+	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_FCTP} ON #{$TB_EXT}.FN = #{$TB_FCTP}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
 	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv'].to_i}\t#{e['allergen1'].to_i}\t#{e['allergen2'].to_i}\t#{e['unit']}\t#{e['color1'].to_i}\t#{e['color2'].to_i}\t#{e['color1h'].to_i}\t#{e['color2h'].to_i}\t#{e['shun1s'].to_i}\t#{e['shun1e'].to_i}\t#{e['shun2s'].to_i}\t#{e['shun2e'].to_i}\n" end
 
 	puts "NB2020 [extp] data (#{ARGV[1]}) #{@date}\n"

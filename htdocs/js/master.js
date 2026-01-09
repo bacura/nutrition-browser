@@ -1,4 +1,4 @@
-// master.js 0.0.8 (2025/08/02)
+// master.js 0.0.9 (2026/01/04)
 
 const mp = 'master/';
 
@@ -310,34 +310,6 @@ const initAccount = function( com ){
 		flashBW();
 		dl1 = true;
 		displayBW();
-	});
-};
-
-// Edit account
-const editAccount = function( target_uid ){
-	$.post( mp + "gm-account.cgi", { command:'edit', target_uid:target_uid }, function( data ){
-		$( "#L2" ).html( data );
-
-		dl2 = true;
-		displayBW();
-	});
-};
-
-// Update account
-const saveAccount = function( target_uid ){
-	const target_pass = document.getElementById( 'target_pass' ).value;
-	const target_mail = document.getElementById( 'target_mail' ).value;
-	const target_aliasu = document.getElementById( 'target_aliasu' ).value;
-	const target_status = document.getElementById( 'target_status' ).value;
-	const target_language = document.getElementById( 'target_language' ).value;
-
-	$.post( mp + "gm-account.cgi", { command:'save', target_uid:target_uid, target_pass:target_pass, target_mail:target_mail, target_aliasu:target_aliasu, target_status:target_status, target_language:target_language }, function( data ){
-		$( "#L1" ).html( data );
-
-		dl2 = true;
-		dl2 = false;
-		displayBW();
-		displayVIDEO( target_uid + ' saved' );
 	});
 };
 

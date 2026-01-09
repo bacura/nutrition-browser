@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 # encoding: utf-8
-# Nutrition Browser 2020 regist 0.0.11 (2025/12/13)
+# Nutrition Browser 2020 regist 0.0.13 (2026/01/09)
 
 #==============================================================================
 # STATIC
@@ -24,7 +24,6 @@ def load_language_pack( language )
 
   #Japanese
   l['ja'] = {
-    nb:        "栄養ブラウザ",
     login:     "ログイン",
     help:      "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:2em; width:2em;'>",
     message:   "IDとパスワードは必須です。英数字とアンダーバー(_)のみ使用可能です。ご登録前に利用規約を確認しておいてください。",
@@ -35,7 +34,7 @@ def load_language_pack( language )
     submit:    "送信",
     error1:    "入力されたIDは英数字とハイフン、アンダーバー以外の文字が使用されています。別のIDを入力して登録してください。",
     error2:    "入力されたIDは制限の30文字を越えています。別のIDを入力して登録してください。",
-    error3:    "IDは4文字以上の長さが必要です。別のIDを入力して登録してください。",
+    error3:    "IDは8文字以上の長さが必要です。別のIDを入力して登録してください。",
     error4:    "入力されたIDはすでに使用されています。別のIDを入力して登録してください。",
     confirm:   "下記の内容でよろしければ登録してください。",
     id:        "ID",
@@ -59,7 +58,7 @@ def render_html_top( l )
   html_output = <<-"HTML"
 <header class="navbar navbar-expand-lg navbar-dark bg-dark" id="header">
   <div class="container-fluid">
-    <a href="index.cgi" class="navbar-brand h1 text-secondary">#{l[:nb]}</a>
+    <a href="index.cgi" class="navbar-brand h1 text-secondary">#{@title}</a>
     <span class="navbar-text text-secondary login_msg h4">#{login_button}</span>
     <a href='https://bacura.jp/?page_id=543' target='manual'>#{l[:help]}</a>
   </div>
@@ -201,9 +200,8 @@ when 'finish'
   mail = @cgi['mail']&.strip.downcase
   mail ||= ''
 
-  passh = BCrypt::Password.new( @cgi['pass'] )
-
-  db.query( "INSERT INTO #{$TB_USER} SET user=?, mail=?, passh=?, aliasu=?, status=1, language=?, reg_date=?", true, @cgi['id'], mail, passh, aliasu, @cgi['language'], @datetime )
+  passh = BCrypt::Password.create( @cgi['pass'] )
+  db.query( "INSERT INTO #{$TB_USER} SET user=?, mail=?, passh=?, aliasu=?, status=1, language=?, reg_date=?", true, [@cgi['id'], mail, passh, aliasu, @cgi['language'], @datetime] )
 
   # Inserting standard palettes
   3.times do |c|
