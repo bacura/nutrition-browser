@@ -11,6 +11,8 @@
 #LIBRARY
 #==============================================================================
 require './nb2020-soul'
+require 'date'
+require 'time'
 
 #==============================================================================
 #DEFINITION
@@ -105,7 +107,8 @@ when 'recipe'
 	r.each do |e|
 		sum_ = e['sum'].gsub( "\t", "<t>" )
 		plotocol_ = e['protocol'].gsub( "\n", "<n>" )
-		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{sum_}\t#{plotocol_}\t#{e['date']}\n"
+		date_ = e['date'].strftime("%Y-%m-%d")
+		export << "#{e['code']}\t#{e['user']}\t#{e['root']}\t#{e['branch']}\t#{e['public']}\t#{e['protect']}\t#{e['draft']}\t#{e['favorite']}\t#{e['name']}\t#{e['dish']}\t#{e['type']}\t#{e['role']}\t#{e['tech']}\t#{e['time']}\t#{e['cost']}\t#{sum_}\t#{plotocol_}\t#{date_}\n"
 	end
 
 	puts "NB2020 [recipe] data (#{ARGV[1]}) #{@date}\n"
