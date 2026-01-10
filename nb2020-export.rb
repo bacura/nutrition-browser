@@ -126,11 +126,12 @@ when 'media'
 	r = $DB.query( "SELECT * FROM #{$TB_MEDIA} WHERE user='#{ARGV[1]}';" )
 	r.each do |e|
 		alt_ = e['alt'].gsub( "\n", "<n>" )
-		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{e['date']}\t#{e['zidx'].to_i}\t#{alt_}\n"
+		date_ = e['date'].strftime("%Y-%m-%d")
+		export << "#{e['user']}\t#{e['code']}\t#{e['origin']}\t#{e['base']}\t#{e['type']}\t#{date_}\t#{e['zidx'].to_i}\t#{alt_}\t#{e['secure'].to_i}\n"
 	end
 
 	puts "NB2020 [media] data (#{ARGV[1]}) #{@date}\n"
-	puts "user\tcode\torigin\tbase\ttype\tdate\tzidx\talt\n"
+	puts "user\tcode\torigin\tbase\ttype\tdate\tzidx\talt\tsecure\n"
 	puts export.force_encoding( 'UTF-8' )
 
 else
