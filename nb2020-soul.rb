@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.13.1 (2025/12/13)
+#Nutrition browser 2020 soul 1.13.2 (2026/01/11)
 
 #==============================================================================
 # LIBRARY
@@ -15,13 +15,13 @@ require 'json'
 $GM = 'gm'
 
 $NBURL = 'https://bacura.jp/nb/'
-$MYURL = 'https://eiyo-b.com'
+$MYURL = 'https://eiyo-b.com/'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
 $MYSQL_DBR = 'rr2020'
 $MYSQL_USER = 'user'
-$MYSQL_USERR = 'ruser'
+$MYSQL_USERR = 'userr'
 $MYSQL_PW = 'password'
 
 $TB_CFG = 'cfg'
@@ -63,11 +63,12 @@ $BS_CSS = '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/boo
 $BS_JS = '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>' 
 
 $SERVER_PATH = '/var/www'
-$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs/nb"
+$HTDOCS_PATH = "#{$SERVER_PATH}/htdocs"
 $TMP_PATH = '/tmp'
 $JS_PATH = 'js'
 $CSS_PATH = 'scss'
 $BOOK_PATH = 'books'
+$KOYOMI_PATH = 'koyomi'
 
 $PHOTO = 'photo_'
 $SPHOTO = 'sphoto_'
