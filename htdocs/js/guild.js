@@ -271,23 +271,6 @@ var initKoyomiex = function(){
 	});
 };
 
-
-// Koyomi EX change
-var changeKoyomiex = function(){
-	var yyyy_mm = document.getElementById( "yyyy_mm" ).value;
-	$.post( kp + "koyomiex.cgi", { command:"init", yyyy_mm:yyyy_mm }, function( data ){ $( "#L1" ).html( data );});
-};
-
-
-// Updating Koyomiex cell
-var updateKoyomiex = function( kex_key, dd ){
-	var yyyy_mm = document.getElementById( "yyyy_mm" ).value;
-	var cell = document.getElementById( kex_key + dd ).value;
-	$.post( kp + "koyomiex.cgi", { command:"update", yyyy_mm:yyyy_mm, dd:dd, kex_key:kex_key, cell:cell }, function( data ){ $( "#L1" ).html( data );});
-//	$.post( kp + "koyomiex.cgi", { command:"update", yyyy_mm:yyyy_mm, dd:dd, kex_key:kex_key, cell:cell }, function( data ){});
-};
-
-
 // Uploading table file
 const importkoyomiex = function(){
 	form_data = new FormData( $( '#table_form' )[0] );
@@ -310,7 +293,6 @@ const importkoyomiex = function(){
 		}
 	);
 };
-
 
 
 /////////////////////////////////////////////////////////////////////////////////

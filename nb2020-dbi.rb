@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.1 (2025/12/11)
+#nb2020-dbi.rb 0.8.2 (2026/01/10)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -803,7 +803,7 @@ def media_init()
 	if res.first
 		puts 'media table already exists.'
 	else
-		query = 'CREATE TABLE media (user VARCHAR(32) NOT NULL, code VARCHAR(64) NOT NULL PRIMARY KEY, origin VARCHAR(64), base VARCHAR(32), type VARCHAR(8), date DATETIME, zidx TINYINT UNSIGNED, alt VARCHAR(128));'
+		query = 'CREATE TABLE media (user VARCHAR(32) NOT NULL, code VARCHAR(64) NOT NULL PRIMARY KEY, origin VARCHAR(64), base VARCHAR(32), type VARCHAR(8), date DATETIME, zidx TINYINT UNSIGNED, alt VARCHAR(128), secure TINYINT(1));'
 		$DB.query( query )
 		puts 'media table has been created.'
 	end

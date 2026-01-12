@@ -1,13 +1,7 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi 0.2.9 (2025/12/27)
+#Nutrition browser 2020 koyomi 0.2.10 (2026/01/11)
 
-
-#==============================================================================
-# STATIC
-#==============================================================================
-@debug = false
-myself = File.basename( __FILE__ )
 
 #==============================================================================
 # LIBRARY
@@ -15,6 +9,13 @@ myself = File.basename( __FILE__ )
 require '../soul'
 require '../brain'
 require '../body'
+
+#==============================================================================
+# STATIC
+#==============================================================================
+@debug = false
+myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
+
 
 #==============================================================================
 # DEFINITION
@@ -124,7 +125,7 @@ db = Db.new( user, @debug, false )
 #### Guild member check
 if user.status < 3
 	puts "Guild member error."
-#	exit
+	exit
 end
 
 
@@ -168,9 +169,9 @@ koyomi.load_db( calendar.ymdf, calendar.ymdl )
 puts "Freeze process<br>" if @debug
 case command
 when 'freeze'
-	koyomi.freeze( calendar.ymd, 'all', freeze_check == 'true' )
+	koyomi.freeze( calendar.ymd, 'all', freeze_check )
 when 'freeze_all'
-	koyomi.freeze_all( calendar.ymd, freeze_all_check == 'true' )
+	koyomi.freeze_all( calendar.ymd, freeze_all_check )
 end
 
 
@@ -199,8 +200,7 @@ puts "koyomi matrix calc<br>" if @debug
 			fct_tdiv.flash
 			code_set, rate_set, unit_set = [], [], []
 
-			if koyomi.fz_bit[ymd][tdiv] == 1
-
+			if koyomi.freeze_flag( ymd, tdiv )
 				puts "Freeze:#{koyomi.fz_code[ymd]}<br>" if @debug
 				fct_day.into_solid( fct_tdiv.solid[0] ) if fct_tdiv.load_fcz( 'freeze', koyomi.fz_code[ymd][tdiv] )
 			else
@@ -311,8 +311,8 @@ photo.base = 'koyomi'
 				else
 					tmp = koyomi.solid[ymd][4]
 				end
+				freeze_flag = koyomi.freeze_flag( ymd, tdiv )
 
-				freeze_flag = true if koyomi.fz_bit[ymd][tdiv] == 1
 			end
 			tmp_html << "<td>#{tmp}</td>"
 		end
@@ -388,43 +388,31 @@ if command == 'init'
 	js = <<~JS
 <script type='text/javascript'>
 
-var postReq = ( command, data, successCallback ) => {
-	$.post( kp + '#{myself}', { command, ...data })
-		.done( successCallback )
-		.fail(( jqXHR, textStatus, errorThrown ) => {
-			console.error( "Request failed: ", textStatus, errorThrown );
-			alert( "An error occurred. Please try again." );
-		});
-}
+var changeKoyomi = ( code ) => {
+	const yyyy_mm = document.getElementById( 'yyyy_mm' ).value;
 
-var changeKoyomi = () => {
-	const yyyy_mm = $( '#yyyy_mm' ).val();
-	postReq( 'change', { yyyy_mm }, data => {
-		$( "#L1" ).html( data );
-	});
-}
+	postLayer( '#{myself}', 'change', true, 'L1', { yyyy_mm });
+};
 
 var freezeKoyomi = ( dd ) => {
-	const yyyy_mm = $( '#yyyy_mm' ).val();
-	const freeze_check = $( `#freeze_check${dd}` ).is( ":checked" );
-	postReq( 'freeze', { yyyy_mm, dd, freeze_check }, data => {
-		$( "#L1" ).html( data );
-	});
-}
+	const yyyy_mm = document.getElementById( 'yyyy_mm' ).value;
+	const freeze_check = document.getElementById( `freeze_check${dd}` ).checked ? 1 : 0;
+
+	postLayer( '#{myself}', 'freeze', true, 'L1', { yyyy_mm, dd, freeze_check });
+};
+
 
 var freezeKoyomiAll = () => {
+	const yyyy_mm = document.getElementById( 'yyyy_mm' ).value;
 	let allChecked = true;
 	for ( let day = 1; ; day++ ){
 		const checkbox = document.getElementById( `freeze_check${day}` );
 		if( !checkbox ) break; // チェックボックスが存在しない場合ループ終了
 		if( !checkbox.checked ) allChecked = false;
 	}
-	const freeze_all_check = allChecked ? 'true' : 'false';
+	const freeze_all_check = allChecked ? 0 : 1;
 
-	const yyyy_mm = $( '#yyyy_mm' ).val();
-	postReq( 'freeze_all', { yyyy_mm, freeze_all_check }, data => {
-		$( "#L1" ).html( data );
-	});
+	postLayer( '#{myself}', 'freeze_all', true, 'L1', { yyyy_mm, freeze_all_check });
 }
 
 // Note book bridge
@@ -437,6 +425,7 @@ var freezeKoyomiAll = () => {
 //	dlf = true;
 //	displayBW();
 //};
+</script>
 
 JS
 

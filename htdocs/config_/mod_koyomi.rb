@@ -1,4 +1,4 @@
-# Nutorition browser 2020 Config module for koyomiex 0.3.0 (2025/12/26)
+# Nutorition browser 2020 Config module for koyomiex 0.3.1 (2026/01/12)
 #encoding: utf-8
 
 @debug = false
@@ -42,8 +42,9 @@ def config_module( cgi, db )
 			begin
 				koyomi = JSON.parse( res['koyomi'] )
     		rescue JSON::ParserError => e
-      			puts "JSON parse error: #{e.message}<br>" if @debug
-    		end			
+	     		puts "J(x_x)P: #{e.message}<br>"
+	      		koyomi = {}
+	    		end			
 			start = koyomi['start'] unless koyomi['start'].nil?
 			kexu = koyomi['kexu'] unless koyomi['kexu'].nil?
 			kexa = koyomi['kexa'] unless koyomi['kexa'].nil?
@@ -100,7 +101,8 @@ def config_module( cgi, db )
 				begin
 					koyomi = JSON.parse( @kex_presets[preset_select] )
 				rescue JSON::ParserError => e
-		  			puts "JSON parse error: #{e.message}<br>" if @debug
+		     		puts "J(x_x)P: #{e.message}<br>"
+		      		koyomi = {}
 				end
 			end
 			kexu = koyomi['kexu'] unless koyomi['kexu'].nil?

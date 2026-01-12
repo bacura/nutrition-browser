@@ -55,14 +55,14 @@ mod = @cgi['mod']
 # Driver logic
 html = if mod == 'menu'
 	puts 'MENU<br>' if @debug
-	user.status == 7 ? "<span class='ref_error'>[config]Astral user limit!</span><br>" : menu( user )
+	user.status == $ASTRAL ? "<span class='ref_error'>[config]Astral user limit!</span><br>" : menu( user )
 else
 	if mod.empty?
 		"<div align='center'>Config</div>"
 	else
 		require "#{$HTDOCS_PATH}/config_/mod_#{mod}.rb"
 		puts "MOD (#{mod})<br>" if @debug
-		config_module( @cgi, db ) unless user.status == 7
+		config_module( @cgi, db ) unless user.status == $ASTRAL
 	end
 end
 

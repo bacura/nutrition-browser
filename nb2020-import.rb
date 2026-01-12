@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 import 0.2.0 (2025/01/07)
+#Nutrition browser 2020 import 0.2.1 (2025/01/10)
 
 #==============================================================================
 #STATIC
@@ -157,7 +157,7 @@ when 'fctp'
 			end
 		end
 	else
-		puts 'Incomplete fctp data.'
+		puts "Incomplete #{tb} data."
 	end
 	puts "#{count} data have imported."
 
@@ -168,7 +168,7 @@ when 'tagp'
 #		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
-			values = Array.new( 20 )
+			values = Array.new( 100 )
 			values = e.dup
 
 			print "#{count}\r"
@@ -199,7 +199,7 @@ when 'tagp'
 			end
 		end
 	else
-		puts 'Incomplete tagp data.'
+		puts "Incomplete #{tb} data."
 	end
 	puts "#{count} data have imported."
 
@@ -210,7 +210,7 @@ when 'extp'
 #		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
-			values = Array.new( 20 )
+			values = Array.new( 100 )
 			values = e.dup
 
 			print "#{count}\r"
@@ -241,7 +241,7 @@ when 'extp'
 			end
 		end
 	else
-		puts 'Incomplete extp data.'
+		puts "Incomplete #{tb} data."
 	end
 	puts "#{count} data have imported."
 
@@ -253,11 +253,11 @@ when 'recipe'
 		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 
 		import_solid.each do |e|
-			values = Array.new( 20 )
+			values = Array.new( 100 )
 			values = e.dup
 
 			print "#{count}\r"
-#			begin
+			begin
 				res = $DB.query( "SELECT * FROM #{tb} WHERE code='#{values[0]}' AND user='#{values[1]}';" )
 				if res.first
 					if opt == 'ow'
@@ -268,7 +268,6 @@ when 'recipe'
 						sum = values[15].gsub( '<t>', "\t"  )
 						plotocol = values[16].gsub( '<n>', "\n"  )
 
-						date = DateTime.parse( values[17] ).to_date
 						query << ", sum='#{sum}', protocol='#{plotocol}' WHERE code='#{values[0]}' AND user='#{values[1]}';"
 
 						$DB.query( query )
@@ -279,7 +278,6 @@ when 'recipe'
 					query = "INSERT INTO #{tb} SET"
 					skips = %w( sum protocol )
 					query = set_query( query, values, items, skips )
-
 					sum = values[15].gsub( '<t>', "\t"  )
 					plotocol = values[16].gsub( '<n>', "\n"  )
 					query << ", sum='#{sum}', protocol='#{plotocol}';"
@@ -288,12 +286,58 @@ when 'recipe'
 				end
 				count += 1
 
-#			rescue
-#				puts "[ERROR]#{e}"
-#			end
+			rescue
+				puts "[ERROR]#{e}"
+			end
 		end
 	else
-		puts 'Incomplete extp data.'
+		puts "Incomplete #{tb} data."
+	end
+	puts "#{count} data have imported."
+
+when 'media'
+	# user, code, origin, base, type, date, zidx, alt, secure
+	tb = $TB_MEDIA
+
+	if items.size == 9
+		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
+
+		import_solid.each do |e|
+			values = Array.new( 100 )
+			values = e.dup
+
+			print "#{count}\r"
+			begin
+				res = $DB.query( "SELECT * FROM #{tb} WHERE user='#{values[0]}' AND code='#{values[1]}';" )
+				if res.first
+					if opt == 'ow'
+						query = "UPDATE #{tb} SET"
+						skips = %w( code user alt )
+						query = set_query( query, values, items, skips )
+						alt = values[8].gsub( '<n>', "\n"  )
+						query << ", alt='#{alt}' WHERE user='#{values[0]}' AND code='#{values[1]}';"
+
+						$DB.query( query )
+					else
+						puts "[SKIP]#{values}"
+					end
+				else
+					query = "INSERT INTO #{tb} SET"
+					skips = %w( alt )
+					query = set_query( query, values, items, skips )
+					alt = values[8].gsub( '<n>', "\n"  )
+					query << ", alt='#{alt}';"
+
+					$DB.query( query ) unless values[0].to_s.empty? || values[1].to_s.empty?
+				end
+				count += 1
+
+			rescue
+				puts "[ERROR]#{e}"
+			end
+		end
+	else
+		puts "Incomplete #{tb} data."
 	end
 	puts "#{count} data have imported."
 
@@ -303,5 +347,7 @@ else
 	puts 'ftcp'
 	puts 'tagp'
 	puts 'extp'
+	puts 'recipe'
+	puts 'media'
 end
 

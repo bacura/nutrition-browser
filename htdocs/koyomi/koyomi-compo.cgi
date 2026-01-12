@@ -25,7 +25,7 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		'title' 	=> "こよみ食品構成計算",\
+		'title' 	=> "こよみ:食品構成",\
 		'signpost'	=> "<img src='bootstrap-dist/icons/signpost.svg' style='height:2em; width:2em;'>",\
 		'fromto'	=> "　～　",\
 		'calc'		=> "計　算",\

@@ -1,4 +1,4 @@
-#Nutrition browser 2020 body 0.1.1 (2025/12/19)
+#Nutrition browser 2020 body 0.1.2 (2026/01/11)
 
 #==============================================================================
 #STATIC
@@ -98,19 +98,21 @@ class Calendar
 
     #sub items
     @wd, @wf, @ddl, @wl, @mms, @dds = update_sub( @date )
-
     @yyyyf = Time.now.year
+
     res = $DB.prepare( "SELECT koyomi FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )&.first
-    unless res['koyomi']&.to_s.empty?
+    if res
+      unless res['koyomi'].to_s.empty?
+        begin
+          koyomi = JSON.parse( res['koyomi'] )
+        rescue JSON::ParserError => e
+          puts "J(x_x)pE: #{e.message}<br>"
+          exit
+        end     
+        @yyyyf = koyomi['start']
+      end
+    else
 
-      begin
-        koyomi = JSON.parse( res['koyomi'] )
-      rescue JSON::ParserError => e
-        puts "J(x_x)pE: #{e.message}<br>"
-        exit
-      end     
-
-      @yyyyf = koyomi['start']
     end
   end
 

@@ -26,7 +26,7 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		'koyomi' 	=> "こよみ栄養計算",\
+		'koyomi' 	=> "こよみ:栄養",\
 		'fromto'	=> "　～　",\
 		'calc'		=> "計　算",\
 		'no_day'	=> "該当日がありません",\

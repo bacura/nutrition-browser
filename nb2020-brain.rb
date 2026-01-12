@@ -1,4 +1,4 @@
-#Nutrition browser 2020 brain 0.6.8 (2025/09/17)
+#Nutrition browser 2020 brain 0.6.9 (2026/01/11)
 
 #==============================================================================
 #STATIC
@@ -217,16 +217,24 @@ class Palette
 
     if @user.name
       res = $DB.prepare( "SELECT * FROM #{$TB_PALETTE} WHERE user=?" ).execute( @user.name )
-      res.each do |e| @sets[e['name']] = e['palette'] end
+      if res.first
+        res.each do |e| @sets[e['name']] = e['palette'] end
+      else
+        $PALETTE_DEFAULT.each.with_index do |e, i|
+          $DB.prepare( "INSERT INTO #{$TB_PALETTE} SET user=?, name=?, palette=?" ).execute( @user.name, $PALETTE_DEFAULT_NAME[i], e )
+          @sets[$PALETTE_DEFAULT_NAME[i]] = e
+        end
+      end
+
     else
-      $PALETTE_DEFAULT_NAME[$DEFAULT_LP].size.times do |c|
-        @sets[$PALETTE_DEFAULT_NAME[$DEFAULT_LP][c]] = $PALETTE_DEFAULT[$DEFAULT_LP][c]
+      $PALETTE_DEFAULT_NAME[$DEFAULT_LP].each.with_index do |e, i|
+        @sets[e] = $PALETTE_DEFAULT[$DEFAULT_LP][i]
       end
     end
   end
 
   def set_bit( palette )
-    palette = $PALETTE_DEFAULT_NAME[$DEFAULT_LP][1] if palette == '' || palette == nil
+    palette = $PALETTE_DEFAULT_NAME[$DEFAULT_LP][1] if palette.to_s.empty?
     @bit = @sets[palette].split( '' )
     @bit.map! do |x| x.to_i end
   end
@@ -853,8 +861,7 @@ class Koyomi
     @updates << ymd
   end
 
-  def freeze( ymd, tdiv = 'all', check )
-      freeze_bit = check ? 1 : 0
+  def freeze( ymd, tdiv = 'all', freeze_bit )
       @fz_bit[ymd] ||= []
       if tdiv.to_s == 'all'
         5.times do |tdiv|
@@ -866,12 +873,11 @@ class Koyomi
       @updates << ymd
   end
 
-  def freeze_all( ymd, check )
-      freeze_bit = check ? 0 : 1
+  def freeze_all( ymd, freeze_bit )
       @fz_bit[ymd] ||= []
       @fz_bit.each do |ymd,|
         5.times do |tdiv|
-          @fz_bit[ymd][tdiv] = freeze_bit
+          @fz_bit[ymd][tdiv] = freeze_bit.to_i
         end
         @updates << ymd
       end
@@ -882,11 +888,11 @@ class Koyomi
     if tdiv == 'all'
       5.times do |tdiv|
         next if @fz_bit[ymd].nil?
-        flag = true if @fz_bit[ymd][tdiv] == 1
+        flag = true if @fz_bit[ymd][tdiv].to_i == 1
       end
     elsif tdiv.to_i >= 0 &&  tdiv.to_i < 5
         return flag if @fz_bit[ymd].nil?
-        flag = true if @fz_bit[ymd][tdiv] == 1
+        flag = true if @fz_bit[ymd][tdiv].to_i == 1
     end
 
     return flag
