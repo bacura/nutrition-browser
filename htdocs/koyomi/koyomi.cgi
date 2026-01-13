@@ -79,7 +79,7 @@ end
 def meals_html( solid, db )
 	mb_html = '<ul>'
 	solid.split( "\t" ).each do |e|
-		code = e.split( '~' )[0]
+		code = e.split( '~' ).first
 		if /^\?/ =~ code
 			tmp = "<li style='list-style-type: circle'>#{@something[code]}</li>"
 
@@ -101,8 +101,8 @@ def meals_html( solid, db )
 		else
 			puts 'food' if @debug
 			food = Food.new( db.user, code )
-			tmp = food.load_tag ? "<li style='list-style-type: square'>#{food.name}</li>" : "<li class='error'>Error: #{code}</li>"
 
+			tmp = food.load_tag ? "<li style='list-style-type: square'>#{food.name}</li>" : "<li class='error'>Error: #{code}</li>"
 		end
 		mb_html << tmp
 	end
@@ -312,7 +312,6 @@ photo.base = 'koyomi'
 					tmp = koyomi.solid[ymd][4]
 				end
 				freeze_flag = koyomi.freeze_flag( ymd, tdiv )
-
 			end
 			tmp_html << "<td>#{tmp}</td>"
 		end

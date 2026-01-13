@@ -1,4 +1,4 @@
-//guild.js ver 0.5.2 (2025/10/04)
+//guild.js ver 0.5.3 (2026/01/13)
 
 kp = 'koyomi/'
 
@@ -426,25 +426,6 @@ const foodRank = function(){
 		displayBW();
 	});
 };
-
-// Dosplaying recipe by scatter plott
-const foodRankList = function(){
-	const main_item = document.getElementById( "main_item" ).value;
-	const comp_item = document.getElementById( "comp_item" ).value;
-	const rank_order = document.getElementById( "rank_order" ).value;
-	const rank_display = document.getElementById( "rank_display" ).value;
-	const fg = document.getElementById( "fg" ).value;
-
-	let ex_inf = 0;
-	let ex_zero = 0;
-	if( document.getElementById( "ex_inf" ).checked ){ ex_inf = 1; }
-	if( document.getElementById( "ex_zero" ).checked ){ ex_zero = 1; }
-
-	$.post( "food-rank.cgi", { command:'list', fg:fg, main_item:main_item, comp_item:comp_item, rank_order:rank_order, rank_display:rank_display, ex_inf:ex_inf, ex_zero:ex_zero }, function( data ){
-		$( "#L1" ).html( data );
-	});
-};
-
 
 /////////////////////////////////////////////////////////////////////////////////
 // Note //////////////////////////////////////////////////////////////

@@ -1,7 +1,11 @@
 #! /usr/bin/ruby
 # coding: utf-8
-#Nutrition browser 2020 index page 0.5.2 (2026/01/06)
+#Nutrition browser 2020 index page 0.5.3 (2026/01/13)
 
+#==============================================================================
+#LIBRARY
+#==============================================================================
+require './soul'
 
 #==============================================================================
 #STATIC
@@ -10,14 +14,8 @@
 myself = File.basename( __FILE__ )
 
 #==============================================================================
-#LIBRARY
-#==============================================================================
-require './soul'
-
-#==============================================================================
 #DEFINITION
 #==============================================================================
-
 # Language pack
 def language_pack( language )
   l = Hash.new
@@ -34,7 +32,7 @@ def language_pack( language )
     recipe: 'レシピ',
     memory: '記憶',
     login_: 'ログインが必要',
-    gmen: 'ギルドメンバー専用',
+    gmen: '登録ユーザー専用',
     cboard: '<img src=\'bootstrap-dist/icons/card-text.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;まな板',
     table: '<img src=\'bootstrap-dist/icons/motherboard.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;お膳',
     history: '<img src=\'bootstrap-dist/icons/inbox-fill.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;履　歴',
@@ -230,7 +228,7 @@ def html_nav( user, l, db )
     config_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:gear]}</button></a>"
   end
 
-  if user.status >= 2
+  if user.status >= 1
     g_button = "<button type='button' class='btn btn-warning btn-sm nav_button text-warning guild_color' onclick=\"changeMenu( '#{user.status}' )\">G</button>"
   else
     g_button = "<button type='button' class='btn btn-warning btn-sm nav_button text-dark guild_color' onclick=\"displayVIDEO( '#{l[:gmen]}' )\">G</button>"
@@ -279,24 +277,23 @@ html = <<-"HTML"
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initKoyomi()">#{l[:koyomi]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="foodRank()">#{l[:foodrank]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initRefIntake()">#{l[:intake]}</button>
+</nav>
+<nav class='container-fluid' id='gs_menu' style='display:none;'>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initGinmi()">#{l[:ginmi]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initPhysique()">#{l[:pysique]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initMomChai()">#{l[:momchai]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initFCZlist()">#{l[:fczl]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initMemoryList( 'init' )">#{l[:memorya]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initNote()">#{l[:note]}</button>
-</nav>
-<nav class='container-fluid' id='gs_menu' style='display:none;'>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initAccountM()">#{l[:accountm]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initAstral()">#{l[:astral]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="recipe3ds()">#{l[:recipe3d]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initSchool()">#{l[:school]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initToker()">#{l[:toker]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initFCZlist()">#{l[:fczl]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initMedialist()">#{l[:medial]}</button>
+<!--    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initSchool()">#{l[:school]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initToker()">#{l[:toker]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initFFlow()">#{l[:fflow]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="">#{l[:senior]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="">#{l[:condition]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="">#{l[:mjl]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="">#{l[:mjl]}</button> -->
 </nav>
 <nav class='container-fluid' id='gm_menu' style='display:none;'>
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initUnit( 'init' )">#{l[:unit]}</button>
