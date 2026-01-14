@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.13.3 (2026/01/13)
+#Nutrition browser 2020 soul 1.13.4 (2026/01/14)
 
 #==============================================================================
 # LIBRARY
@@ -12,7 +12,7 @@ require 'json'
 #==============================================================================
 #STATIC
 #==============================================================================
-$GM = 'gm'
+$GM = '--gm--'
 
 $NBURL = 'https://bacura.jp/nb/'
 $MYURL = 'https://eiyo-b.com/'
@@ -20,9 +20,9 @@ $MYURL = 'https://eiyo-b.com/'
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
 $MYSQL_DBR = 'rr2020'
-$MYSQL_USER = 'user'
-$MYSQL_USERR = 'userr'
-$MYSQL_PW = 'password'
+$MYSQL_USER = '--nbuser--'
+$MYSQL_USERR = '--rruser--'
+$MYSQL_PW = '--password--'
 
 $TB_CFG = 'cfg'
 $TB_DIC = 'dic'
@@ -577,7 +577,6 @@ class Config
   def update()
     @elements[@base] = @val
     elements_ = JSON.generate( @elements )
-    res = $DB.prepare( "SELECT * FROM #{$TB_CFG} WHERE user=?" ).execute( @user.name )
     $DB.prepare( "UPDATE #{$TB_CFG} SET cfgj=? WHERE user=?" ).execute( elements_, @user.name ) unless @user.barrier
   end
 end
