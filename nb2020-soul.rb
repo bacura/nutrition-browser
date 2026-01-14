@@ -21,7 +21,7 @@ $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
 $MYSQL_DBR = 'rr2020'
 $MYSQL_USER = 'user'
-$MYSQL_USERR = userr
+$MYSQL_USERR = 'userr'
 $MYSQL_PW = 'password'
 
 $TB_CFG = 'cfg'
