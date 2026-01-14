@@ -323,7 +323,7 @@ if command == 'init'
 <script type='text/javascript'>
 
 // Dosplaying recipe by scatter plott
-const foodRankList = () => {
+var foodRankList = () => {
 	const main_item = document.getElementById( "main_item" ).value;
 	const comp_item = document.getElementById( "comp_item" ).value;
 	const rank_order = document.getElementById( "rank_order" ).value;

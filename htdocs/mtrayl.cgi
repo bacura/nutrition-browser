@@ -293,7 +293,7 @@ menus.each do |e|
 		menu_html << "<td>-</td>"
 
 		menu_html << "<td>"
-		if user.status >= 2
+		if user.status >= 1
 			menu_html << "<span onclick=\"addKoyomi( '#{e.code}', 1 )\">#{l[:calendar]}</span>&nbsp;&nbsp;"
 		end
 		menu_html << "</td>"

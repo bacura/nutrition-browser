@@ -86,7 +86,7 @@ def html_top( user, l, db )
 
   case user.status
   when 1
-    login_color = "primary"
+    login_color = "info"
   when 3, 6
     login_color = "warning"
   when 2, 4
@@ -100,7 +100,7 @@ def html_top( user, l, db )
   else
     login_color = "secondary"
   end
-  login_color = "light" if user.name == 'gm'
+  login_color = "light" if user.name == $GM
 
   family = []
   family_a = []

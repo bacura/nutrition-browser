@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutritoin browser history 0.2.8 (2025/12/18)
+#Nutritoin browser history 0.2.9 (2026/01/14)
 
 #==============================================================================
 # STATIC
@@ -100,7 +100,7 @@ def get_histry( db, l, sub_fg )
 			tags = tagnames( res_tag )
 
 			add_button = "<span onclick=\"addingCB( '#{entry}', '', '#{food_name}' )\">#{l[:cboard]}</span>" if db.user.name
-			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 2
+			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 1
 
 			html += "<tr class='fct_value'><td class='link_cursor' onclick=\"detailView_his( '#{entry}' )\">#{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}</td></tr>\n"
 		elsif sgh[entry] == 'r' && ( sub_fg == 'R' || sub_fg == 'all' )
@@ -108,7 +108,7 @@ def get_histry( db, l, sub_fg )
 			next unless recipe_res
 
 			recipe_name = recipe_res['name']
-			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 2
+			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 1
 			print_button = "<span onclick=\"print_templateSelect( '#{entry}' )\">#{l[:printer]}</span>"
 			cp2w_button = "<span onclick=\"cp2words( '#{entry}', '' )\">#{l[:cp2words]}</span>"
 

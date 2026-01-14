@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 food detail sub 0.0.6 (2025/07/27)
+#Nutrition browser 2020 food detail sub 0.0.7 (2026/01/14)
 
 
 #==============================================================================
@@ -225,7 +225,7 @@ when 'init', 'weight', 'cb', 'cbp'
 		end
 
 		# Koyomi button
-		koyomi_button = user.status >= 2 && base != 'cb' ? "<span onclick=\"addKoyomi( '#{food_no_list[c]}' )\">#{l[:calendar]}</span>" : ''
+		koyomi_button = user.status >= 1 && base != 'cb' ? "<span onclick=\"addKoyomi( '#{food_no_list[c]}' )\">#{l[:calendar]}</span>" : ''
 
 		# GM/SGM専用単位変換ボタン
 		gm_unitc = ''
