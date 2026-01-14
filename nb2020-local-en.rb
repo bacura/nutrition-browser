@@ -85,7 +85,7 @@ def html_head( interrupt, status, sub_title )
   refresh = '<meta http-equiv="refresh" content="0; url=index.cgi">' if interrupt == 'refresh'
 
   js_guild = ''
-  if status >= 2
+  if status >= 1
     js_guild = "<script type='text/javascript' src='#{$JS_PATH}/guild.js'></script>"
   end
 

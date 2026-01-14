@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.13.2 (2026/01/11)
+#Nutrition browser 2020 soul 1.13.3 (2026/01/13)
 
 #==============================================================================
 # LIBRARY
@@ -21,7 +21,7 @@ $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
 $MYSQL_DBR = 'rr2020'
 $MYSQL_USER = 'user'
-$MYSQL_USERR = 'userr'
+$MYSQL_USERR = userr
 $MYSQL_PW = 'password'
 
 $TB_CFG = 'cfg'
@@ -631,6 +631,8 @@ class Food
       @fup = 'U'
     elsif /^P/ =~ code
       @fup = 'P'
+    elsif /^C/ =~ code
+      @fup = 'C'
     else
       @fup = ''
     end
@@ -640,7 +642,7 @@ class Food
     return false if @code.to_s.empty?
 
     opt = @fup == 'U' ? " AND user='#{@user.name}';" : ''
-    res = $DB.query( "SELECT * FROM #{$TB_TAG} WHERE FN=? #{opt};" ).execute( code )&.first
+    res = $DB.prepare( "SELECT * FROM #{$TB_TAG} WHERE FN=? #{opt};" ).execute( @code )&.first
     if res
       @name = res['name']
       @classes[0] = res['class1']
@@ -1063,7 +1065,6 @@ class Menu
   end
 
   def update_db()
-    $DB.query( "UPDATE #{$TB_MENU} SET public='#{@public}', protect='#{@protect}', label='#{@label}', name='#{@name}', meal='#{@meal}', memo='#{@memo}' WHERE user='#{@user.name}' and code='#{@code}';" ) unless @user.barrier
     $DB.prepare( "UPDATE #{$TB_MENU} SET public=?, protect=?, label=?, name=?, meal=?, memo=? WHERE user=? AND code=?" ).execute( @public, @protect, @label, @name, @meal, @memo, @user.name, @code ) unless @user.barrier
 
   end
