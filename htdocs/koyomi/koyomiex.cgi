@@ -59,8 +59,8 @@ db = Db.new( user, @debug, false )
 html = []
 
 puts 'CHECK membership<br>' if @debug
-if user.status < 3
-	puts "Guild member error."
+if user.status < 1
+	puts "Member error."
 	exit
 end
 

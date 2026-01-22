@@ -62,8 +62,8 @@ l = language_pack( user.language )
 db = Db.new( user, @debug, false )
 
 #### Guild member check
-if user.status < 3
-	puts "Guild member error."
+if user.status < 1
+	puts "Member error."
 	exit
 end
 
