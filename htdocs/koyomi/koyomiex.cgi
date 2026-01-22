@@ -40,7 +40,7 @@ def language_pack( language )
 		basic: 	"基本",
 		geo:	"<img src='bootstrap-dist/icons/geo.svg' style='height:2em; width:2em;'>",
 		table:	"<img src='bootstrap-dist/icons/table.svg' style='height:1.5em; width:1.5em;'>",
-		tsv:	"TSV<img src='bootstrap-dist/icons/download.svg' style='height:1.5em; width:1.5em;'>"
+		tsv:	"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>"
 	}
 
 	return l[language]

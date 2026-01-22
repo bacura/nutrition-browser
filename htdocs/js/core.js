@@ -1,4 +1,4 @@
-// Nutorition Browser 2020 core.js 0.7.2 (2025/07/26)
+// Nutorition Browser 2020 core.js 0.7.1 (2026/01/21)
 ///////////////////////////////////////////////////////////////////////////////////
 // Global ////////////////////////////////////////////////////////////////////
 dl1 = false;
@@ -162,27 +162,25 @@ const displayREC = () => {
 const changeMenu = ( user_status ) => {
 	switch( menu_status ){
 		case 0:
+			document.getElementById( "fn_menu" ).style.display = 'none';
 			document.getElementById( "guild_menu" ).style.display = 'inline';
-			displayVIDEO( 'Guild menu' );
 			if( user_status >= 5 && user_status != 6 ){ menu_status = 1; }else{ menu_status = 3; }
 			break;
 		case 1:
 			document.getElementById( "guild_menu" ).style.display = 'none';
 			document.getElementById( "gs_menu" ).style.display = 'inline';
-			displayVIDEO( 'Guild Shun menu' );
 			if( user_status >= 8 ){ menu_status = 2; }else{ menu_status = 3; }
 			break;
 		case 2:
 			document.getElementById( "gs_menu" ).style.display = 'none';
 			document.getElementById( "gm_menu" ).style.display = 'inline';
-			displayVIDEO( 'GM menu' );
 			menu_status = 3;
 			break;
 		case 3:
+			document.getElementById( "fn_menu" ).style.display = 'inline';
 			document.getElementById( "guild_menu" ).style.display = 'none';
 			document.getElementById( "gs_menu" ).style.display = 'none';
 			document.getElementById( "gm_menu" ).style.display = 'none';
-			displayVIDEO( 'Standard menu' );
 			menu_status = 0;
 			break;
 	}
@@ -323,19 +321,6 @@ const viewDetailSub = function( com, key, direct ){
 	dlf = false;
 	displayBW();
 };
-
-
-// Changing weight of food
-const changeDSWeight = function( com, key, fn ){
-	const fraction_mode = document.getElementById( "fraction" ).value;
-	const weight = document.getElementById( "weight" ).value;
-	$.post( "detail-sub.cgi", { command:com, food_key:key, frct_mode:fraction_mode, food_weight:weight, food_no:fn }, function( data ){
-		$( "#L5" ).html( data );
-		displayVIDEO( '(>_<)' );
-
-	});
-};
-
 
 //////////////////////////////////////////////////////////////////////////////////
 // Browsing nutritional Information (ditail) ///////////////////////////////////////////////////////////////////////
@@ -941,6 +926,20 @@ const initDetective = function(){
 		flashBW();
 		dl1 = true;
 		dl2 = true;
+		displayBW();
+	});
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// Food rank //////////////////////////////////////////////////////////////
+
+// Dosplaying recipe by scatter plott
+const foodRank = function(){
+	$.post( "food-rank.cgi", { command:'init' }, function( data ){
+		$( "#L1" ).html( data );
+
+		flashBW();
+		dl1 = true;
 		displayBW();
 	});
 };

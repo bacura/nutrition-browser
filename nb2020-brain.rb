@@ -613,6 +613,59 @@ class FCT
 end
 
 
+class FCZ
+  attr_accessor :res
+
+  def initialize( user, base = nil, code = nil )
+    @code = code
+    @origin = nil
+    @base = base
+    @name = nil
+    @user = user
+    @date = nil
+    @res = nil
+  end
+
+  def set_code( code )
+    @code = code
+  end
+
+  def load_db( code = nil )
+    @code = code unless code.nil?
+    @res = $DP.prepare( "SELECT * FROM #{$TB_FCZ} WHERE user=? AND base=? AND code=?" ).execute( @user.name, @base, @code )&.first
+    if @res
+      @origin = @res['origin']
+      @name = @res['name']
+      @date = @res['date']
+    end
+
+    return @res
+  end
+
+  def load_off_lim_db( offset, limit )
+    @res = $DP.prepare( "SELECT * FROM #{$TB_FCZ} WHERE user=? AND base=? ORDER BY name LIMIT ?, ?" ).execute( @user.name, @base, offset, limit )&.first
+
+    return @res
+  end
+
+  def count_db()
+    @res = $DB.prepare( "SELECT COUNT(code) FROM #{$TB_FCZ} WHERE user=? AND base=?" ).execute( @user.name, @base )&.first
+
+    return @res['COUNT(code)'].to_i
+  end
+
+  def delete( code = nil )
+    @code = code unless code.nil?
+    $DP.prepare( "DELETE FROM #{$TB_FCZ} WHERE user=? AND base=? AND code=?" ).execute( @user.name, @base, @code ) unless @user.barrier
+    @code = nil
+    @origin = nil
+    @name = nil
+    @date = nil
+
+  end
+end
+
+
 class Memory
   attr_accessor :code, :user, :category, :pointer, :content, :date
 
@@ -902,3 +955,4 @@ class Koyomi
     $DB.query( "DELETE FROM #{$TB_KOYOMI} WHERE user='#{@user.name}' AND freeze=0 AND ( koyomi='' OR koyomi IS NULL OR DATE IS NULL );" ) unless @user.barrier
   end
 end
+

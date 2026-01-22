@@ -1,6 +1,12 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 detail viewer 0.1.6.AI (2024/10/19)
+#Nutrition browser 2020 detail viewer 0.1.7 (2026/01/21)
+
+#==============================================================================
+# LIBRARY
+#==============================================================================
+require './soul'
+require './brain'
 
 #==============================================================================
 # STATIC
@@ -8,12 +14,6 @@
 @debug = false
 sn_max = 2538
 myself = File.basename( __FILE__ )
-
-#==============================================================================
-# LIBRARY
-#==============================================================================
-require './soul'
-require './brain'
 
 #==============================================================================
 # DEFINITION
@@ -25,24 +25,24 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		:login    => "ログインが必要",
-		:aliase   => "別名",
-		:request  => "リクエスト",
-		:fract    => "端数",
-		:food_no  => "食品番号",
-		:sid      => "索引番号",
-		:round    => "四捨五入",
-		:ceil     => "切り上げ",
-		:floor    => "切り捨て",
-		:volume   => "量",
-		:skey     => "検索キー",
-		:notice   => "備考：",
-		:calendar => "暦+",
-		:cboard   => "<img src='bootstrap-dist/icons/card-text.svg' style='height:2em; width:2em;'>",
-		:rev      => "<img src='bootstrap-dist/icons/caret-left.svg' style='height:1.5em; width:1.5em;'>",
-		:fwd      => "<img src='bootstrap-dist/icons/caret-right.svg' style='height:1.5em; width:1.5em;'>",
-		:downlord => "<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>",
-		:return   => "<img src='bootstrap-dist/icons/signpost-r.svg' style='height:2em; width:2em;'>"
+		login:    "ログインが必要",
+		aliase:   "別名",
+		request:  "リクエスト",
+		fract:    "端数",
+		food_no:  "食品番号",
+		sid:      "索引番号",
+		round:    "四捨五入",
+		ceil:     "切り上げ",
+		floor:    "切り捨て",
+		volume:   "量",
+		skey:     "検索キー",
+		notice:   "備考：",
+		calendar: "暦+",
+		cboard:   "<img src='bootstrap-dist/icons/card-text.svg' style='height:2em; width:2em;'>",
+		rev:      "<img src='bootstrap-dist/icons/caret-left.svg' style='height:1.5em; width:1.5em;'>",
+		fwd:      "<img src='bootstrap-dist/icons/caret-right.svg' style='height:1.5em; width:1.5em;'>",
+		downlord: "<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>",
+		return:   "<img src='bootstrap-dist/icons/signpost-r.svg' style='height:2em; width:2em;'>"
 	}
 
 	return l[language]
@@ -79,9 +79,9 @@ unit_set = []
 unit_select = []
 selectu = 'g' if selectu.empty?
 uk = BigDecimal( '1' )
-r = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN='#{food_no}';", false )
-if r.first
-	unith = JSON.parse( r.first['unit'] )
+res = db.query( "SELECT unit FROM #{$TB_EXT} WHERE FN=?", false, [food_no] )&.first
+if res
+	unith = JSON.parse( res['unit'] )
 	unith.each do |k, v|
 		next if k == 'note'
 
@@ -103,42 +103,42 @@ food_weight = food_volume * uk
 
 puts 'Load FCT<br>' if @debug
 fct_opt = Hash.new
-r = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN='#{food_no}';", false )
-if r.first
-	sid = r.first['SID']
-	food_no = r.first['FN']
-	@fct_item.each do |e| fct_opt[e] = num_opt( r.first[e], food_weight, frct_mode, @fct_frct[e] ) end
+res = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN=?", false, [food_no] )&.first
+if res
+	sid = res['SID']
+	food_no = res['FN']
+	@fct_item.each do |e| fct_opt[e] = num_opt( res[e], food_weight, frct_mode, @fct_frct[e] ) end
 end
 
 puts 'Aliase process<br>' if @debug
 search_key = ''
-r = db.query( "SELECT alias FROM #{$TB_DIC} WHERE org_name=(SELECT name FROM #{$TB_TAG} WHERE FN='#{food_no}');", false )
+r = db.query( "SELECT alias FROM #{$TB_DIC} WHERE org_name=(SELECT name FROM #{$TB_TAG} WHERE FN=?)", false, [food_no] )
 r.each do |e| search_key << "#{e['alias']}," end
 search_key.chop!
 
 alias_button = ''
-if user.status > 0
-	alias_button << '<div class="input-group input-group-sm">'
-	alias_button << "<label class='input-group-text' for='alias'>#{l[:aliase]}</label>"
-	alias_button <<	'<input type="text" class="form-control" id="alias">'
-	alias_button <<	"<div class='input-group-prepend'><button class='btn btn-outline-primary' type='button' onclick=\"aliasRequest( '#{food_no}' )\">#{l[:request]}</button></div>"
-	alias_button << '</div>'
-end
+#if user.status > 0
+#	alias_button << '<div class="input-group input-group-sm">'
+#	alias_button << "<label class='input-group-text' for='alias'>#{l[:aliase]}</label>"
+#	alias_button <<	'<input type="text" class="form-control" id="alias">'
+#	alias_button <<	"<div class='input-group-prepend'><button class='btn btn-outline-primary' type='button' onclick=\"aliasRequest( '#{food_no}' )\">#{l[:request]}</button></div>"
+#	alias_button << '</div>'
+#end
 
 
 puts 'Search index<br>' if @debug
-r = db.query( "SELECT SN FROM #{$TB_TAG} WHERE FN='#{food_no}';", false )
-sn = r.first['SN'].to_i
+res = db.query( "SELECT SN FROM #{$TB_TAG} WHERE FN=?", false, [food_no] )&.first
+sn = res['SN'].to_i
 
 sn_rev = sn - 1
 sn_rev = sn_max if sn_rev < 1
-r = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN='#{sn_rev}';", false )
-fn_rev = r.first['FN']
+res = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN=?", false, [sn_rev] )&.first
+fn_rev = res['FN']
 
 sn_fwd = sn + 1
 sn_fwd = 1 if sn_fwd > sn_max
-r = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN='#{sn_fwd}';", false )
-fn_fwd = r.first['FN']
+res = db.query( "SELECT FN FROM #{$TB_TAG} WHERE SN=?", false, [sn_fwd] )&.first
+fn_fwd = res['FN']
 
 
 puts 'FCT table HTML<br>' if @debug
@@ -185,7 +185,7 @@ HTML
 puts 'Fract input HTML<br>' if @debug
 fract_html = <<~HTML
 	<div class="input-group input-group-sm">
-		<label class='input-group-text' for='detail_fraction'>#{l[:fract]}></label>
+		<label class='input-group-text' for='detail_fraction'>#{l[:fract]}</label>
 		<select class='form-select form-select-sm' id='detail_fraction' onchange="detailWeight( '#{food_no}' )">
 			<option value='1' #{$SELECT[frct_mode == 1]}>#{l[:round]}</option>
 			<option value='2' #{$SELECT[frct_mode == 2]}>#{l[:ceil]}</option>
@@ -206,7 +206,7 @@ html = <<-"HTML"
 			<span onclick="detailWeight( '#{fn_fwd}' )">#{l[:fwd]}</span>
 		</div>
 		<div class="col"><h6>#{fct_opt['Tagnames']}</h6></div>
-	  	<div class="col-1"><h6>#{food_volume.to_f} #{selectu}<br>#{food_weight.to_f} g</h6></div>
+	  	<div class="col-2"><h6>#{food_volume.to_f} #{selectu}<br>#{food_weight.to_f} g</h6></div>
 		<div align='center' class='col joystic_koyomi' onclick="detailReturn()">#{l[:return]}</div>
 
 	  </div>
@@ -287,22 +287,13 @@ if command == 'init'
 	js = <<-"JS"
 <script type='text/javascript'>
 
-var postReq = ( command, data, successCallback ) => {
-	$.post( '#{myself}', { command, ...data })
-		.done( successCallback )
-		.fail(( jqXHR, textStatus, errorThrown ) => {
-			console.error( "Request failed: ", textStatus, errorThrown );
-			alert( "An error occurred. Please try again." );
-		});
-};
-
 //
 var detailWeight = ( food_no ) => {
-	const frct_mode = $( '#detail_fraction' ).val();
-	const food_weight = $( '#detail_volume' ).val();
-	const selectu = $( '#detail_unit' ).val();
+	const frct_mode = document.getElementById( 'detail_fraction' ).value;
+	const food_weight = document.getElementById( 'detail_volume' ).value;
+	const selectu = document.getElementById( 'detail_unit' ).value;
 
-	postReq( 'weight', { food_no, frct_mode, food_weight, selectu }, data => $( "#LF" ).html( data ));
+	postLayer( '#{myself}', 'weight', true, 'LF', { food_no, frct_mode, food_weight, selectu });
 };
 
 //

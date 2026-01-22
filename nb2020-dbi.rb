@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.2 (2026/01/10)
+#nb2020-dbi.rb 0.8.3 (2026/01/20)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -658,7 +658,7 @@ def user_init()
 
 		$DB.query( "INSERT INTO user SET user='#{$GM}', passh='', status='9', language='#{$DEFAULT_LP}', astral=0;" )
 
-		['guest', 'guest2', 'guest3'].each do |e|
+		['guest', 'guest2', 'guest3', 'guest4', 'guest5', 'guest6', 'guest7', 'guest8', 'guest9'].each do |e|
 			$DB.query( "INSERT INTO user SET user='#{e}', passh='', status='3', language='#{$DEFAULT_LP}', astral=0;" )
 		end
 
@@ -674,7 +674,7 @@ def cfg_init()
 	if res.first
 		puts 'cfg table already exists.'
 	else
-		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), fcze VARCHAR(128), media VARCHAR(128), allergen VARCHAR(3));'
+		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), media VARCHAR(128), allergen VARCHAR(3));'
 		$DB.query( query )
 		puts 'cfg table has been created.'
 	end

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 food detail sub 0.0.7 (2026/01/14)
+#Nutrition browser 2020 food detail sub 0.0.8 (2026/01/21)
 
 
 #==============================================================================
@@ -24,26 +24,26 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-			search: "レシピ検索",
-			fract: "端数",
-			round: "四捨五入",
-			ceil: "切り上げ",
-			floor: "切り捨て",
-			weight: "重量",
-			fn: "食品番号",
-			name: "食品名",
-			change: "<img src='bootstrap-dist/icons/hammer.svg' style='height:1.2em; width:1.2em;'>",
-			egg: "<img src='bootstrap-dist/icons/egg.svg' style='height:1.2em; width:1.2em;'>",
+			search:	"レシピ検索",
+			fract:	"端数",
+			round:	"四捨五入",
+			ceil:	"切り上げ",
+			floor:	"切り捨て",
+			weight: "重量(g)",
+			fn:		"食品番号",
+			name:	"食品名",
+			change:	"<img src='bootstrap-dist/icons/hammer.svg' style='height:1.2em; width:1.2em;'>",
+			egg:	"<img src='bootstrap-dist/icons/egg.svg' style='height:1.2em; width:1.2em;'>",
 			cboard: "<img src='bootstrap-dist/icons/card-text.svg' style='height:1.2em; width:1.2em;'>",
-			calendar: "<img src='bootstrap-dist/icons/calendar-plus.svg' style='height:1.2em; width:1.2em;'>",
-			unit: "単",
-			color: "色",
-			shun: "旬",
-			dic: "辞",
-			allergen: "ア",
-			plus: "<img src='bootstrap-dist/icons/plus-square-fill.svg' style='height:2em; width:2em;'>",
-			signpost: "<img src='bootstrap-dist/icons/signpost-r.svg' style='height:2em; width:2em;'>",
-			parallel: "<img src='bootstrap-dist/icons/wrench-adjustable.svg' style='height:2em; width:2em;'>"
+			calendar:	"<img src='bootstrap-dist/icons/calendar-plus.svg' style='height:1.2em; width:1.2em;'>",
+			unit:	"単",
+			color:	"色",
+			shun:	"旬",
+			dic:	"辞",
+			allergen:	"ア",
+			plus:	"<img src='bootstrap-dist/icons/plus-square-fill.svg' style='height:2em; width:2em;'>",
+			signpost:	"<img src='bootstrap-dist/icons/signpost-r.svg' style='height:2em; width:2em;'>",
+			parallel:	"<img src='bootstrap-dist/icons/wrench-adjustable.svg' style='height:2em; width:2em;'>"
 	}
 
 	return l[language]
@@ -203,11 +203,17 @@ when 'init', 'weight', 'cb', 'cbp'
 			exit()
 		end
 
+		if pseudo_flag
+			onclick = "onclick=\"pseudoAdd( 'init', '#{fg_key}:#{class1}:#{class2}:#{class3}:#{food_name}', '#{food_no_list[c]}' )\""
+		else
+			onclick = "onclick=\"detailView( '#{food_no_list[c]}' )\""
+		end
+
 		sub_components = ''
 		fc_items.each do |e|
 			if res[e] != nil
 				t = num_opt( res[e], food_weight, frct_mode, @fct_frct[e] )
-				sub_components << "<td align='center'>#{t}</td>"
+				sub_components << "<td align='center' #{onclick}>#{t}</td>"
 			else
 				sub_components << "<td align='center'><span class='error'>[FCTP load]ERROR!!</td>"
 			end
@@ -252,11 +258,7 @@ when 'init', 'weight', 'cb', 'cbp'
 		end
 
 		tags = "<span class='tag1'>#{tag1_list[c]}</span> <span class='tag2'>#{tag2_list[c]}</span> <span class='tag3'>#{tag3_list[c]}</span> <span class='tag4'>#{tag4_list[c]}</span> <span class='tag5'>#{tag5_list[c]}</span>"
-		if pseudo_flag
-			food_html << "<tr class='fct_value'><td>#{food_no_list[c]}</td><td class='link_cursor' onclick=\"pseudoAdd( 'init', '#{fg_key}:#{class1}:#{class2}:#{class3}:#{food_name}', '#{food_no_list[c]}' )\">#{class_add}#{food_name_list[c]} #{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}&nbsp;&nbsp;#{gm_unitc}&nbsp;#{gm_allergen}&nbsp;#{gm_shun}&nbsp;#{gm_dic}</td>#{sub_components}</tr>\n"
-		else
-			food_html << "<tr class='fct_value'><td>#{food_no_list[c]}</td><td class='link_cursor' onclick=\"detailView( '#{food_no_list[c]}' )\">#{class_add}#{food_name_list[c]} #{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}&nbsp;&nbsp;#{gm_unitc}&nbsp;#{gm_allergen}&nbsp;#{gm_shun}&nbsp;#{gm_dic}</td>#{sub_components}</tr>\n"
-		end
+		food_html << "<tr class='fct_value'><td #{onclick}>#{food_no_list[c]}</td><td class='link_cursor' #{onclick}>#{class_add}#{food_name_list[c]} #{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}&nbsp;&nbsp;#{gm_unitc}&nbsp;#{gm_allergen}&nbsp;#{gm_shun}&nbsp;#{gm_dic}</td>#{sub_components}</tr>\n"
 	end
 
 
@@ -266,7 +268,7 @@ when 'init', 'weight', 'cb', 'cbp'
 <div class="col-3">
 	<div class="input-group input-group-sm">
 		<label class='input-group-text' for='fraction'>#{l[:fract]}</label>
-		<select class='form-select' id='fraction' onchange='changeDSWeight( "weight", "#{food_key}", "#{food_no}" )>
+		<select class='form-select' id='fraction' onchange='changeDSWeight( "weight", "#{food_key}", "#{food_no}" )'>
 			<option value='1'#{$SELECT[frct_mode == 1]}>#{l[:round]}</option>
 			<option value='2'#{$SELECT[frct_mode == 2]}>#{l[:ceil]}</option>
 			<option value='3'#{$SELECT[frct_mode == 3]}>#{l[:floor]}</option>
@@ -277,8 +279,7 @@ when 'init', 'weight', 'cb', 'cbp'
 <div class="col-3">
 	<div class="input-group input-group-sm">
 		<label class="input-group-text" for="weight">#{l[:weight]}</label>
-		<input type="number" min='0' class="form-control" id="weight" value="#{food_weight.to_f}">
-		<button class="btn btn-outline-primary" type="button" onclick="changeDSWeight( 'weight', '#{food_key}', '#{food_no}' )">g</button>
+		<input type="number" min='0' class="form-control" id="weight" value="#{food_weight.to_f}" onchange="changeDSWeight( 'weight', '#{food_key}', '#{food_no}' )">
 	</div>
 </div>
 
@@ -325,3 +326,31 @@ HTML
 end
 
 puts html
+
+#==============================================================================
+# POST PROCESS
+#==============================================================================
+
+
+#==============================================================================
+# FRONT SCRIPT START
+#==============================================================================
+if command == 'init'
+	js = <<-"JS"
+<script type='text/javascript'>
+
+// Changing weight of food
+var changeDSWeight = function( com, food_key, food_no ){
+	const frct_mode = document.getElementById( "fraction" ).value;
+	const food_weight = document.getElementById( "weight" ).value;
+
+	postLayer( '#{myself}', com, true, 'L5', { food_key, frct_mode, food_weight, food_no });
+	displayVIDEO( 'Recalced' );
+};
+
+</script>
+
+JS
+
+	puts js
+end

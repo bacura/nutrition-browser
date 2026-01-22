@@ -37,7 +37,7 @@ def language_pack( language )
 		food_name:	"食品名",
 		ratio:	"比率",
 		search:	"レシピ検索",
-		fg:	"食品群",
+		fg:		"食品群",
 		num:		"表示数",
 		ex_inf:		"∞を除外",
 		ex_zero:	"0を除外 (0/0含む)",
@@ -157,7 +157,7 @@ if command == 'list'
 		tags = "<span class='tagc'>#{sub_class}</span> #{food_name} <span class='tag1'>#{tag1}</span> <span class='tag2'>#{tag2}</span> <span class='tag3'>#{tag3}</span> <span class='tag4'>#{tag4}</span> <span class='tag5'>#{tag5}</span>"
 
 		recipe_serch = ''
-		recipe_serch = "<span class='badge bg-info text-dark' onclick=\"searchDR( '#{food_name}' )\">#{l[:search]}</span>" if recipei[food_name] == true
+		recipe_serch = "<span class='badge bg-info text-dark' onclick=\"searchDR( '#{food_name}' )\">#{l[:search]}</span>" if recipei[food_name] == true && user.status >= 1
 
 		unless ( v == 99999999 && ex_inf == 1 ) || ( v == 0 && ex_zero == 1 )
 			list_html << '<tr>'
@@ -285,13 +285,13 @@ html = <<-"HTML"
 			</select>
 			</div>
 		</div>
-		<div class='col-1'>
+		<div class='col-2'>
 			<div class="form-check">
 				<input class="form-check-input" type="checkbox" id="ex_inf" #{$CHECK[ex_inf == 1]}>
 				<label class="form-check-label">#{l[:ex_inf]}</label>
 			</div>
 		</div>
-		<div class='col-2'>
+		<div class='col-3'>
 			<div class="form-check">
 				<input class="form-check-input" type="checkbox" id="ex_zero" #{$CHECK[ex_zero == 1]}>
 				<label class="form-check-label">#{l[:ex_zero]}</label>

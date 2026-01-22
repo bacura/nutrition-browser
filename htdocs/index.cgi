@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-#Nutrition browser 2020 index page 0.5.3 (2026/01/13)
+#Nutrition browser 2020 index page 0.5.4 (2026/01/21)
 
 #==============================================================================
 #LIBRARY
@@ -32,7 +32,7 @@ def language_pack( language )
     recipe: 'レシピ',
     memory: '記憶',
     login_: 'ログインが必要',
-    gmen: '登録ユーザー専用',
+    gmen: '要登録機能',
     cboard: '<img src=\'bootstrap-dist/icons/card-text.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;まな板',
     table: '<img src=\'bootstrap-dist/icons/motherboard.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;お膳',
     history: '<img src=\'bootstrap-dist/icons/inbox-fill.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;履　歴',
@@ -43,11 +43,11 @@ def language_pack( language )
     fire: '<img src=\'bootstrap-dist/icons/fire-blue.svg\' style=\'height:0.8em; width:1.2em;\'>',
     ping: '<img src=\'bootstrap-dist/icons/fire-blue.svg\' style=\'height:0.8em; width:1.2em;\'>',
     piny: '<img src=\'bootstrap-dist/icons/fire-blue.svg\' style=\'height:0.8em; width:1.2em;\'>',
-    koyomi: 'こよみ',
+    koyomi: '<img src=\'bootstrap-dist/icons/calendar2-week.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;こよみ',
     ginmi: 'アセスメント',
     pysique: '体格管理',
     momchai: '母子管理',
-    note: '管理ノート',
+    note: '<img src=\'bootstrap-dist/icons/chat-left-dots.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;雑記',
     foodrank: '食品栄養ランク',
     fczl: 'FCZエディタ',
     mjl: 'JSONエディタ',
@@ -156,6 +156,9 @@ def html_top( user, l, db )
 
   ##
 ##
+
+op1 = user.status >= 1 ? "<option value='1'>#{l[:recipe]}</option>" : ''
+op2 = user.status >= 2 ? "<option value='2'>#{l[:memory]}</option>" : ''
 html = <<-"HTML"
 <header class="navbar navbar-expand-lg navbar-dark bg-dark" id="header">
   <div class="container-fluid">
@@ -165,8 +168,8 @@ html = <<-"HTML"
     <span class="d-flex">
       <select class="form-select" id="qcate">
         <option value='0'>#{l[:food]}</option>
-        <option value='1'>#{l[:recipe]}</option>
-        <option value='2'>#{l[:memory]}</option>
+        #{op1}
+        #{op2}
       </select>
       <input class="form-control" type="text" maxlength="100" id="words" onchange="search()">
       <btton class='btn btn-sm' onclick="search()">#{l[:search]}</button>
@@ -205,34 +208,22 @@ def html_nav( user, l, db )
     end
   end
 
-  # 履歴ボタンとまな板ボタンの設定
-  if user.status >= 1
-    cb = "#{l[:cboard]} <span class='badge rounded-pill bg-dark text-light' id='CBN'>#{cb_num}</span>"
-    mb = "#{l[:table]} <span class='badge rounded-pill bg-dark text-light' id='MTN'>#{mt_num}</span>"
-    special_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' id='category0' onclick='summonL1( 0 )''>#{@category[0]}</button>"
-    his_button = "<button type='button' class='btn btn-primary btn-sm nav_button' onclick=\"initHistory( 'init' )\">#{l[:history]}</button>"
-    sum_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initCB( 'init' )\">#{cb}</button>"
-    recipe_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"recipeList( 'init' )\">#{l[:recipel]}</button>"
-    menu_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initMT( 'init' )\">#{mb}</button>"
-    mtray_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"intMTL( 'init' )\">#{l[:menul]}</button>"
-    config_button = "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"configInit( 'init' )\">#{l[:gear]}</button>"
-  else
-    cb = "#{l[:cboard]} <span class='badge badge-pill badge-secondary' id='CBN'>#{cb_num}</span>"
-    mb = "#{l[:table]} <span class='badge badge-pill badge-secondary' id='MTN'>#{mt_num}</span>"
-    special_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{@category[0]}</button></a>"
-    his_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:history]}</button></a>"
-    sum_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{cb}</button></a>"
-    recipe_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:recipel]}</button></a>"
-    menu_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{mb}</button></a>"
-    mtray_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:menul]}</button></a>"
-    config_button = "<a href='login.cgi'><button type='button' class='btn btn-dark btn-sm nav_button text-secondary'>#{l[:gear]}</button></a>"
-  end
 
-  if user.status >= 1
-    g_button = "<button type='button' class='btn btn-warning btn-sm nav_button text-warning guild_color' onclick=\"changeMenu( '#{user.status}' )\">G</button>"
-  else
-    g_button = "<button type='button' class='btn btn-warning btn-sm nav_button text-dark guild_color' onclick=\"displayVIDEO( '#{l[:gmen]}' )\">G</button>"
-  end
+  #Fnボタンの設定
+  fn_button = user.status >= 1 ? "&nbsp;&nbsp;<button type='button' class='btn btn-dark btn-sm nav_button text-warning guild_color' onclick=\"changeMenu( '#{user.status}' )\">Fn</button>" : ''
+
+  special_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' id='category0' onclick='summonL1( 0 )''>#{@category[0]}</button>" : ''
+  his_button = user.status >= 1 ? "<button type='button' class='btn btn-primary btn-sm nav_button' onclick=\"initHistory( 'init' )\">#{l[:history]}</button>" : ''
+  confifn_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"configInit( 'init' )\">#{l[:gear]}</button>" : ''
+
+  cb = user.status >= 1 ? "#{l[:cboard]} <span class='badge rounded-pill bg-dark text-light' id='CBN'>#{cb_num}</span>" : ''
+  mb = user.status >= 1 ? "#{l[:table]} <span class='badge rounded-pill bg-dark text-light' id='MTN'>#{mt_num}</span>" : ''
+  sum_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initCB( 'init' )\">#{cb}</button>" : ''
+  recipe_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"recipeList( 'init' )\">#{l[:recipel]}</button>" : ''
+  menu_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initMT( 'init' )\">#{mb}</button>" : ''
+  mtray_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"intMTL( 'init' )\">#{l[:menul]}</button>" : ''
+  koyomi_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initKoyomi()\">#{l[:koyomi]}</button>" : ''
+  note_button = user.status >= 1 ? "<button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick=\"initNote()\">#{l[:note]}</button>" : ''
 
   gm_account = ''
   if user.status == 9
@@ -245,7 +236,6 @@ def html_nav( user, l, db )
 ##
 html = <<-"HTML"
 <nav class='container-fluid'>
-    #{g_button}
     <button type="button" class="btn btn-info btn-sm nav_button" id="category1" onclick="summonL1( 1 )">#{@category[1]}</button>
     <button type="button" class="btn btn-info btn-sm nav_button" id="category2" onclick="summonL1( 2 )">#{@category[2]}</button>
     <button type="button" class="btn btn-info btn-sm nav_button" id="category3" onclick="summonL1( 3 )">#{@category[3]}</button>
@@ -266,24 +256,29 @@ html = <<-"HTML"
     <button type="button" class="btn btn-secondary btn-sm nav_button" id="category18" onclick="summonL1( 18 )">#{@category[18]}</button>
     #{special_button}
     #{his_button}
+    <button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick="foodRank()">#{l[:foodrank]}</button>
+    #{confifn_button}
+</nav>
+
+#{fn_button}
+
+<nav class='container-fluid' id='fn_menu' style='display:inline;'>
     #{sum_button}
     #{recipe_button}
     #{menu_button}
     #{mtray_button}
-    <button type="button" class="btn btn-outline-secondary btn-sm nav_button" onclick="bookOpen( 'books/books.html', 1 )">#{l[:book]}</button>
-    #{config_button}
+    #{koyomi_button}
+    #{note_button}
+<!--    <button type="button" class="btn btn-outline-secondary btn-sm nav_button" onclick="bookOpen( 'books/books.html', 1 )">#{l[:book]}</button> -->
 </nav>
 <nav class='container-fluid' id='guild_menu' style='display:none;'>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initKoyomi()">#{l[:koyomi]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="foodRank()">#{l[:foodrank]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initRefIntake()">#{l[:intake]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button moe_color" onclick="initRefIntake()">#{l[:intake]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button moe_color" onclick="initGinmi()">#{l[:ginmi]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button moe_color" onclick="initPhysique()">#{l[:pysique]}</button>
 </nav>
 <nav class='container-fluid' id='gs_menu' style='display:none;'>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initGinmi()">#{l[:ginmi]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initPhysique()">#{l[:pysique]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initMomChai()">#{l[:momchai]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initMemoryList( 'init' )">#{l[:memorya]}</button>
-    <button type="button" class="btn btn-dark btn-sm nav_button guild_color" onclick="initNote()">#{l[:note]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initMomChai()">#{l[:momchai]}</button>
+    <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initMemoryList( 'init' )">#{l[:memorya]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initAccountM()">#{l[:accountm]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initAstral()">#{l[:astral]}</button>
     <button type="button" class="btn btn-dark btn-sm nav_button shun_color" onclick="initFCZlist()">#{l[:fczl]}</button>

@@ -81,9 +81,15 @@ nav {
   text-align: center;
 }
 
+.moe_color{
+  background: indigo;
+  color: lightpink;
+  font-weight: bold;
+}
+
 .shun_color{
   background: indigo;
-  color: springgreen;
+  color: springgreen;;
   font-weight: bold;
 }
 
@@ -95,7 +101,6 @@ nav {
 
 .guild_color{
   background: indigo;
-  color: gold;
   font-weight: bold;
 }
 
