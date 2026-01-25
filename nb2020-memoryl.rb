@@ -1,31 +1,20 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 memory linker 0.00b
+#Nutrition browser 2020 recipe search index & fcz builder & 0.2.0 (2026/01/25)
 
-#==============================================================================
-#CHANGE LOG
-#==============================================================================
-#20210425	0.00b	start
-
-
+ENV['REQUEST_METHOD'] = 'GET'
+ENV['GATEWAY_INTERFACE'] = 'CGI/1.1'
 #==============================================================================
 #LIBRARY
 #==============================================================================
+require './nb2020-soul'
 require 'mysql2'
-
 
 #==============================================================================
 #STATIC
 #==============================================================================
-$MYSQL_HOST = 'localhost'
-$MYSQL_USER = 'user'
-$MYSQL_PW = 'password'
-$MYSQL_DB = 'nb2020'
-$TB_MEMORY = 'memory'
-db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
-
 @debug = false
-
+db = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
 
 #==============================================================================
 #DEFINITION

@@ -1,8 +1,9 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 recipe search index & fcz builder & 0.2.0 (2024/07/14)
+#Nutrition browser 2020 recipe search index & fcz builder & 0.2.0 (2026/01/25)
 
-
+ENV['REQUEST_METHOD'] = 'GET'
+ENV['GATEWAY_INTERFACE'] = 'CGI/1.1'
 #==============================================================================
 #LIBRARY
 #==============================================================================
