@@ -102,7 +102,7 @@ def html_head( interrupt, status, sub_title )
   <meta name="description" content="*栄養者の慾を如意自在に同化するユビキタス栄養ツール、栄養士、管理栄養士が活動に必要な食品成分の閲覧、料理の栄養計算、レシピの管理などが無料できる">
   <meta name="robots" content="index,nofollow">
   -->
-  <meta name="robots" content="noindex,nofollow">
+  <meta name="robots" content="index,nofollow">
   <meta name="author" content="ばきゅら京都Lab">
 
   <!-- Twitter card -->

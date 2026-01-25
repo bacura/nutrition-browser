@@ -1,10 +1,13 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.3 (2026/01/20)
+#nb2020-dbi.rb 0.8.4 (2026/01/25)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
 #https://bacura.jp
 #yossy@bacura.jp
+
+ENV['REQUEST_METHOD'] = 'GET'
+ENV['GATEWAY_INTERFACE'] = 'CGI/1.1'
 
 #==============================================================================
 #LIBRARY
