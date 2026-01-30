@@ -28,14 +28,17 @@ def menu( user )
 	end
 
 	mods.delete( 'release' )
-	mods.push( 'release' )
 
-	html = mods.each_with_index.map do |e, i|
+	html = ''
+	 mods.each_with_index.map do |e, i|
 		require "#{$HTDOCS_PATH}/config_/mod_#{e}.rb"
 		ml = module_lp( user.language )
-		bclass = ( i == mods.size - 1 ) ? 'bg-danger' : 'ppill'
-		puts "<span class='btn badge rounded-pill #{bclass}' onclick='configForm( \"#{e}\" )'>#{ml['mod_name']}</span>&nbsp;"
-	end.join
+		html << "<span class='btn badge rounded-pill ppill' onclick='configForm( \"#{e}\" )'>#{ml['mod_name']}</span>&nbsp;"
+	end
+
+	require "#{$HTDOCS_PATH}/config_/mod_release.rb"
+	ml = module_lp( user.language )
+	html <<  "<span class='btn badge rounded-pill bg-danger' onclick='configForm( \"release\" )'>#{ml['mod_name']}</span>&nbsp;"
 
 	return html
 end
@@ -53,17 +56,21 @@ db = Db.new( user, @debug, false )
 mod = @cgi['mod']
 
 # Driver logic
-html = if mod == 'menu'
+if mod == 'menu'
 	puts 'MENU<br>' if @debug
-	user.status == $ASTRAL ? "<span class='ref_error'>[config]Astral user limit!</span><br>" : menu( user )
+	if user.status == $ASTRAL
+		puts "<span class='ref_error'>[config]Astral user limit!</span><br>"
+	else
+		puts menu( user )
+	end
 else
 	if mod.empty?
-		"<div align='center'>Config</div>"
+		puts "<div align='center'>Config</div>"
 	else
 		require "#{$HTDOCS_PATH}/config_/mod_#{mod}.rb"
 		puts "MOD (#{mod})<br>" if @debug
-		config_module( @cgi, db ) unless user.status == $ASTRAL
+		puts config_module( @cgi, db ) unless user.status == $ASTRAL
 	end
 end
 
-puts html
+

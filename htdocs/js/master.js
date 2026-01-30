@@ -237,34 +237,14 @@ const initShun = function( com ){
 	});
 };
 
-// Direct shun button
-const directShun = function( code ){
-	$.post( mp + "gm-shun.cgi", { command:'init', code:code }, function( data ){
+
+// Editor direct
+const directShun = function( food_no ){
+	$.post( mp + "gm-shun.cgi", { command:'editor', food_no:food_no, direct:1 }, function( data ){
 		$( "#LF" ).html( data );
 
 		dlf = true;
 		displayBW();
-	});
-};
-
-// Shun ON
-const onShun = function(){
-	const code = document.getElementById( 'code' ).value;
-	const shun1s = document.getElementById( 'shun1s' ).value;
-	const shun1e = document.getElementById( 'shun1e' ).value;
-	const shun2s = document.getElementById( 'shun2s' ).value;
-	const shun2e = document.getElementById( 'shun2e' ).value;
-	$.post( mp + "gm-shun.cgi", { command:'on', code:code, shun1s:shun1s, shun1e:shun1e, shun2s:shun2s, shun2e:shun2e }, function( data ){
-		$( "#LF" ).html( data );
-		displayVIDEO( code + ':Shun ON' );
-	});
-};
-
-// Shun OFF
-const offShun = function( code ){
-	$.post( mp + "gm-shun.cgi", { command:'off', code:code }, function( data ){
-		$( "#LF" ).html( data );
-		displayVIDEO( code + ':Shun OFF' );
 	});
 };
 
