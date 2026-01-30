@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.4 (2026/01/25)
+#nb2020-dbi.rb 0.8.4 (2026/01/31)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -372,7 +372,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 		puts 'ext table already exists.'
 		update_flag = true
 	else
-		query = 'CREATE TABLE ext (FN VARCHAR(6), user VARCHAR(32), gycv TINYINT(1), allergen1 TINYINT(1), allergen2 TINYINT(1), unit VARCHAR(1000), color1 TINYINT, color2 TINYINT, color1h TINYINT, color2h TINYINT, shun1s TINYINT(2), shun1e TINYINT(2), shun2s TINYINT(2), shun2e TINYINT(2));'
+		query = 'CREATE TABLE ext (FN VARCHAR(6), user VARCHAR(32), gycv TINYINT(1), allergen1 TINYINT(1), allergen2 TINYINT(1), unit VARCHAR(1000), color1 TINYINT, color2 TINYINT, color1h TINYINT, color2h TINYINT, flags BIT(12) NOT NULL DEFAULT b'000000000000';'
 		$DB.query( query )
 	end
 
@@ -422,16 +422,9 @@ def ext_init( gycv_file, shun_file, unit_file )
 		elsif shun_flag == true
 			a = e.force_encoding( 'UTF-8' ).chomp.split( "\t" )
 			food_no = a[0]
-			shun1s = a[2]
-			shun1e = a[3]
-			shun2s = a[4]
-			shun2e = a[5]
-			shun1s = 0 if shun1s == nil || shun1s == ''
-			shun1e = 0 if shun1e == nil || shun1e == ''
-			shun2s = 0 if shun2s == nil || shun2s == ''
-			shun2e = 0 if shun2e == nil || shun2e == ''
+			shun_bit = a[1]
 
-			query = "UPDATE #{$TB_EXT} SET shun1s=#{shun1s}, shun1e=#{shun1e}, shun2s=#{shun2s}, shun2e=#{shun2e} WHERE FN='#{food_no}';"
+			query = "UPDATE #{$TB_EXT} SET shun=b'#{shun_bit}' WHERE FN='#{food_no}';"
 			$DB.query( query )
 		end
 	end

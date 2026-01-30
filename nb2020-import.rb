@@ -205,7 +205,7 @@ when 'tagp'
 
 when 'extp'
 	tb = $TB_EXT
-	# FN, user, gycv, allergen1, allergen2, unit, color1, color2, color1h, color2h, shun1s, shun1e, shun2s, shun2e
+	# FN, user, gycv, allergen1, allergen2, unit, shun_bit
 	if items.size == 14
 #		$DB.query( "DELETE FROM #{tb};" ) if opt == 'xx'
 

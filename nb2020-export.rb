@@ -41,8 +41,10 @@ when 'gycv'
 
 when 'shun'
 	export = ''
-	r = $DB.query( "SELECT * FROM #{$TB_EXT};" )
-	r.each do |e| export << "#{e['FN']}\t#{e['shun1s']}\t#{e['shun1e']}\t#{e['shun2s']}\t#{e['shun2e']}\n" end
+	r = $DB.query( "SELECT FN, LPAD( BIN( shun ), 12, '0' ) AS shun_bit FROM #{$TB_EXT};" )
+	r.each do |e|
+		export << "#{e['FN']}\t#{e['shun_bit']}\n" unless /[PCU]/ =~ e['FN'] || e['FN'].empty?
+	end
 	puts "NB2020 [shun] data\n"
 	puts export.force_encoding( 'UTF-8' )
 
@@ -100,11 +102,11 @@ when 'tagp'
 
 when 'extp'
 	export = ''
-	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_FCTP} ON #{$TB_EXT}.FN = #{$TB_FCTP}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
-	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv'].to_i}\t#{e['allergen1'].to_i}\t#{e['allergen2'].to_i}\t#{e['unit']}\t#{e['color1'].to_i}\t#{e['color2'].to_i}\t#{e['color1h'].to_i}\t#{e['color2h'].to_i}\t#{e['shun1s'].to_i}\t#{e['shun1e'].to_i}\t#{e['shun2s'].to_i}\t#{e['shun2e'].to_i}\n" end
+	r = $DB.query( "SELECT * FROM #{$TB_EXT} INNER JOIN #{$TB_TAG} ON #{$TB_EXT}.FN = #{$TB_TAG}.FN WHERE #{$TB_TAG}.user='#{ARGV[1]}';" )
+	r.each do |e| export << "#{e['FN']}\t#{e['user']}\t#{e['gycv'].to_i}\t#{e['allergen1'].to_i}\t#{e['allergen2'].to_i}\t#{e['unit']}\n" end
 
 	puts "NB2020 [extp] data (#{ARGV[1]}) #{@date}\n"
-	puts "FN\tuser\tgycv\tallergen1\tallergen2\tunit\tcolor1\tcolor2\tcolor1h\tcolor2h\tshun1s\tshun1e\tshun2s\tshun2e\n"
+	puts "FN\tuser\tgycv\tallergen1\tallergen2\tunit\n"
 	puts export.force_encoding( 'UTF-8' )
 
 when 'recipe'
