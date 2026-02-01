@@ -372,16 +372,9 @@ def ext_init( gycv_file, shun_file, unit_file )
 		puts 'ext table already exists.'
 		update_flag = true
 	else
-		query = 'CREATE TABLE ext (FN VARCHAR(6), user VARCHAR(32), gycv TINYINT(1), allergen1 TINYINT(1), allergen2 TINYINT(1), unit VARCHAR(1000), color1 TINYINT, color2 TINYINT, color1h TINYINT, color2h TINYINT, flags BIT(12) NOT NULL DEFAULT b'000000000000';'
+		query = "CREATE TABLE ext (FN VARCHAR(6), user VARCHAR(32), gycv TINYINT(1), allergen1 TINYINT(1), allergen2 TINYINT(1), unit VARCHAR(1000), shun BIT(12) NOT NULL DEFAULT b'000000000000' );"
 		$DB.query( query )
 	end
-
-#	query = "SELECT FN FROM #{$TB_TAG};"
-#	res = $DB.query( query )
-#	res.each do |e|
-#		query = "UPDATE #{$TB_EXT} SET color1='0', color2='0', color1h='0', color2h='0' WHERE FN='#{e['FN']}';"
-#		$DB.query( query )
-#	end
 
 	query = "SELECT FN FROM #{$TB_FCT};"
 	res = $DB.query( query )
@@ -393,7 +386,6 @@ def ext_init( gycv_file, shun_file, unit_file )
 			$DB.query( query )
 		end
 	end
-
 
 	# Green/Yellow color vegitable
 	f = open( gycv_file, 'r' )

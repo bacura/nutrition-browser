@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-# Nutrition browser food search 0.2.0 (2025/12/27)
+# Nutrition browser food search 0.3.0 (2026/01/31)
 
 
 #==============================================================================
@@ -60,32 +60,12 @@ def shun_result( db, words )
 	search_month = numbers.empty? ? @time_now.month : numbers[0].to_i
 
 	results_hash = Hash.new
-	r = db.query( "SELECT FN, shun1s, shun1e, shun2s, shun2e FROM #{$TB_EXT} WHERE ( shun1s IS NOT NULL ) AND shun1s!=0;", false )
+	shun_bit = ''
+	r = db.query( "SELECT FN FROM #{$TB_EXT} WHERE (shun>>(12-#{search_month})&1)=1;", false )
 	r.each do |entry|
-		is_in_season = false
-		sm_adjusted = search_month
-		shun1_start = entry['shun1s']
-		shun1_end = entry['shun1e']
-		if shun1_start > shun1_end
-			shun1_end += 12
-			sm_adjusted += 12 if sm_adjusted < shun1_start
-		end
-		is_in_season = true if shun1_start <= sm_adjusted && sm_adjusted <= shun1_end
-
-		if entry['shun2s'] != 0
-			sm_adjusted = search_month
-			shun2_start = entry['shun2s']
-			shun2_end = entry['shun2e']
-			if shun2_start > shun2_end
-				shun2_end += 12
-				sm_adjusted += 12 if sm_adjusted < shun2_start
-			end
-			is_in_season = true if shun2_start <= sm_adjusted && sm_adjusted <= shun2_end
-		end
-
-		if is_in_season
-			related_result = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [entry['FN']] )
-			results_hash["#{related_result.first['FG']}:#{related_result.first['class1']}:#{related_result.first['class2']}:#{related_result.first['class3']}:#{related_result.first['name']}"] = 1
+		res = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [entry['FN']] )&.first
+		if res
+		results_hash["#{res['FG']}:#{res['class1']}:#{res['class2']}:#{res['class3']}:#{res['name']}"] = 1
 		end
 	end
 
