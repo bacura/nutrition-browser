@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.4 (2026/01/31)
+#nb2020-dbi.rb 0.8.4 (2026/02/01)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -391,7 +391,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 	f = open( gycv_file, 'r' )
 	gycv_flag = false
 	f.each_line do |e|
-		if e == "NB2020 [gycv] data\n"
+		if e.include?( "NB2020 [gycv] data" )
 			gycv_flag = true
 			next
 		elsif gycv_flag == true
@@ -408,7 +408,7 @@ def ext_init( gycv_file, shun_file, unit_file )
 	f = open( shun_file, 'r' )
 	shun_flag = false
 	f.each_line do |e|
-		if e == "NB2020 [shun] data\n"
+		if e.include?( "NB2020 [shun] data" )
 			shun_flag = true
 			next
 		elsif shun_flag == true
@@ -427,12 +427,11 @@ def ext_init( gycv_file, shun_file, unit_file )
 	f = open( unit_file, 'r' )
 	unit_flag = false
 	f.each_line do |e|
-		if e == "NB2020 [unit] data\n"
+		if e.include?( "NB2020 [unit] data" )
 			unit_flag = true
 			next
 		elsif unit_flag
 			a = e.force_encoding( 'UTF-8' ).chomp.split( "\t" )
-
 			query = "UPDATE #{$TB_EXT} SET unit='#{a[1]}' WHERE FN='#{a[0]}';"
 			$DB.query( query )
 		end
@@ -1186,8 +1185,6 @@ $DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}
 
 db_create_nb()
 db_create_rr()
-
-
 
 #==============================================================================
 $DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )

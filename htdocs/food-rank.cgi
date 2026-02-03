@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 food ranking 0.1.1 (2026/01/13)
+#Nutrition browser 2020 food ranking 0.1.2 (2026/02/02)
 
 
 #==============================================================================
@@ -175,10 +175,10 @@ if command == 'list'
 
 			list_html << "<td>#{recipe_serch}</td>"
 			list_html << '</tr>'
-		end
 
-		break if count == rank_display
-		count += 1
+			break if count == rank_display
+			count += 1
+		end
 	end
 	list_html << '</table>'
 end
@@ -223,13 +223,8 @@ comp_item_select << '</select>'
 
 ####
 rank_order_select = '<select class="form-select form-select-sm" id="rank_order">'
-if rank_order == 0
-	rank_order_select << "<option value='0' SELECTED>#{l[:shou]}</option>"
-	rank_order_select << "<option value='1'>#{l[:kou]}</option>"
-else
-	rank_order_select << "<option value='0'>#{l[:shou]}</option>"
-	rank_order_select << "<option value='1' SELECTED>#{l[:kou]}</option>"
-end
+rank_order_select << "<option value='0' #{$SELECT[rank_order == 0]}>#{l[:kou]}</option>"
+rank_order_select << "<option value='1' #{$SELECT[rank_order == 1]}>#{l[:shou]}</option>"
 rank_order_select << '</select>'
 
 
@@ -330,8 +325,8 @@ var foodRankList = () => {
 	const rank_display = document.getElementById( "rank_display" ).value;
 	const fg = document.getElementById( "fg" ).value;
 
-	const ex_infif = document.getElementById( "ex_inf" ).checked ? 1 : 0;
-	const ex_zeroif = document.getElementById( "ex_zero" ).checked ? 1 : 0;
+	const ex_inf = document.getElementById( "ex_inf" ).checked ? 1 : 0;
+	const ex_zero = document.getElementById( "ex_zero" ).checked ? 1 : 0;
 
 	postLayer( '#{myself}', 'list', true, 'L1', { fg, main_item, comp_item, rank_order, rank_display, ex_inf, ex_zero });
 };

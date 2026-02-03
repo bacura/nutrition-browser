@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 export 0.1.1 (2026/01/09)
+#Nutrition browser 2020 export 0.1.2 (2026/02/01)
 
 #==============================================================================
 #STATIC
@@ -26,7 +26,6 @@ require 'time'
 case ARGV[0]
 when 'unit'
 	export = ''
-	puts "SELECT * FROM #{$TB_EXT};"
 	r = $DB.query( "SELECT * FROM #{$TB_EXT};" )
 	r.each do |e| export << "#{e['FN']}\t#{e['unit']}\n" end
 	puts "NB2020 [unit] data #{@date}\n"
@@ -45,7 +44,7 @@ when 'shun'
 	r.each do |e|
 		export << "#{e['FN']}\t#{e['shun_bit']}\n" unless /[PCU]/ =~ e['FN'] || e['FN'].empty?
 	end
-	puts "NB2020 [shun] data\n"
+	puts "NB2020 [shun] data #{@date}\n"
 	puts export.force_encoding( 'UTF-8' )
 
 when 'allergen'

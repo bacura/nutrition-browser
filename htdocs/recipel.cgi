@@ -219,8 +219,10 @@ def referencing( words, db, sql_where_ij )
 		res = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias=?", false, [e] )&.first
 		if res
 			res2 = db.query( "SELECT * FROM #{$TB_TAG} WHERE class1=? OR class2=? OR class3=?", false, [res['org_name'], res['org_name'], res['org_name']] )
-			if res2
-				res2.each do |ee| true_query << ee['name'] end
+			if res2.size > 0
+				res2.each do |ee|
+					true_query << ee['name']
+				end
 			else
 				true_query << res['org_name']
 			end
@@ -238,11 +240,7 @@ def referencing( words, db, sql_where_ij )
 
 	# Referencing recipe
 	true_query.each do |e|
-		if e =~ /\-r\-/
-			return db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code=? AND ( user=? OR public='1' );", false, [e, db.user.name] )
-		else
-			return db.query( "SELECT t1.* FROM #{$TB_RECIPE} AS t1 INNER JOIN #{$TB_RECIPEI} AS t2 ON t1.code = t2.code #{sql_where_ij} AND t2.word='#{e}';", false )
-		end
+		return db.query( "SELECT t1.* FROM #{$TB_RECIPE} AS t1 INNER JOIN #{$TB_RECIPEI} AS t2 ON t1.code = t2.code #{sql_where_ij} AND t2.word='#{e}';", false )
 	end
 end
 
@@ -554,12 +552,16 @@ recipe_num = 0
 res = nil
 ref_msg = cfg.val['words']
 
-if cfg.val['words'].to_s != ''
+unless cfg.val['words'].to_s.empty?
 	if /\-r\-/ =~ cfg.val['words'].to_s
+		puts 'Word-recipe' if @debug
+
 		res = db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code='#{cfg.val['words'].to_s}';", false )
 		ref_msg = res.first['name']
 	else
+		puts 'Word-Referencing' if @debug
 		res = referencing( cfg.val['words'], db, sql_where_ij )
+
 		offset = ( cfg.val['page'] - 1 ) * cfg.val['page_limit']
 		cfg.val['page_limit'] = offset + cfg.val['page_limit']
 	end
@@ -767,85 +769,92 @@ var postReq_recipel = async (command, requestData, successCallback) => {
 };
 
 // Displaying recipe list with narrow down
-var recipeListP = async (page) => {
-    const range = $("#range").val();
-    const type = $("#type").val();
-    const role = $("#role").val();
-    const tech = $("#tech").val();
-    const time = $("#time").val();
-    const cost = $("#cost").val();
-    const words = $("#words").val();
-    const page_limit = $("#page_limit").val();
-    const family = $("#family").is(":checked") ? 1 : 0;
-    await postReq_recipel('limit', { range, type, role, tech, time, cost, page, words, family, page_limit }, data => {
-        $("#L1").html(data);
-    });
+var recipeListP = ( page ) => {
+    const range = document.getElementById( "range" ).value;
+    const type = document.getElementById( "type" ).value;
+    const role = document.getElementById( "role" ).value;
+    const tech = document.getElementById( "tech" ).value;
+    const time = document.getElementById( "time" ).value;
+    const cost = document.getElementById( "cost" ).value;
+    const words = document.getElementById( "words" ).value;
+    const page_limit = document.getElementById( "page_limit" ).value;
+    const family = document.getElementById( "family" ).checked ? 1 : 0;
+
+    postLayer( '#{myself}', 'limit', true, 'L1',
+    	{ range, type, role, tech, time, cost, page, words, family, page_limit }
+    );
 };
 
 // Green button
-var recipeListGreen = async (com) => {
-    const range = $("#range").val();
-    const type = $("#type").val();
-    const role = $("#role").val();
-    const tech = $("#tech").val();
-    const time = $("#time").val();
-    const cost = $("#cost").val();
-    const words = $("#words").val();
-    const page_limit = $("#page_limit").val();
-    const family = $("#family").is(":checked") ? 1 : 0;
-    await postReq_recipel(com, { range, type, role, tech, time, cost, words, family, page_limit }, data => {
-        $("#L1").html(data);
-    });
+var recipeListGreen = ( com ) => {
+    const range = document.getElementById( "range" ).value;
+    const type = document.getElementById( "type" ).value;
+    const role = document.getElementById( "role" ).value;
+    const tech = document.getElementById( "tech" ).value;
+    const time = document.getElementById( "time" ).value;
+    const cost = document.getElementById( "cost" ).value;
+    const words = document.getElementById( "words" ).value;
+    const page_limit = document.getElementById( "page_limit" ).value;
+    const family = document.getElementById( "family" ).checked ? 1 : 0;
+
+    postLayer( '#{myself}', com, true, 'L1',
+    	{ range, type, role, tech, time, cost, words, family, page_limit }
+    );
 };
 
 // Displaying recipe list after delete
 var recipeDelete = async (code, page) => {
-    const range = $("#range").val();
-    const type = $("#type").val();
-    const role = $("#role").val();
-    const tech = $("#tech").val();
-    const time = $("#time").val();
-    const cost = $("#cost").val();
-    const page_limit = $("#page_limit").val();
-    const family = $("#family").is(":checked") ? 1 : 0;
+    const range = document.getElementById( "range" ).value;
+    const type = document.getElementById( "type" ).value;
+    const role = document.getElementById( "role" ).value;
+    const tech = document.getElementById( "tech" ).value;
+    const time = document.getElementById( "time" ).value;
+    const cost = document.getElementById( "cost" ).value;
+    const page_limit = document.getElementById( "page_limit" ).value;
+    const family = document.getElementById( "family" ).checked ? 1 : 0;
 
-    if ($("#" + code).is(":checked")) {
-        await postReq_recipel('delete', { code, range, type, role, tech, time, cost, page, family, page_limit }, async () => {
-            await postReq_recipel('limit', { range, type, role, tech, time, cost, page, family, page_limit }, data => {
-                $("#L1").html(data);
-                displayVIDEO('Removed');
-                const modalElement = document.querySelector('#modal_tip');
-                if (modalElement) {
-                    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-                    modal.hide();
-                }
-            });
-        });
+    if ( document.getElementById( code ).checked ) {
+	    postLayer( '#{myself}', 'delete', false, 'L1',
+	    	{ code, range, type, role, tech, time, cost, page, family, page_limit }
+	    );
+
+	    postLayer( '#{myself}', 'limit', true, 'L1',
+	    	{ range, type, role, tech, time, cost, page, family, page_limit }
+	    );
+
+        displayVIDEO('Removed');
+        const modalElement = document.querySelector('#modal_tip');
+        if ( modalElement ) {
+            const modal = bootstrap.Modal.getInstance( modalElement ) || new bootstrap.Modal( modalElement );
+            modal.hide();
+        }
     } else {
         displayVIDEO('Check! (>_<)');
     }
 };
 
 // Generating subSpecies
-var recipeImport = async (com, code, page) => {
-    const range = $("#range").val();
-    const type = $("#type").val();
-    const role = $("#role").val();
-    const tech = $("#tech").val();
-    const time = $("#time").val();
-    const cost = $("#cost").val();
-    const page_limit = $("#page_limit").val();
-    const family = $("#family").is(":checked") ? 1 : 0;
+var recipeImport = ( com, code, page ) => {
+    const range = document.getElementById( "range" ).value;
+    const type = document.getElementById( "type" ).value;
+    const role = document.getElementById( "role" ).value;
+    const tech = document.getElementById( "tech" ).value;
+    const time = document.getElementById( "time" ).value;
+    const cost = document.getElementById( "cost" ).value;
+    const page_limit = document.getElementById( "page_limit" ).value;
+    const family = document.getElementById( "family" ).checked ? 1 : 0;
 
-    await postReq_recipel(com, { code, range, type, role, tech, time, cost, page, family, page_limit }, data => {
-        $( "#L1" ).html( data );
-        displayVIDEO( 'Recipe has branched' );
-        const modalElement = document.querySelector( '#modal_tip' );
-        if ( modalElement ) {
-            const modal = bootstrap.Modal.getInstance( modalElement ) || new bootstrap.Modal( modalElement );
-            modal.hide();
-        }
-    });
+    postLayer( '#{myself}', com, true, 'L1',
+    	{ code, range, type, role, tech, time, cost, page, family, page_limit }
+    );
+
+	displayVIDEO( 'Recipe has branched' );
+
+    const modalElement = document.querySelector( '#modal_tip' );
+    if ( modalElement ) {
+        const modal = bootstrap.Modal.getInstance( modalElement ) || new bootstrap.Modal( modalElement );
+        modal.hide();
+    }
 };
 
 // Modal Tip for fcz list

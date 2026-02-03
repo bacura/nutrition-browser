@@ -38,7 +38,7 @@ def language_pack( language )
 		total:		"合計",
 		weight:		"重量",
 		recalc:		"<img src='bootstrap-dist/icons/calculator.svg' style='height:2em; width:2em;'>",
-		raw:		"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:1.5em; width:1.5em;'>"
+		raw:		"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>"
 	}
 
 	return l[language]
