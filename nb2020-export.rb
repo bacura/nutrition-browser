@@ -68,7 +68,8 @@ when 'memory'
 	r = $DB.query( "SELECT * FROM #{$TB_MEMORY};" )
 	r.each do |e|
 		content_ = e['content'].gsub( "\n", "<n>" )
-		export << "#{e['code']}\t#{e['user']}\t#{e['category']}\t#{e['pointer']}\t#{content_}\t#{e['date']}\t#{e['public']}\n"
+		date_ = e['date'].strftime("%Y-%m-%d")
+		export << "#{e['code']}\t#{e['user']}\t#{e['category']}\t#{e['pointer']}\t#{content_}\t#{date_}\t#{e['public']}\n"
 	end
 	puts "NB2020 [memory] data #{@date}\n"
 	puts export.force_encoding( 'UTF-8' )
