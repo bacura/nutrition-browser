@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 export 0.1.3 (2026/02/03)
+#Nutrition browser 2020 export 0.1.4 (2026/02/04)
 
 #==============================================================================
 #STATIC
@@ -66,7 +66,10 @@ when 'dic'
 when 'memory'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_MEMORY};" )
-	r.each do |e| export << "#{e['user']}\t#{e['category']}\t#{e['pointer']}\t#{e['memory']}\t#{e['rank']}\t#{e['total_rank']}\t#{e['count']}\t#{e['know']}\t#{e['date']}\n" end
+	r.each do |e|
+		content_ = e['content'].gsub( "\n", "<n>" )
+		export << "#{e['code']}\t#{e['user']}\t#{e['category']}\t#{e['pointer']}\t#{content_}\t#{e['date']}\t#{e['public']}\n"
+	end
 	puts "NB2020 [memory] data #{@date}\n"
 	puts export.force_encoding( 'UTF-8' )
 

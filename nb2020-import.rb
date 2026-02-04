@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 import 0.2.1 (2025/01/10)
+#Nutrition browser 2020 import 0.3.0 (2026/02/04)
 
 #==============================================================================
 #STATIC
@@ -116,6 +116,38 @@ when 'dic'
 		end
 	else
 		puts 'Incomplete dic data.'
+	end
+	puts "#{count} data have imported."
+
+when 'memory'
+	#code user category pointer content date public
+
+	if import_solid[0].size == 7
+		$DB.query( "DELETE FROM #{$TB_MEMORY};" ) if opt == 'xx'
+
+		import_solid.each do |e|
+			print "#{count}\r"
+
+			begin
+				res = $DB.query( "SELECT * FROM #{$TB_MEMORY} WHERE code='#{e[0]}';" )
+
+				if res.first
+					if opt == 'ow'
+						$DB.query( "UPDATE #{$TB_MEMORY} SET user='#{e[1]}', category='#{e[2]}', pointer'#{e[3]}', content'#{e[4]}', date'#{e[5]}', public'#{e[6]}' WHERE code='#{e[0]}';" )
+					else
+						puts "[SKIP]#{e}"
+					end
+				else
+
+					$DB.query( "INSERT INTO #{$TB_MEMORY} SET code='#{e[0]}', user='#{e[1]}', category='#{e[2]}', pointer'#{e[3]}', content'#{e[4]}', date'#{e[5]}', public'#{e[6]}';" )
+				end
+				count += 1
+			rescue
+				puts "[ERROR]#{e}"
+			end
+		end
+	else
+		puts 'Incomplete memory data.'
 	end
 	puts "#{count} data have imported."
 
