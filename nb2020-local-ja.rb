@@ -95,7 +95,7 @@ def html_head( interrupt, status, sub_title )
 <!DOCTYPE html>
 <head>
   #{refresh}
-  <title>栄養ブ #{sub_title}</title>
+  <title>#{@title} #{sub_title}</title>
   <meta charset="UTF-8">
   <!--
   <meta name="keywords" content="栄養士,管理栄養士,無料,フリー,ダイエット,減量,Webサービス,食品成分表.献立,レシピ,検索,食事,評価,記録,栄養計算,栄養指導,フードインフォマティクス,インフォマティクス,食品情報解析,栄養情報解析,nutrition,Nutritionist,food,informatics,diet">

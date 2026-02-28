@@ -390,19 +390,19 @@ const search = () => {
 		flashBW();
 		switch( qcate ){
 		case '0':
-			postLayer( 'search-food.cgi', 'dummy', true, 'L1', {words});
+			$.post( 'search-food.cgi', { command:'dummy', words }, data => $( "#L1" ).html( data ));
 		 	dl1 = true;
 		 	displayBW();
 			break;
 
 		case '1':
-			postLayer( 'recipel.cgi', 'refer', true, 'L1', {words});
+			$.post( 'recipel.cgi', { command:'refer', words }, data => $( "#L1" ).html( data ));
 		 	dl1 = true;
 		 	displayBW();
 			break;
 
 		case '2':
-			postLayer( 'memory.cgi', 'refer', true, 'L1', {words, depth:1});
+			$.post( 'memory.cgi', { command:'refer', words, depth:1 }, data => $( "#L1" ).html( data ));
 	 		dl1 = true;
 //	 		pushBW();
 	 		displayBW();

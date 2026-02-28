@@ -331,6 +331,7 @@ puts html
 #FRONT SCRIPT
 #==============================================================================
 if command == 'refer'
+
 	js = <<-"JS"
 <script type='text/javascript'>
 
