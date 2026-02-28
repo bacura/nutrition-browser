@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 recipe 3D plotter 0.1.1.AI (2025/02/17)
+#Nutrition browser 2020 recipe 3D plotter 0.1.2 (2026/02/21)
 
 
 #==============================================================================
@@ -32,7 +32,6 @@ def language_pack( language )
 		public: 	"公開",
 		normal: 	"無印",
 		favoriter: 	"お気に入り",
-		publicou: 	"公開(他ユーザー)",
 		type:	 	"料理スタイル",
 		role: 		"献立区分",
 		tech:	 	"調理区分",
@@ -61,6 +60,7 @@ def language_pack( language )
 		median:		"中央値",
 		min:		"最小値",
 		max:		"最大値",
+		globe_l:	"<img src='bootstrap-dist/icons/globe.svg' style='height:2.0em; width:2.0em;'>",
 		crosshair2:	"<img src='bootstrap-dist/icons/crosshair2-red.svg' style='height:2.0em; width:2.0em;'>"
 	}
 
@@ -70,7 +70,7 @@ end
 #### Display range
 def range_html( range, l )
 	range_select = []
-	7.times do |i| range_select[i] = $SELECT[range == i] end
+	6.times do |i| range_select[i] = $SELECT[range == i] end
 
 	html = l[:range]
 	html << '<select class="form-select form-select-sm" id="range">'
@@ -80,8 +80,17 @@ def range_html( range, l )
 	html << "<option value='3' #{range_select[3]}>#{l[:protect]}</option>"
 	html << "<option value='4' #{range_select[4]}>#{l[:public]}</option>"
 	html << "<option value='5' #{range_select[5]}>#{l[:normal]}</option>"
-	html << "<option value='6' #{range_select[6]}>#{l[:publicou]}</option>"
 	html << '</select>'
+
+	return html
+end
+
+#### 他ユーザー公開チェックボックス
+def publicou_html( publicou, l )
+	html = "<div class='form-check'>"
+	html << "<input class='form-check-input' type='checkbox' id='publicou' #{$CHECK[publicou == 1]}>"
+	html << "<label class='form-check-label'>#{l[:globe_l]}</label>"
+	html << "</div>"
 
 	return html
 end
@@ -116,7 +125,7 @@ end
 
 #### 調理区分
 def tech_html( tech, l )
-		html = l[:tech]
+	html = l[:tech]
 	html << '<select class="form-select form-select-sm" id="tech">'
 	html << "<option value='99'>#{l[:all]}</option>"
 	@recipe_tech.size.times do |c|
@@ -181,6 +190,7 @@ cfg.val['role'] = cfg.val['role'].nil? ? 99 : cfg.val['role'].to_i
 cfg.val['tech'] = cfg.val['tech'].nil? ? 99 : cfg.val['tech'].to_i
 cfg.val['time'] = cfg.val['time'].nil? ? 99 : cfg.val['time'].to_i
 cfg.val['cost'] = cfg.val['cost'].nil? ? 99 : cfg.val['cost'].to_i
+cfg.val['publicou'] = cfg.val['publicou'].nil? ? 0 : cfg.val['publicou'].to_i
 
 cfg.val['xitem'].nil? ? 'ENERC' : cfg.val['xitem']
 cfg.val['yitem'].nil? ? 'ENERC' : cfg.val['yitem']
@@ -204,41 +214,30 @@ when 'plott_area'
 html = <<-"PLOTT"
 	<div class="row">
 		<div class='col-2'>
-			#{l[:plot_size]}<br>
-			<select class="form-select form-select-sm" id="area_size" onchange="resize3dp()">
-				#{area_size_option}
-			</select>
-			<br>
-			<br>
-
-<!--			<div class="form-check form-switch">
-				<label class="form-check-label">#{l[:x_log]}</label>
-				<input class="form-check-input" type="checkbox" id="x_log" DISABLED>
+			<div class="input-group input-group-sm mb-3">
+				<label class="form-check-label">#{l[:plot_size]}</label>
+				<select class="form-select form-select-sm" id="area_size" onchange="resize3dp()">
+					#{area_size_option}
+				</select>
 			</div>
-			<br>
-			<br>
--->
+		</div>
+
+		<div class='col-1'>
 			<div class="form-check form-switch">
 				<label class="form-check-label">#{l[:x_zoom]}</label>
 				<input class="form-check-input" type="checkbox" id="x_zoom" onchange="recipe3dsPlottDraw()" #{$CHECK[cfg.val['x_zoom'] == 'true']}>
 			</div>
-			<br>
-			<br>
+		</div>
 
+		<div class='col-1'>
 			<div class="form-check form-switch">
 				<label class="form-check-label">#{l[:y_log]}</label>
 				<input class="form-check-input" type="checkbox" id="y_log" onchange="recipe3dsPlottDraw()" #{$CHECK[cfg.val['y_log'] == 'log']}>
 			</div>
-			<br>
-			<br>
-<!--
-			<div class="form-check form-switch">
-				<label class="form-check-label">#{l[:y_zoom]}</label>
-				<input class="form-check-input" type="checkbox" id="y_zoom" DISABLED>
-			</div>
--->
 		</div>
-		<div class='col-10'>
+	</div>
+	<div class="row">
+		<div class='col'>
 			<div id='recipe3ds_plott' align='center'></div>
 		</div>
 	</div>
@@ -253,6 +252,7 @@ when 'plott_data', 'monitor', 'config'
 	cfg.val['tech'] = @cgi['tech'].to_i
 	cfg.val['time'] = @cgi['time'].to_i
 	cfg.val['cost'] = @cgi['cost'].to_i
+	cfg.val['publicou'] = @cgi['publicou'].to_i
 
 	cfg.val['xitem'] = @cgi['xitem']
 	cfg.val['yitem'] = @cgi['yitem']
@@ -276,6 +276,7 @@ when 'reset'
 	cfg.val['tech'] = 99
 	cfg.val['time'] = 99
 	cfg.val['cost'] = 99
+	cfg.val['publicou'] = 0
 
 	cfg.val['xitem'] = 'ENERC'
 	cfg.val['yitem'] = 'ENERC'
@@ -286,8 +287,6 @@ when 'reset'
 	cfg.val['area_size'] = 0.6
 	cfg.val['x_zoom'] = 'false'
 	cfg.val['y_log'] = 'linner'
-when 'config'
-
 end
 p cfg.val if @debug
 
@@ -320,12 +319,14 @@ when 4
 	sql_where << "t1.user='#{user.name}' AND t1.name!='' AND t1.public='1'"
 # 自分の無印
 when 5
-	sql_where << "t1.user='#{user.name}' AND t1.name!=''AND t1.public='0'AND t1.draft='0'"
-# 他の公開
-when 6
-	sql_where << "t1.user!='#{user.name}' AND t1.name!=''AND t1.public='1'"
+	sql_where << "t1.user='#{user.name}' AND t1.name!='' AND t1.public='0' AND t1.draft='0'"
 else
 	sql_where << "t1.user='#{user.name}' AND t1.name!=''"
+end
+
+# 他ユーザー公開チェックON時：自分の条件 OR 他ユーザー公開 に拡張
+if cfg.val['publicou'] == 1
+	sql_where = "WHERE (#{sql_where.sub(/^WHERE /, '')}) OR (t1.user!='#{user.name}' AND t1.public='1' AND t1.name!='')"
 end
 
 #料理スタイル
@@ -337,7 +338,7 @@ elsif cfg.val['role'] != 99
 	sql_where << " AND t1.role='#{cfg.val['role']}'"
 end
 
-sql_where << " AND t1.tech='#{cfg.val['tech']}" unless cfg.val['tech'] == 99
+sql_where << " AND t1.tech='#{cfg.val['tech']}'" unless cfg.val['tech'] == 99
 sql_where << " AND t1.time>0 AND t1.time<=#{cfg.val['time']}" unless cfg.val['time'] == 99
 sql_where << " AND t1.cost>0 AND t1.cost<=#{cfg.val['cost']}" unless cfg.val['cost'] == 99
 
@@ -440,6 +441,7 @@ when 'monitor'
 else
 	#### 検索条件HTML
 	html_range = range_html( cfg.val['range'], l )
+	html_publicou = publicou_html( cfg.val['publicou'], l )
 	html_type = type_html( cfg.val['type'], l )
 	html_role = role_html( cfg.val['role'], l )
 	html_tech = tech_html( cfg.val['tech'], l )
@@ -492,6 +494,7 @@ else
 		<div class='col'>#{html_cost}</div>
 	</div>
 	<br>
+
 	<div class='row'>
 		<div class='col-3'>
 			<div class="input-group input-group-sm mb-3">
@@ -518,8 +521,12 @@ else
 			</div>
 		</div>
 	</div>
+
 	<div class='row'>
-		<div class='col-11'>
+		<div class='col-1'>
+			#{html_publicou}
+		</div>
+		<div class='col-10'>
 			<div class='row'>
 				<button class="btn btn-info btn-sm" type="button" onclick="recipe3dsPlottDraw()">#{l[:plot]}</button>
 			</div>
@@ -528,7 +535,6 @@ else
 			<button class="btn btn-warning btn-sm" type="button" onclick="recipe3dsReset()">#{l[:reset]}</button>
 		</div>
 	</div>
-	<br>
 </div>
 HTML
 
@@ -541,8 +547,6 @@ puts html
 #==============================================================================
 
 if command == 'monitor'
-	#### 検索設定の保存
-#	p cfg.val
 	cfg.update()
 end
 
@@ -566,7 +570,7 @@ var postReq_recipe3ds = ( command, data, successCallback ) => {
 };
 
 
-// Dosplaying recipe by scatter plott
+// Displaying recipe by scatter plott
 var recipe3dsPlottDraw = function(){
 	const range = $( "#range" ).val();
 	const type = $( "#type" ).val();
@@ -574,6 +578,7 @@ var recipe3dsPlottDraw = function(){
 	const tech = $( "#tech" ).val();
 	const time = $( "#time" ).val();
 	const cost = $( "#cost" ).val();
+	const publicou = $( "#publicou" ).prop( "checked" ) ? 1 : 0;
 
 	const xitem = $( "#xitem" ).val();
 	const yitem = $( "#yitem" ).val();
@@ -585,21 +590,19 @@ var recipe3dsPlottDraw = function(){
 	const x_zoom = $( "#x_zoom" ).prop( "checked" );
 	const y_log  = $( "#y_log" ).prop( "checked" ) ? 'log' : 'linear';
 
-	postReq_recipe3ds( 'monitor', { range, type, role, tech, time, cost,
+	postReq_recipe3ds( 'monitor', { range, type, role, tech, time, cost, publicou,
 		xitem, yitem, zitem, zml, zrange, area_size, x_zoom, y_log }, data => {
 		$( "#L3" ).html( data );
 	});
 
-	postReq_recipe3ds( 'plott_data', { range, type, role, tech, time, cost,
+	postReq_recipe3ds( 'plott_data', { range, type, role, tech, time, cost, publicou,
 		xitem, yitem, zitem, zml, zrange, area_size, x_zoom, y_log }, raw => {
 
-		//
 		if( raw == 0 ){
 			displayVIDEO( 'No match found' );
 			return;
 		}
 
-		//
 		const column = ( String( raw )).split( '::' );
 		const x_values = ( String( column[0] )).split(',');
 		const y_values = ( String( column[1] )).split(',');
@@ -608,7 +611,6 @@ var recipe3dsPlottDraw = function(){
 		const x_tickv = ( String( column[4] )).split(',');
 		const y_tickv = ( String( column[5] )).split(',');
 
-		//
 		let names_dic = {};
 		let codes_dic = {};
 		for( let i = 0; i < x_values.length; i++ ){
@@ -616,7 +618,6 @@ var recipe3dsPlottDraw = function(){
 			codes_dic[ x_values[i] + y_values[i]] = codes[ i ];
 		}
 
-		//
 		const plott_size = $( document.documentElement ).width();
 		const frame_rate = $( "#area_size" ).val();
 		if ( window.chart_recipe3d != null ){
@@ -624,15 +625,14 @@ var recipe3dsPlottDraw = function(){
 			displayVIDEO( 'Flush!' );
 		}
 
-		//
 		window.chart_recipe3d = c3.generate({
 			bindto: '#recipe3ds_plott',
 			size:{ width: plott_size * frame_rate, height: plott_size * frame_rate },
 
 			data: {
 				columns: [
-					x_values,	// x軸
-					y_values	// y軸
+					x_values,
+					y_values
 				],
 			    x: x_values[0],
 				type: 'scatter',
@@ -640,7 +640,6 @@ var recipe3dsPlottDraw = function(){
 					var key = d.x.toFixed( 1 ) + d.value.toFixed( 1 );
 					searchDR(  codes_dic[ key ] );
                 }
-//				colors:{ x_values[0]: '#ff44FF' }
 			},
 			axis: {
 			    x: {
@@ -697,7 +696,7 @@ var recipe3dsPlottDraw = function(){
 };
 
 
-// Dosplaying recipe by scatter plott
+// Resetting recipe3ds
 var recipe3dsReset = function(){
 	$( "#range" ).val( 0 );
 	$( "#type" ).val( 99 );
@@ -705,6 +704,7 @@ var recipe3dsReset = function(){
 	$( "#tech" ).val( 99 );
 	$( "#time" ).val( 99 );
 	$( "#cost" ).val( 99 );
+	$( "#publicou" ).prop( "checked", false );
 
 	$( "#xitem" ).val( 'ENERC' );
 	$( "#yitem" ).val( 'ENERC' );
@@ -714,7 +714,7 @@ var recipe3dsReset = function(){
 	$( "#zrange" ).val( 0 );
 };
 
-// Dosplaying recipe by scatter plott
+// Resize plott area
 var resize3dp = function(){
 	const plott_size = $( document.documentElement ).width();
 	const frame_rate = $( "#area_size" ).val();
@@ -730,6 +730,7 @@ var resize3dp = function(){
 	const tech = $( "#tech" ).val();
 	const time = $( "#time" ).val();
 	const cost = $( "#cost" ).val();
+	const publicou = $( "#publicou" ).prop( "checked" ) ? 1 : 0;
 
 	const xitem = $( "#xitem" ).val();
 	const yitem = $( "#yitem" ).val();
@@ -740,9 +741,8 @@ var resize3dp = function(){
 	const area_size = $( "#area_size" ).val();
 	const x_zoom = $( "#x_zoom" ).prop( "checked" );
 	const y_log  = $( "#y_log" ).prop( "checked" ) ? 'log' : 'linear';
-	postReq_recipe3ds( 'config', { range, type, role, tech, time, cost,
+	postReq_recipe3ds( 'config', { range, type, role, tech, time, cost, publicou,
 		xitem, yitem, zitem, zml, zrange, area_size, x_zoom, y_log }, data => {
-//		$( "#L3" ).html( data );
 	});
 
 };

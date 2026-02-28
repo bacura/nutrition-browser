@@ -346,16 +346,16 @@ if food_no != ''
 		if prefix == food_no[0..2]
 			food_base_no = food_no[3..5]
 		else
-#			food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
-			food_base_no = 'Auto'
+			food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
+#			food_base_no = 'Auto'
 		end
 	else
 		food_base_no = '001' if food_base_no == '' || food_base_no == '000'
 	end
 else
 	if switch == 0
-#		food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
-		food_base_no = 'Auto'
+		food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
+#		food_base_no = 'Auto'
 	else
 		food_base_no = '001' if food_base_no == '' || food_base_no == '000'
 	end

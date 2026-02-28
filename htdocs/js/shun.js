@@ -1,4 +1,4 @@
-//shun.js ver 0.0.4 (2025/08/22)
+//shun.js ver 0.0.5 (2026/02/21)
 
 /////////////////////////////////////////////////////////////////////////////////
 // Cooking school //////////////////////////////////////////////////////////////
@@ -359,28 +359,6 @@ var visionnerz = function( yyyymmdd ){
 //
 //
 //
-
-
-/////////////////////////////////////////////////////////////////////////////////
-// 3D recipe plott search //////////////////////////////////////////////////////////////
-
-// Dosplaying recipe by scatter plott
-const recipe3ds = function(){
-	flashBW();
-	$.post( "recipe3ds.cgi", { command:'plott_area' }, function( data ){
-		$( "#L2" ).html( data );
-		$.post( "recipe3ds.cgi", { command:'init' }, function( data ){
-			$( "#L1" ).html( data );
-
-			dl1 = true;
-			dl2 = true;
-			dl3 = true;
-			displayBW();
-		}).fail( function(){
-			alert( "Error: Failed to load plotting area." );
-		});
-	});
-};
 
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 recipe list 0.4.8 (2025/12/29)
+#Nutrition browser 2020 recipe list 0.4.8 (2026/02/21)
 	
 
 #==============================================================================
@@ -39,7 +39,7 @@ def language_pack( language )
 		public:		"公開",
 		normal:		"無印",
 		favoriter:	"お気に入り",
-		publicou:	"公開(他ユーザー)",
+		publicou:	"他ユーザー公開",
 		type:		"料理スタイル",
 		role:		"献立区分",
 		tech:		"調理区分",
@@ -64,6 +64,7 @@ def language_pack( language )
 		crosshair:	"<img src='bootstrap-dist/icons/crosshair.svg' style='height:2.0em; width:2.0em;'>",
 		command:	"<img src='bootstrap-dist/icons/command.svg' style='height:1.2em; width:1.2em;'>",
 		globe:		"<img src='bootstrap-dist/icons/globe.svg' style='height:1.2em; width:1.2em;'>",
+		globe_l:	"<img src='bootstrap-dist/icons/globe.svg' style='height:2.0em; width:2.0em;'>",
 		lock:		"<img src='bootstrap-dist/icons/lock-fill.svg' style='height:1.2em; width:1.2em;'>",
 		cone:		"<img src='bootstrap-dist/icons/cone-striped.svg' style='height:1.2em; width:1.2em;'>",
 		table:		"<img src='bootstrap-dist/icons/motherboard.svg' style='height:2.4em; width:2.4em;'>",
@@ -84,7 +85,7 @@ end
 #### 表示範囲
 def range_html( range, l )
 	range_select = []
-	7.times do |i| range_select[i] = $SELECT[range == i] end
+	6.times do |i| range_select[i] = $SELECT[range == i] end
 
 	html = l[:range]
 	html << '<select class="form-select form-select-sm" id="range">'
@@ -94,8 +95,18 @@ def range_html( range, l )
 	html << "<option value='3' #{range_select[3]}>#{l[:protect]}</option>"
 	html << "<option value='4' #{range_select[4]}>#{l[:public]}</option>"
 	html << "<option value='5' #{range_select[5]}>#{l[:normal]}</option>"
-	html << "<option value='6' #{range_select[6]}>#{l[:publicou]}</option>"
 	html << '</select>'
+
+	return html
+end
+
+
+#### 他ユーザー公開チェックボックス
+def publicou_html( publicou, l )
+	html = "<div class='form-check'>"
+	html << "<input class='form-check-input' type='checkbox' id='publicou' #{$CHECK[publicou == 1]}>"
+	html << "<label class='form-check-label'>#{l[:globe_l]}</label>"
+	html << "</div>"
 
 	return html
 end
@@ -295,6 +306,7 @@ else
 	html_init_cache( nil )
 end
 
+
 cfg.val['page'] = cfg.val['page'].to_i == 0 ? 1 : cfg.val['page'].to_i
 cfg.val['page_limit'] = cfg.val['page_limit'].nil? ? limit_num : cfg.val['page_limit'].to_i
 cfg.val['range'] = cfg.val['range'].nil?  ? 0 : cfg.val['range'].to_i
@@ -304,6 +316,7 @@ cfg.val['tech'] = cfg.val['tech'].nil? ? 99 : cfg.val['tech'].to_i
 cfg.val['time'] = cfg.val['time'].nil? ? 99 : cfg.val['time'].to_i
 cfg.val['cost'] = cfg.val['cost'].nil? ? 99 : cfg.val['cost'].to_i
 cfg.val['family'] = cfg.val['family'].nil? ? 0 : cfg.val['family'].to_i
+cfg.val['publicou'] = cfg.val['publicou'].nil? ? 0 : cfg.val['publicou'].to_i
 cfg.val['words'] = cfg.val['words'].nil? ? '' : cfg.val['words'].to_s
 
 #### POST
@@ -328,6 +341,7 @@ when 'reset'
 	cfg.val['time'] = 99
 	cfg.val['cost'] = 99
 	cfg.val['family'] = 0
+	cfg.val['publicou'] = 0
 	cfg.val['words'] = ''
 
 	cfg.val['green'] = 0
@@ -342,6 +356,7 @@ when 'green_set'
 	cfg.val['time'] = @cgi['time'].to_i
 	cfg.val['cost'] = @cgi['cost'].to_i
 	cfg.val['family'] = @cgi['family'].to_i
+	cfg.val['publicou'] = @cgi['publicou'].to_i
 	cfg.val['words'] = @cgi['words']
 
 	cfg.val['green'] = 1
@@ -353,6 +368,7 @@ when 'green_set'
 	cfg.val['gb_time'] = cfg.val['time']
 	cfg.val['gb_cost'] = cfg.val['cost']
 	cfg.val['gb_family'] = cfg.val['family']
+	cfg.val['gb_publicou'] = cfg.val['publicou']
 	cfg.val['gb_words'] = cfg.val['words']
 
 when 'green_return'
@@ -364,7 +380,8 @@ when 'green_return'
 	cfg.val['tech'] = cfg.val['gb_tech'].to_i
 	cfg.val['time'] = cfg.val['gb_time'].to_i
 	cfg.val['cost'] = cfg.val['gb_cost'].to_i
-	cfg.val['family'] =cfg.val['gb_family'].to_i
+	cfg.val['family'] = cfg.val['gb_family'].to_i
+	cfg.val['publicou'] = cfg.val['gb_publicou'].to_i
 	cfg.val['words'] = cfg.val['gb_words']
 
 when 'delete'
@@ -435,14 +452,13 @@ when 'limit', 'refer'
 	cfg.val['time'] = command == 'limit' ? @cgi['time'].to_i : 99
 	cfg.val['cost'] = command == 'limit' ? @cgi['cost'].to_i : 99
 	cfg.val['family'] = command == 'limit' ? @cgi['family'].to_i : 99
+	cfg.val['publicou'] = command == 'limit' ? @cgi['publicou'].to_i : 0
 	cfg.val['words'] = @cgi['words']
 
 when 'modal_body'
 	cfg.val['page'] = @cgi['page'].to_i == 0 ? 1 : @cgi['page'].to_i
 	recipe = Recipe.new( user )
     recipe.load_db( code, true )
-
-    puts recipe.name
 
 	puts "<table class='table table-borderless'><tr>"
 
@@ -507,13 +523,15 @@ when 4
 when 5
 	sql_where << "user='#{user.name}' AND public='0' AND draft='0' AND name!=''"
 	sql_where_ij << "t1.user='#{user.name}' AND t1.public='0' AND t1.draft='0' AND t1.name!=''"
-# 他の公開
-when 6
-	sql_where << "public='1' AND user!='#{user.name}' AND name!=''"
-	sql_where_ij << "t1.public='1' AND t1.user!='#{user.name}' AND t1.name!=''"
 else
 	sql_where << " user='#{user.name}' AND name!=''"
 	sql_where_ij << " t1.user='#{user.name}' AND t1.name!=''"
+end
+
+# 他ユーザー公開チェックON時：自分の条件 OR 他ユーザー公開 に拡張
+if cfg.val['publicou'] == 1
+	sql_where = "WHERE (#{sql_where.sub(/^WHERE /, '')}) OR (user!='#{user.name}' AND public='1' AND name!='')"
+	sql_where_ij = "WHERE (#{sql_where_ij.sub(/^WHERE /, '')}) OR (t1.user!='#{user.name}' AND t1.public='1' AND t1.name!='')"
 end
 
 sql_where << " AND type='#{cfg.val['type']}'" unless cfg.val['type'] == 99
@@ -539,6 +557,7 @@ sql_where_ij << " AND t1.cost>0 AND t1.cost<=#{cfg.val['cost']}" unless cfg.val[
 
 #### 検索条件HTML
 html_range = range_html( cfg.val['range'], l )
+html_publicou = publicou_html( cfg.val['publicou'], l )
 html_type = type_html( cfg.val['type'], l )
 html_role = role_html( cfg.val['role'], l )
 html_tech = tech_html( cfg.val['tech'], l )
@@ -576,7 +595,9 @@ else
 end
 
 res.each do |e|
-	o = Recipe.new( user )
+	recipe_user = User.new( nil )
+	recipe_user.name = e['user']
+	o = Recipe.new( recipe_user )
 	o.load_db( e, false )
 	o.load_media
 	recipes << o
@@ -618,7 +639,9 @@ if cfg.val['family'] == 1
 		r.each do |ee|
 			daughters << ee['code']
 
-			ro = Recipe.new( user )
+			recipe_user = User.new( nil )
+			recipe_user.name = ee['user'] rescue recipe_user.name = user.name
+			ro = Recipe.new( recipe_user )
       		ro.load_db( ee['code'], true )
 			daughter_recipes << ro
 		end
@@ -657,9 +680,9 @@ end
 
 puts "Green button HTML parts<br>" if @debug
 if cfg.val['green'] == 1
-	green_button = "<button class='btn btn-success btn-sm gb' type='button' onclick='recipeListGreen( \"green_return\" )'>#{l[:green]}</button>"
+	green_button = "<div align='center'><button class='btn btn-success btn-sm gb' type='button' onclick='recipeListGreen( \"green_return\" )'>#{l[:green]}</button></div>"
 else
-	green_button = "<button class='btn btn-success btn-sm' type='button' onclick='recipeListGreen( \"green_set\" )'>#{l[:green]}</button>"
+	green_button = "<div align='center'><button class='btn btn-success btn-sm' type='button' onclick='recipeListGreen( \"green_set\" )'>#{l[:green]}</button></div>"
 end
 
 
@@ -687,14 +710,17 @@ html = <<~"HTML"
 	  			<label class='form-check-label'>#{l[:diagram]}</label>
 			</div>
 		</div>
-		<div class='col-9'>
+		<div class='col-1'>
+			#{html_publicou}
+		</div>
+		<div class='col-8'>
 			<div class='row'><button class="btn btn-info btn-sm" type="button" onclick="recipeListP( '#{cfg.val['page']}' )">#{l[:limit]}</button></div>
 		</div>
 		<div class='col-1'>
 			#{green_button}
 		</div>
 		<div class='col-1'>
-			<button class="btn btn-warning btn-sm" type="button" onclick="recipeList( 'reset' )">#{l[:reset]}</button>
+			<div align='center'><button class="btn btn-warning btn-sm" type="button" onclick="recipeList( 'reset' )">#{l[:reset]}</button></div>
 		</div>
 	</div>
 	<br>
@@ -739,7 +765,6 @@ puts html
 p cfg.val if @debug
 cfg.update()
 
-
 #==============================================================================
 # FRONT SCRIPT START
 #==============================================================================
@@ -747,26 +772,6 @@ cfg.update()
 if command == 'init' || command == 'refer' 
 	js = <<-"JS"
 <script type='text/javascript'>
-var postReq_recipel = async (command, requestData, successCallback) => {
-    try {
-        const response = await fetch('recipel.cgi', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ command, ...requestData }),
-        });
-        if (!response.ok) {
-            const text = await response.text();
-            console.error(`Request failed: HTTP ${response.status}, ${text}`);
-            alert("An error occurred. Please try again.");
-            return;
-        }
-        const responseData = await response.text();
-        successCallback(responseData);
-    } catch (error) {
-        console.error('Request failed:', error);
-        alert("An error occurred. Please try again.");
-    }
-};
 
 // Displaying recipe list with narrow down
 var recipeListP = ( page ) => {
@@ -779,9 +784,10 @@ var recipeListP = ( page ) => {
     const words = document.getElementById( "words" ).value;
     const page_limit = document.getElementById( "page_limit" ).value;
     const family = document.getElementById( "family" ).checked ? 1 : 0;
+    const publicou = document.getElementById( "publicou" ).checked ? 1 : 0;
 
     postLayer( '#{myself}', 'limit', true, 'L1',
-    	{ range, type, role, tech, time, cost, page, words, family, page_limit }
+    	{ range, type, role, tech, time, cost, page, words, family, publicou, page_limit }
     );
 };
 
@@ -796,9 +802,10 @@ var recipeListGreen = ( com ) => {
     const words = document.getElementById( "words" ).value;
     const page_limit = document.getElementById( "page_limit" ).value;
     const family = document.getElementById( "family" ).checked ? 1 : 0;
+    const publicou = document.getElementById( "publicou" ).checked ? 1 : 0;
 
     postLayer( '#{myself}', com, true, 'L1',
-    	{ range, type, role, tech, time, cost, words, family, page_limit }
+    	{ range, type, role, tech, time, cost, words, family, publicou, page_limit }
     );
 };
 
@@ -812,14 +819,15 @@ var recipeDelete = async (code, page) => {
     const cost = document.getElementById( "cost" ).value;
     const page_limit = document.getElementById( "page_limit" ).value;
     const family = document.getElementById( "family" ).checked ? 1 : 0;
+    const publicou = document.getElementById( "publicou" ).checked ? 1 : 0;
 
     if ( document.getElementById( code ).checked ) {
 	    postLayer( '#{myself}', 'delete', false, 'L1',
-	    	{ code, range, type, role, tech, time, cost, page, family, page_limit }
+	    	{ code, range, type, role, tech, time, cost, page, family, publicou, page_limit }
 	    );
 
 	    postLayer( '#{myself}', 'limit', true, 'L1',
-	    	{ range, type, role, tech, time, cost, page, family, page_limit }
+	    	{ range, type, role, tech, time, cost, page, family, publicou, page_limit }
 	    );
 
         displayVIDEO('Removed');
@@ -843,9 +851,10 @@ var recipeImport = ( com, code, page ) => {
     const cost = document.getElementById( "cost" ).value;
     const page_limit = document.getElementById( "page_limit" ).value;
     const family = document.getElementById( "family" ).checked ? 1 : 0;
+    const publicou = document.getElementById( "publicou" ).checked ? 1 : 0;
 
     postLayer( '#{myself}', com, true, 'L1',
-    	{ code, range, type, role, tech, time, cost, page, family, page_limit }
+    	{ code, range, type, role, tech, time, cost, page, family, publicou, page_limit }
     );
 
 	displayVIDEO( 'Recipe has branched' );

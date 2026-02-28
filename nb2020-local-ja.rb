@@ -1,9 +1,10 @@
-#Nutrition browser 2020 soul Japanese pack 0.3.3 (2026/01/07)
+#Nutrition browser 2020 soul Japanese pack 0.3.5 (2026/02/21)
 
 #==============================================================================
 # STATIC
 #==============================================================================
 @title = '栄養ブラウザ'
+@no_aliase = '名無し'
 
 @category = %w( 特　殊 穀　類 いも・でん粉類 砂糖・甘味類 豆　類 種実類 野菜類 果実類 きのこ類 藻　類 魚介類 肉　類 卵　類 乳　類 油脂類 菓子類 し好飲料類 調味料・香辛料類 調理・流通食品類 特　殊 )
 @fg = %w( 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 )
@@ -49,7 +50,7 @@ $PALETTE_BIT_ALL = @palette_bit_all
 #@color = %w( 未指定 赤 ピンク オレンジ 黄 緑 青 紫 茶 白 黒 透明 )
 
 #             0      1   2     　3     4       5       6  7   8      9
-@account = %w( 退会 一般 常ギルメン guest 萌ギルメン 旬ギルメン 娘 幽体 サブマス ギルマス )
+@account = %w( 封印 一般 常ギルメン guest 萌ギルメン 旬ギルメン 娘 幽体 サブマス ギルマス )
 @accounts_general = [1, 2, 4, 5]
 @accounts_guild = [2, 4, 5]
 $GUEST = 3
@@ -74,14 +75,13 @@ def html_head( interrupt, status, sub_title )
   js_guild = ''
   if status >= 1
     js_guild = "<script type='text/javascript' src='#{$JS_PATH}/guild.js'></script>"
-  end
+    js_guild << '<script src="https://d3js.org/d3.v5.min.js"></script>'
+    js_guild << "<link href='#{$CSS_PATH}/c3.css' rel='stylesheet'>"
+    js_guild << "<script type='text/javascript' src='#{$JS_PATH}/c3.min.js'></script>"  end
 
   js_shun = ''
   if status >= 5
-    js_shun << '<script src="https://d3js.org/d3.v5.min.js"></script>'
-    js_shun << "<link href='#{$CSS_PATH}/c3.css' rel='stylesheet'>"
-    js_shun << "<script type='text/javascript' src='#{$JS_PATH}/c3.min.js'></script>"
-    js_shun << "<script type='text/javascript' src='#{$JS_PATH}/shun.js'></script>" 
+    js_shun = "<script type='text/javascript' src='#{$JS_PATH}/shun.js'></script>" 
   end
 
   js_master = ''

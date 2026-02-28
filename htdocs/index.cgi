@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-#Nutrition browser 2020 index page 0.5.4 (2026/01/21)
+#Nutrition browser 2020 index page 0.5.5 (2026/02/27)
 
 #==============================================================================
 #LIBRARY
@@ -81,8 +81,15 @@ end
 #### HTML top
 def html_top( user, l, db )
   puts 'HTML TOP<br>' if @debug
-  user_name = user.name
-  user_name = user.aliasu if user.aliasu != '' && user.aliasu != nil
+
+  if ( user.aliasu.to_s.empty? || user.name == user.aliasu ) && user.name
+    db.query( "UPDATE #{$TB_USER} SET aliasu=? WHERE user=?", true, [@no_aliase, user.name] )
+    user_name = @no_aliase
+  elsif user.name
+    user_name = user.aliasu
+  else
+    user_name = nil
+  end
 
   case user.status
   when 1

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 GM account editor 0.0.2 (2026/01/04)
+#Nutrition browser 2020 GM account editor 0.0.3 (2026/02/14)
 
 #==============================================================================
 #STATIC
@@ -127,7 +127,7 @@ else
 	end
 
 	account_html << "<div class='row'>"
-	r = db.query( "SELECT * FROM #{$TB_USER} WHERE status!='9' AND user!='';", false )
+	r = db.query( "SELECT * FROM #{$TB_USER} WHERE user!='';", false )
 	if r.first
 		account_html << "<table class='table table-striped table-bordered'>"
 		account_html << "<thead>"

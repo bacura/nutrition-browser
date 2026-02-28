@@ -1,4 +1,4 @@
-// Nutorition Browser 2020 core.js 0.7.1 (2026/01/21)
+// Nutorition Browser 2020 core.js 0.7.2 (2026/02/21)
 ///////////////////////////////////////////////////////////////////////////////////
 // Global ////////////////////////////////////////////////////////////////////
 dl1 = false;
@@ -695,6 +695,28 @@ const recipeList = function( com ){
 		flashBW();
 		dl1 = true;
 		displayBW();
+	});
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// 3D recipe plott search //////////////////////////////////////////////////////////////
+
+// Dosplaying recipe by scatter plott
+const recipe3ds = function(){
+	flashBW();
+	$.post( "recipe3ds.cgi", { command:'plott_area' }, function( data ){
+		$( "#L2" ).html( data );
+		$.post( "recipe3ds.cgi", { command:'init' }, function( data ){
+			$( "#L1" ).html( data );
+
+			dl1 = true;
+			dl2 = true;
+			dl3 = true;
+			displayBW();
+		}).fail( function(){
+			alert( "Error: Failed to load plotting area." );
+		});
 	});
 };
 

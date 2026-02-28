@@ -14,8 +14,8 @@ require 'json'
 #==============================================================================
 $GM = '--gm--'
 
-$NBURL = 'https://bacura.jp/nb/'
-$MYURL = 'https://eiyo-b.com/'
+$NBURL = 'https://bacura.jp/nb'
+$MYURL = 'https://bacura.jp/nb'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
@@ -23,6 +23,12 @@ $MYSQL_DBR = 'rr2020'
 $MYSQL_USER = '--nbuser--'
 $MYSQL_USERR = '--rruser--'
 $MYSQL_PW = '--password--'
+
+$SMTP_SERVER = '--smtp--'
+$SMTP_PORT = --port--
+$SMTP_USER = '--smtp_user--'
+$SMTP_PASS = '--smtp_pass--'
+$FROM_EMAIL = '--smtp_from--'
 
 $TB_CFG = 'cfg'
 $TB_DIC = 'dic'

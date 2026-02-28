@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.1.3 (2026/01/09)
+# Nutrition browser 2020 login 0.1.5 (2026/02/28)
 
 #==============================================================================
 # STATIC
@@ -29,6 +29,7 @@ def language_pack( language )
     error:    "IDとパスワードが一致しませんでした。<br>パスワードを忘れた方は再登録してください。",
     help:     "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:3em; width:2em;'>",
     regist:   "登録",
+    reset:   "パスワードを忘れた方は<a href='regist.cgi?mode=reset_form'>こちら</a>",
     empty:    "[空き地]"
   }
 
@@ -40,6 +41,8 @@ def render_html( content )
 end
 
 def render_login_form( msg, l )
+  reset_form = ( $SMTP_SERVER.to_s.empty? || $SMTP_SERVER == '--smtp--' ) ? '' : l[:reset]
+
   form_html = <<-"HTML"
     <div class="container">
       <div class="row">
@@ -54,6 +57,12 @@ def render_login_form( msg, l )
         </div>
         <div class="col-6">
           #{l[:empty]}
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-6">
+          #{reset_form}
         </div>
       </div>
     </div>
@@ -78,26 +87,34 @@ def validate_user( db, cgi, l )
   res = db.query( "SELECT user, passh, status, cookie FROM #{$TB_USER} WHERE user=? AND status>'0'", false, [cgi['id']] )&.first
   #for initial empty password
 
-  if res['passh'].empty? && cgi['pass'].empty?
-    update_user_data( db, res, cgi )
+  if res
+    if res['passh'].empty? && cgi['pass'].empty?
+      update_user_data( db, res, cgi )
 
-  elsif !cgi['pass'].empty? && res['passh'].empty?
-    html_init( nil )
-    html_head( nil, 0, nil )
-    render_top_login( l )
-    render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
-    html_foot()
+    elsif !cgi['pass'].empty? && res['passh'].empty?
+      html_init( nil )
+      html_head( nil, 0, nil )
+      render_top_login( l )
+      render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
+      html_foot()
 
-  elsif BCrypt::Password.new( res['passh'] ) == cgi['pass']
-    update_user_data( db, res, cgi )
+    elsif BCrypt::Password.new( res['passh'] ) == cgi['pass']
+      update_user_data( db, res, cgi )
 
+    else
+      html_init( nil )
+      html_head( nil, 0, nil )
+
+      render_top_login( l )
+      render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
+      html_foot()
+    end
   else
-    html_init( nil )
-    html_head( nil, 0, nil )
-
-    render_top_login( l )
-    render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
-    html_foot()
+      html_init( nil )
+      html_head( nil, 0, nil )
+      render_top_login( l )
+      render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
+      html_foot()
   end
 end
 
@@ -158,7 +175,7 @@ end
 #==============================================================================
 # MAIN
 #==============================================================================
-text_init() if @debug
+html_init( nil ) if @debug
 
 get_data = get_data()
 user = User.new( @cgi )
@@ -169,7 +186,7 @@ if l.nil?
 end
 db = Db.new( user, false, true )
 
-
+p get_data['mode'] if @debug
 case get_data['mode']
   when 'check'
     validate_user( db, @cgi, l )

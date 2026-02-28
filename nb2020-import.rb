@@ -376,6 +376,7 @@ when 'media'
 else
 	puts 'Importable data list..'
 	puts 'dic'
+	puts 'memory'
 	puts 'ftcp'
 	puts 'tagp'
 	puts 'extp'

@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.4 (2026/02/01)
+#nb2020-dbi.rb 0.8.5 (2026/02/14)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -639,7 +639,7 @@ def user_init()
 	if res.first
 		puts 'user table already exists.'
 	else
-		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, mail VARCHAR(64), passh VARCHAR(256), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32));'
+		query = 'CREATE TABLE user (user VARCHAR(32) NOT NULL PRIMARY KEY, mail VARCHAR(64), passh VARCHAR(256), cookie VARCHAR(32), cookie_m VARCHAR(32), aliasu VARCHAR(64), status TINYINT, reg_date DATETIME, language VARCHAR(2), mom VARCHAR(32), switch TINYINT(1), astral TINYINT(1), tensei VARCHAR(32), reset_token VARCHAR(128) DEFAULT NULL, reset_token_expires_at DATETIME DEFAULT NULL );'
 		$DB.query( query )
 		puts 'user in ext has been created.'
 
