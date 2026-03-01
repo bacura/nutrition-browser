@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul Japanese pack 0.3.5 (2026/02/21)
+#Nutrition browser 2020 soul Japanese pack 0.3.6 (2026/03/01)
 
 #==============================================================================
 # STATIC
@@ -23,7 +23,6 @@
 @fct_min_nr = @fct_ew + @fct_pf + @fct_cho + @fct_m + @fct_fsv + @fct_wsv + @fct_as
 @fct_item = @fct_base + @fct_min
 @fct_item << 'Notice'
-@fct_d
 
 #             0              1                 2                 3                     4                  5                        6                               7               8                                   9                    10                       11             12                                 13                14                      15                        16                          17                               18                               19                    20                    21                                    22                                  23                                      24                      25                    26                         27                           28                            29                          30                                    31                                    32                            33                          34                     35             36               37           38                39                 40          41            42            43          44              45             46            47            48              49                  50                  51                  52                          53                          54                           55                56                      57                        58                       59                      60                61                  62                 63                64                    65                   66                     67            68                     69               70                71              72              73                       74
 @fct_name = {'FG'=>'食品群', 'FN'=>'食品番号', 'SID'=>'索引番号', 'Tagnames'=>'食品名', 'REFUSE'=>'廃棄率', 'ENERC'=>'エネルギー(kJ)',  'ENERC_KCAL'=>'エネルギー(kcal)',  'WATER'=>'水分', 'PROTCAA'=>'アミノ酸組成によるたんぱく質', 'PROT'=>'たんぱく質',  'PROTV'=>'たんぱく質*',   'FAT'=>'脂質',  'FATNLEA'=>'トリアシルグリセロール当量',  'FATV'=>'脂質*', 'FASAT'=>'飽和脂肪酸', 'FAMS'=>'一価不飽和脂肪酸', 'FAPU'=>'多価不飽和脂肪酸',  'FAPUN3'=>'n-3系多価不飽和脂肪酸', 'FAPUN6'=>'n-6系多価不飽和脂肪酸', 'CHOLE'=>'コレステロール', 'CHOCDF'=>'炭水化物', 'CHOAVLM'=>'利用可能炭水化物(単糖当量)', 'CHOAVL'=>'利用可能炭水化物(質量計)', 'CHOAVLDF'=>'利用可能炭水化物(差引き法)', 'CHOV'=>'炭水化物*',  'FIB'=>'食物繊維総量', 'FIBTG'=>'食物繊維総量(P)', 'FIBSOL'=>'水溶性食物繊維(P)', 'FIBINS'=>'不溶性食物繊維(P)', 'FIBTDF'=>'食物繊維総量(A)', 'FIBSDFS'=>'低分子量水溶性食物繊維(A)', 'FIBSDFP'=>'高分子量水溶性食物繊維(A)', 'FIBIDF'=>'不溶性食物繊維(A)', 'STARES'=>'難消化性でん粉(A)', 'POLYL'=>'糖アルコール', 'ASH'=>'灰分',  'NA'=>'ナトリウム', 'K'=>'カリウム', 'CA'=>'カルシウム', 'MG'=>'マグネシウム', 'P'=>'リン',  'FE'=>'鉄',   'ZN'=>'亜鉛', 'CU'=>'銅', 'MN'=>'マンガン', 'ID'=>'ヨウ素', 'SE'=>'セレン', 'CR'=>'クロム', 'MO'=>'モリブデン', 'RETOL'=>'レチノール', 'CARTA'=>'α-カロテン', 'CARTB'=>'β-カロテン', 'CRYPXB'=>'β-クリプトキサンチン', 'CARTBEQ'=>'β-カロテン当量', 'VITA_RAE'=>'レチノール活性当量', 'VITD'=>'ビタミンD', 'TOCPHA'=>'α-トコフェロール', 'TOCPHB'=>'β-トコフェロール',  'TOCPHG'=>'γ-トコフェロール', 'TOCPHD'=>'δ-トコフェロール', 'VITK'=>'ビタミンK', 'THIA'=>'ビタミンB1', 'RIBF'=>'ビタミンB2', 'NIA'=>'ナイアシン', 'NE'=>'ナイアシン当量',   'VITB6A'=>'ビタミンB6', 'VITB12'=>'ビタミンB12', 'FOL'=>'葉酸', 'PANTAC'=>'パントテン酸', 'BIOT'=>'ビオチン', 'VITC'=>'ビタミンC', 'OA'=>'有機酸', 'ALC'=>'アルコール', 'NACL_EQ'=>'食塩相当量', 'Notice'=>'備考'}
@@ -89,7 +88,7 @@ def html_head( interrupt, status, sub_title )
     js_master = "<script type='text/javascript' src='#{$JS_PATH}/master.js'></script>"
   end
 
-  x_card = ''
+  x_card_site = '@ho_meow'
 
   html = <<-"HTML"
 <!DOCTYPE html>
@@ -98,7 +97,7 @@ def html_head( interrupt, status, sub_title )
   <title>#{@title} #{sub_title}</title>
   <meta charset="UTF-8">
   <!--
-  <meta name="keywords" content="栄養士,管理栄養士,無料,フリー,ダイエット,減量,Webサービス,食品成分表.献立,レシピ,検索,食事,評価,記録,栄養計算,栄養指導,フードインフォマティクス,インフォマティクス,食品情報解析,栄養情報解析,nutrition,Nutritionist,food,informatics,diet">
+  <meta name="keywords" content="栄養士,管理栄養士,無料,フリー,ダイエット,減量,Webサービス,食品成分表.献立,レシピ,検索,食事,評価,記録,栄養計算,栄養指導,フードインフォマティクス,食品情報解析,栄養情報解析,nutrition,Nutritionist,food,informatics,diet">
   <meta name="description" content="*栄養者の慾を如意自在に同化するユビキタス栄養ツール、栄養士、管理栄養士が活動に必要な食品成分の閲覧、料理の栄養計算、レシピの管理などが無料できる">
   <meta name="robots" content="index,nofollow">
   -->
@@ -107,11 +106,11 @@ def html_head( interrupt, status, sub_title )
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@ho_meow" />
-  <meta name="twitter:title" content="栄養ブラウザ" />
+  <meta name="twitter:site" content="#{x_card_site}" />
+  <meta name="twitter:title" content="#{@title}" />
   <meta name="twitter:description" content="栄養者のユビキタスツール" />
-  <meta name='twitter:image' content='https://bacura.jp/nb/#{$PHOTO}/nb.png' />
-  <meta name="twitter:image:alt" content="栄養ブラウザロゴ" />
+  <meta name='twitter:image' content='#{$MYURL}/#{$PHOTO}/nb-ja.png' />
+  <meta name="twitter:image:alt" content="" />
 
   <!-- Jquery -->
   #{$JQUERY}
