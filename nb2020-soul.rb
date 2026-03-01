@@ -14,8 +14,8 @@ require 'json'
 #==============================================================================
 $GM = '--gm--'
 
-$NBURL = 'https://bacura.jp/nb'
-$MYURL = 'https://bacura.jp/nb'
+$NBURL = '--myurl--'
+$MYURL = '--myurl--'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'

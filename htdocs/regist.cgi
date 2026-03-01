@@ -196,21 +196,21 @@ end
 
 
 def send_reset_email( mail, token, id, l )
-  link = "#{$HTDOCS_PATH}/#{@myself}?mode=reset_receive&token=#{URI.encode_www_form_component( token )}"
+  link = "#{$MYURL}/#{@myself}?mode=reset_receive&token=#{URI.encode_www_form_component( token )}"
 
   subject = l[:mail_subject]
   body = <<~TEXT
-    #{mail_body1}
+    #{l[:mail_body1]}
 
-    #{mail_body2}
+    #{l[:mail_body2]}
 
-    #{mail_body3}
+    #{l[:mail_body3]}
 
     #{link}
 
-    #{mail_body4}
-    #{mail_body5}
-    #{mail_body6}
+    #{l[:mail_body4]}
+    #{l[:mail_body5]}
+    #{l[:mail_body6]}
   TEXT
 
   message = <<~EOF
@@ -242,6 +242,12 @@ def render_reset_mail( cgi, db, l )
   mail = ( cgi['mail_reset'] || '' ).strip.downcase
 
   res = db.query( "SELECT * FROM #{$TB_USER} WHERE user=? AND mail=? LIMIT 1", false, [id, mail] )&.first
+
+  puts "[DEBUG] res = #{res.inspect}" if @debug
+  puts "[DEBUG] id != $GM = #{id != $GM}" if @debug
+  puts "[DEBUG] id.size = #{id.size}" if @debug
+  puts "[DEBUG] status = #{res['status'].to_i if res}" if @debug
+
   if res && id != $GM && id.size <= 30 && id.size >= 8 && res['status'].to_i > 0
     token = SecureRandom.urlsafe_base64( 32 )
     expires_at = ( Time.now + 1200 ).strftime( '%Y-%m-%d %H:%M:%S' )
