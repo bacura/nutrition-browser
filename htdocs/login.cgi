@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.1.5 (2026/02/28)
+# Nutrition browser 2020 login 0.2.0 (2026/03/01)
 
 #==============================================================================
 # STATIC
@@ -120,7 +120,7 @@ end
 
 def update_user_data( db, user_data, cgi )
   status = user_data['status'].to_i
-  uid = user_data['cookie'] || SecureRandom.hex( 16 )
+  uid = SecureRandom.hex( 16 )
   cookie = "Set-Cookie: NAME=#{cgi['id']}\nSet-Cookie: #{$COOKIE_UID}=#{uid}\n"
 
   db.query( "UPDATE #{$TB_USER} SET cookie=?, cookie_m=NULL WHERE user=?", true, [uid, cgi['id']] )
@@ -143,33 +143,59 @@ def initialize_user_config( db, cgi, status )
 end
 
 def handle_family_login( db, get_data )
-  login_mv = get_data['login_mv']
-  res = db.query( "SELECT * FROM #{$TB_USER} WHERE user=?", false, [login_mv] )&.first
-  handle_login_mv( db, res ) if res
-end
+  login_mv_user = get_data['login_mv']
+  pre_res = db.query( "SELECT * FROM #{$TB_USER} WHERE user=?", false, [login_mv_user] )&.first
 
-def handle_login_mv( db, login_data )
-  cookie = if login_data['mom'].to_s.empty?
-    "Set-Cookie: NAME=#{login_data['user']}\nSet-Cookie: #{$COOKIE_UID}=#{login_data['cookie']}\n"
+  if pre_res
+    if pre_res['mom'].to_s.empty?
+      # 娘→母親への切り替え
+      cookie_m = db.user.mid
+      if cookie_m.to_s.empty?
+        html_init( nil )
+        puts 'No(x_x)MOM'
+        exit
+      end
+
+      mom_res = db.query( "SELECT * FROM #{$TB_USER} WHERE cookie=? AND user=?", false, [cookie_m, login_mv_user] )&.first
+      if mom_res.nil?
+        html_init( nil )
+        puts 'No(x_x)MOM'
+        exit
+      end
+
+      cookie = "Set-Cookie: NAME=#{mom_res['user']}\nSet-Cookie: #{$COOKIE_UID}=#{cookie_m}\n"
+      html_init( cookie )
+      html_head( 'refresh', mom_res['status'], nil )
+      puts '</span></body></html>'
+
+    else
+      # 母親→娘への切り替え
+      cookie = handle_family_cookie( db, pre_res )
+      html_init( cookie )
+      html_head( 'refresh', pre_res['status'], nil )
+      puts '</span></body></html>'
+    end
+
+    db.query( "UPDATE #{$TB_USER} SET cookie_m=NULL WHERE user=?", true, [db.user.name] )
+
   else
-    handle_family_cookie( db, login_data )
+    html_init( nil )
+    puts 'No(x_x)FU'
+    exit
   end
-  db.query( "UPDATE #{$TB_USER} SET cookie_m=NULL WHERE user=?", true, [db.user.name] )
-  html_init( cookie )
-  html_head( 'refresh', login_data['status'], nil )
-  puts '</span></body></html>'
 end
 
-def handle_family_cookie( db, login_data )
-  parent_res = db.query( "SELECT * FROM #{$TB_USER} WHERE user=?", false, [login_data['mom']] )&.first
-  return unless parent_res
+def handle_family_cookie( db, pre_res )
+  post_res = db.query( "SELECT * FROM #{$TB_USER} WHERE user=?", false, [pre_res['mom']] )&.first
+  return unless post_res
 
-  uid = login_data['cookie']
+  uid = pre_res['cookie']
 #  uid = SecureRandom.hex( 16 )
 
-  parent_cookie = parent_res.first['cookie']
-  db.query( "UPDATE #{$TB_USER} SET cookie=?, cookie_m=? WHERE user=?", true, [uid, parent_cookie, login_data['user']] )
-  "Set-Cookie: NAME=#{login_data['user']}\nSet-Cookie: #{$COOKIE_UID}=#{uid}\n"
+  parent_cookie = post_res['cookie']
+
+  db.query( "UPDATE #{$TB_USER} SET cookie=?, cookie_m=? WHERE user=?", true, [uid, parent_cookie, pre_res['user']] )
+  return "Set-Cookie: NAME=#{pre_res['user']}\nSet-Cookie: #{$COOKIE_UID}=#{uid}\n"
 end
 
 #==============================================================================
@@ -181,6 +207,7 @@ get_data = get_data()
 user = User.new( @cgi )
 l = language_pack( user.language )
 if l.nil?
+  html_init( nil )
   puts 'U(x_x)L'
   exit
 end
@@ -188,23 +215,36 @@ db = Db.new( user, false, true )
 
 p get_data['mode'] if @debug
 case get_data['mode']
-  when 'check'
-    validate_user( db, @cgi, l )
+when 'check'
+  validate_user( db, @cgi, l )
 
-  when 'logout'
-    cookie = "Set-Cookie: NAME=NULL\nSet-Cookie: #{$COOKIE_UID}=NULL\n"
-    html_init( cookie )
-    html_head( 'refresh', 0, nil )
-    puts '</span></body></html>'
-    db.query( "UPDATE #{$TB_USER} SET cookie_m=NULL WHERE user=?", true, [user.name] )
+when 'logout'
+  cookie = "Set-Cookie: NAME=NULL\nSet-Cookie: #{$COOKIE_UID}=NULL\n"
+  html_init( cookie )
+  html_head( 'refresh', 0, nil )
+  puts '</span></body></html>'
+  db.query( "UPDATE #{$TB_USER} SET cookie_m=NULL WHERE user=?", true, [user.name] )
 
-  when 'family'
-    handle_family_login( db, get_data )
+when 'family'
+  handle_family_login( db, get_data )
 
-  else
-    html_init( nil )
-    html_head( nil, 0, nil )
-    render_top_login( l )
-    render_login_form( nil, l )
-    html_foot()
+else
+  # ブラウザのcookieをDBと照合
+  browser_uid = @cgi.cookies[$COOKIE_UID]&.first
+  if browser_uid && !browser_uid.empty?
+    res = db.query( "SELECT * FROM #{$TB_USER} WHERE cookie=?", false, [browser_uid] )&.first
+    if res
+      # 一致したらそのままリダイレクト
+      html_init( nil )
+      html_head( 'refresh', res['status'], nil )
+      puts '</span></body></html>'
+      exit
+    end
+  end
+  # 一致しなければ通常のログインフォーム表示
+  html_init( nil)
+  html_head( nil, 0, nil )
+  render_top_login( l )
+  render_login_form( nil, l )
+  html_foot()
 end

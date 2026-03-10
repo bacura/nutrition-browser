@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 pseudo food editer 0.3.1 (2026/01/10)
+#Nutrition browser 2020 pseudo food editer 0.3.2 (2026/03/05)
 
 #==============================================================================
 # STATIC
@@ -63,37 +63,24 @@ end
 #
 def generate_food_no( db, food_group, prefix, food_base_no )
 	puts 'generate_food_no<br>' if @debug
-#	t = food_base_no.to_i <= 0 ? '' : food_base_no.to_s
-	food_no = prefix + '001'
 
 	food_status = 1
 	food_status = 2 if prefix[0, 1] == 'C'
 	food_status = 3 if prefix[0, 1] == 'P'
 
-	query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND FN=? AND status=?"
-	condition = [food_group, food_no, food_status]
+	select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
+	select_condition = [food_group, food_status]
 	if food_status == 1
-		query += " AND user=?"
-		condition << db.user.name
+		select_query += " AND user=?"
+		select_condition << db.user.name
 	end
 
-	unless db.query( query, false, condition )&.first
-		select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
-		select_condition = [food_group, food_status]
-		if food_status == 1
-			select_query += " AND user=?"
-			select_condition << db.user.name
-		end
-
-		fns = db.query( select_query, false, select_condition )&.map { |row| row['FN'] }
-		( 1..999 ).each do |i|
-			candidate = prefix + "%03d" % i
-			return candidate unless fns&.include?( candidate )
-		end
-		rise( 'error 999' )
+	fns = db.query( select_query, false, select_condition )&.map { |row| row['FN'] }
+	( 1..999 ).each do |i|
+		candidate = prefix + "%03d" % i
+		return candidate unless fns&.include?( candidate )
 	end
-
-	food_no
+	raise( 'error 999' )
 end
 
 #==============================================================================
@@ -254,32 +241,41 @@ if command == 'save'
 	fct_set = "REFUSE='#{refuse}', #{fct.sql}, Notice='#{notice}'"
 
 	puts 'Generate food number<br>' if @debug
+	# FIX: food_no_new を正しく決定する
 	if switch == 0
+		# 自動割り振り：旧番号を除外したうえで最小空き番号を探す
 		food_no_new = generate_food_no( db, food_group, prefix, '001' )
 	else
-		food_no_new = prefix + food_base_no 
+		# 任意設定：入力値をそのまま使用（既存番号でも上書き）
+		food_no_new = prefix + food_base_no
 	end
+
+	# 食品番号が変わる場合（プレフィックス変更等）は旧番号を削除してから新番号で登録
 	move_flag = true if food_no_new != food_no && food_no != ''
 
 	puts 'Checking Food number<br>' if @debug
-	if db.query(  "select FN from #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$TB_TAG} SET FG=?,,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
+	# FIX: INSERT/UPDATEの判定・クエリをfood_no_newで統一
+	if db.query( "SELECT FN FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+		# FIX: カンマ二重（,,）を修正、food_no_newで UPDATE
+		db.query( "UPDATE #{$TB_TAG} SET FG=?,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
 	else
-		db.query(  "INSERT INTO #{$TB_TAG} SET FG=?,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=?,FN=?,user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
+		db.query( "INSERT INTO #{$TB_TAG} SET FG=?,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=?,FN=?,user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
 	end
 
-	if db.query(  "select FN from #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
+	if db.query( "SELECT FN FROM #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+		db.query( "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no_new, user.name] )
 	else
-		db.query(  "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
+		db.query( "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no_new, user.name] )
 	end
 
-	if db.query(  "select FN from #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-		db.query(  "UPDATE #{$TB_EXT} SET allergen1=0, allergen2=0, color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
+	if db.query( "SELECT FN FROM #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+		db.query( "UPDATE #{$TB_EXT} SET allergen1=0, allergen2=0, color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no_new, user.name] )
 	else
-		db.query(  "INSERT INTO #{$TB_EXT} SET allergen1=0, allergen2=0, color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
+		db.query( "INSERT INTO #{$TB_EXT} SET allergen1=0, allergen2=0, color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no_new, user.name] )
 	end
 
+	# FIX: food_noをfood_no_newに更新しておく（削除処理・表示に使われるため）
+	food_no = food_no_new
 	food_weight = 100
 	tag_user = user.name
 end
@@ -288,19 +284,21 @@ end
 puts "Deleting pseudo food<br>" if @debug
 if command == 'delete' || move_flag
 	puts "DELETE<br>" if @debug
-	res = db.query( "SELECT FG, name FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-	db.query(  "DELETE FROM #{$TB_DIC} WHERE user=? AND FG=? AND org_name", true, [user.name, res['FG'], res['name']] ) if res
+	# move_flagの場合は旧food_no、deleteの場合はfood_noを削除対象にする
+	delete_target = move_flag ? @cgi['food_no'].to_s : food_no
 
-	db.query(  "DELETE FROM #{$TB_TAG} WHERE user=? AND FN=?", true, [user.name, food_no] )
-	db.query(  "DELETE FROM #{$TB_FCTP} WHERE user=? AND FN=?", true, [user.name, food_no] )
-	db.query(  "DELETE FROM #{$TB_EXT} WHERE user=? AND FN=?", true, [user.name, food_no] )
+	res = db.query( "SELECT FG, name FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, delete_target] )&.first
+	# FIX: org_name の条件を修正（=? を追加）
+	db.query( "DELETE FROM #{$TB_DIC} WHERE user=? AND FG=? AND org_name=?", true, [user.name, res['FG'], res['name']] ) if res
+
+	db.query( "DELETE FROM #{$TB_TAG}  WHERE user=? AND FN=?", true, [user.name, delete_target] )
+	db.query( "DELETE FROM #{$TB_FCTP} WHERE user=? AND FN=?", true, [user.name, delete_target] )
+	db.query( "DELETE FROM #{$TB_EXT}  WHERE user=? AND FN=?", true, [user.name, delete_target] )
 
 	unless move_flag
 		prefix = ''
 		food_base_no = ''
 		food_no = ''
-	else
-		food_no = prefix + food_base_no 
 	end
 end
 
@@ -347,7 +345,6 @@ if food_no != ''
 			food_base_no = food_no[3..5]
 		else
 			food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
-#			food_base_no = 'Auto'
 		end
 	else
 		food_base_no = '001' if food_base_no == '' || food_base_no == '000'
@@ -355,7 +352,6 @@ if food_no != ''
 else
 	if switch == 0
 		food_base_no = generate_food_no( db, food_group, prefix, '000' )[3..5]
-#		food_base_no = 'Auto'
 	else
 		food_base_no = '001' if food_base_no == '' || food_base_no == '000'
 	end

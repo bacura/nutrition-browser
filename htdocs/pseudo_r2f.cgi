@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser recipe to pseudo food 0.2.5 (2025/10/04)
+#Nutrition browser recipe to pseudo food 0.2.6 (2026/03/05)
 
 #==============================================================================
 # STATIC
@@ -35,37 +35,26 @@ end
 
 def generate_food_no( db, food_group, prefix, food_base_no )
 	puts 'generate_food_no<br>' if @debug
-#	t = food_base_no.to_i <= 0 ? '' : food_base_no.to_s
-	food_no = prefix + '001'
 
+	# FIX: food_status に統一（status 未定義変数バグを修正）
 	food_status = 1
 	food_status = 2 if prefix[0, 1] == 'C'
 	food_status = 3 if prefix[0, 1] == 'P'
 
-	query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND FN=? AND status=?"
-	condition = [food_group, food_no, status]
-	if status == 1
-		query += " AND user=?"
-		condition << db.user.name
+	# FIX: 最初から空き番号を探す処理に統一（pseudo.cgi修正版に合わせる）
+	select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
+	select_condition = [food_group, food_status]
+	if food_status == 1
+		select_query += " AND user=?"
+		select_condition << db.user.name
 	end
 
-	unless db.query( query, false, condition )&.first
-		select_query = "SELECT FN FROM #{$TB_TAG} WHERE FG=? AND status=?"
-		select_condition = [food_group, status]
-		if status == 1
-			select_query += " AND user=?"
-			select_condition << db.user.name
-		end
-
-		fns = db.query(select_query, false, select_condition)&.map { |row| row['FN'] }
-		( 1..999 ).each do |i|
-			candidate = prefix + "%03d" % i
-			return candidate unless fns&.include?( candidate )
-		end
-		rise( 'error 999' )
+	fns = db.query( select_query, false, select_condition )&.map { |row| row['FN'] }
+	( 1..999 ).each do |i|
+		candidate = prefix + "%03d" % i
+		return candidate unless fns&.include?( candidate )
 	end
-
-	food_no
+	raise( 'error 999' )
 end
 
 #==============================================================================
@@ -113,7 +102,7 @@ end
 
 
 puts 'Extracting SUM<br>' if @debug
-res = db.query(  "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
+res = db.query( "SELECT code, name, sum, dish from #{$TB_SUM} WHERE user=?", false, [user.name] )&.first
 if res
 	food_name = res['name'] if food_name == ''
 	recipe_code = res['code']
@@ -127,7 +116,7 @@ if command == 'init'
 	@category.size.times do |c| food_group_option << "<option value='#{@fg[c]}'>#{c}.#{@category[c]}</option>" end
 
 	food_range_option = "<option value='U'>U</option>"
-#	food_range_option << "<option value='C'>U</option>" if user.status >= 8 
+#	food_range_option << "<option value='C'>C</option>" if user.status >= 8
 	food_range_option << "<option value='P'>P</option>" if user.status >= 8 && $NBURL == $MYURL
 
 	html = <<~HTML
@@ -190,8 +179,9 @@ if command == 'save'
 	fct.digit
 
 	class1_new = class1.empty? ? '' : "＜#{class1}＞"
-	class2_new = class2.empty? ? '' : "＜#{class2}＞"
-	class3_new = class3.empty? ? '' : "＜#{class3}＞"
+	# FIX: class2, class3 のブラケットを pseudo.cgi に合わせて修正（＜＞→［］、（））
+	class2_new = class2.empty? ? '' : "［#{class2}］"
+	class3_new = class3.empty? ? '' : "（#{class3}）"
 	tag1_new = tag1.empty? ? '' : "　#{tag1}"
 	tag2_new = tag2.empty? ? '' : "　#{tag2}"
 	tag3_new = tag3.empty? ? '' : "　#{tag3}"
@@ -203,37 +193,37 @@ if command == 'save'
 	unith = Hash.new
 	unith['g'] = 1
 	unith['kcal'] = fct.pickt( 'ENERC_KCAL' ).to_f / 100 if fct.pickt( 'ENERC_KCAL' ) != 0
-	unith_ = unith.sort.to_h
-	unit = JSON.generate( unith_ )
+	unit = JSON.generate( unith.sort.to_h )
 
 	fct_set = "REFUSE='0', #{fct.sql}, Notice='#{recipe_code}'"
 
 	puts 'Generate food number<br>' if @debug
-	food_no = generate_food_no( db, food_group, prefix, '001' )
+	food_no_new = generate_food_no( db, food_group, prefix, '001' )
+
+	# FIX: status をここで定義（generate_food_no の外で使うため）
+	status = 1
+	status = 2 if prefix[0, 1] == 'C'
+	status = 3 if prefix[0, 1] == 'P'
 
 	puts 'Checking Food number<br>' if @debug
-	unless food_no.empty?
-		status = 1
-		status = 2 if prefix[0, 1] == 'C'
-		status = 3 if prefix[0, 1] == 'P'
-
-
-		if db.query(  "select FN from #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$TB_TAG} SET FG=?, SID='0', SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name] )
+	# FIX: INSERT/UPDATEの判定・実行を food_no_new で統一
+	unless food_no_new.nil? || food_no_new.empty?
+		if db.query( "SELECT FN FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+			db.query( "UPDATE #{$TB_TAG} SET FG=?, SID='0', SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
 		else
-			db.query(  "INSERT INTO #{$TB_TAG} SET FG=?, SID='0',SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no, user.name ] )
-	 	end
-
-		if db.query(  "select FN from #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no, user.name] )
-		else
-			db.query(  "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no, user.name])
+			db.query( "INSERT INTO #{$TB_TAG} SET FG=?, SID='0', SN='0', name=?, class1=?, class2=?, class3=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, status=?, FN=?, user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
 		end
 
-		if db.query(  "select FN from #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no] )&.first
-			db.query(  "UPDATE #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no, user.name] )
+		if db.query( "SELECT FN FROM #{$TB_FCTP} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+			db.query( "UPDATE #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set} WHERE FN=? AND user=?", true, [food_group, tagnames_new, food_no_new, user.name] )
 		else
-			db.query(  "INSERT INTO #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no, user.name] )
+			db.query( "INSERT INTO #{$TB_FCTP} SET FG=?, Tagnames=?, #{fct_set}, FN=?, user=?", true, [food_group, tagnames_new, food_no_new, user.name] )
+		end
+
+		if db.query( "SELECT FN FROM #{$TB_EXT} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
+			db.query( "UPDATE #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=? WHERE FN=? AND user=?", true, [unit, food_no_new, user.name] )
+		else
+			db.query( "INSERT INTO #{$TB_EXT} SET allergen1='0', allergen2='0', color1='0', color2='0', color1h='0', color2h='0', unit=?, FN=?, user=?", true, [unit, food_no_new, user.name] )
 		end
 	end
 end

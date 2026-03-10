@@ -1,13 +1,13 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutritoin browser note 0.2.1 (2025/05/18)
+#Nutritoin browser note 0.2.1 (2026/03/02)
 
 
 #==============================================================================
 # STATIC
 #==============================================================================
 @debug = false
-script = File.basename( $0, '.cgi' )
+myself = File.basename( __FILE__ )
 
 
 #==============================================================================
@@ -26,9 +26,9 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		'pencil'	=> "<img src='bootstrap-dist/icons/pencil.svg' style='height:3em; width:3em;'>",\
-		'trash'		=> "<img src='bootstrap-dist/icons/trash.svg' style='height:1.5em; width:1.2em;'>",\
-		'camera'	=> "<img src='bootstrap-dist/icons/camera.svg' style='height:1.2em; width:1.2em;'>"
+		pencil:	"<img src='bootstrap-dist/icons/pencil.svg' style='height:3em; width:3em;'>",
+		trash:	"<img src='bootstrap-dist/icons/trash.svg' style='height:1.5em; width:1.2em;'>",
+		camera:	"<img src='bootstrap-dist/icons/camera.svg' style='height:1.2em; width:1.2em;'>"
 	}
 
 	return l[language]
@@ -58,18 +58,17 @@ end
 
 aliasm = ''
 if user.mid != nil
-	r = db.query( "SELECT aliasu from #{$TB_USER} WHERE user='#{user.mom}';", false )
-	if r.first
-		aliasm = r.first['aliasu']
-		aliasm = user.mom if aliasm == '' || aliasm == nil
+	res = db.query( "SELECT aliasu from #{$TB_USER} WHERE user=?", false, [user.mom] )&.first
+	if res
+		aliasm = aliasm.to_s.empty? ? user.mom : res['aliasu']
 	end
 end
 
 case command
 when 'write'
 	note_code = generate_code( user.name, 'n' )
-	p @datetime, note_code, aliasm,note if @debug
-	db.query( "INSERT INTO #{$TB_NOTE} SET code='#{note_code}', user='#{user.name}', aliasm='#{aliasm}', note='#{note}', datetime='#{@datetime}', status=1;", true )
+	p @datetime, note_code, aliasm, note if @debug
+	db.query( "INSERT INTO #{$TB_NOTE} SET code=?, user=?, aliasm=?, note=?, datetime=?, status=1", true, [note_code, user.name, aliasm, note, @datetime] )
 
 when 'delete'
 	p note_code if @debug
@@ -80,7 +79,7 @@ when 'delete'
 	target_photo.get_series()
 	target_photo.delete_series( true )
 
-	db.query( "DELETE FROM #{$TB_NOTE} WHERE code='#{note_code}';", true )
+	db.query( "DELETE FROM #{$TB_NOTE} WHERE code=?", true, [note_code] )
 
 when 'photo_upload'
 	puts 'photo_upload' if @debug
@@ -91,7 +90,7 @@ when 'photo_upload'
 	new_photo.save_photo( @cgi )
 	new_photo.save_db()
 
-	db.query( "INSERT INTO #{$TB_NOTE} SET code='#{note_code}', media='#{new_photo.code}', user='#{user.name}', aliasm='#{aliasm}', note='', datetime='#{@datetime}';", true )
+	db.query( "INSERT INTO #{$TB_NOTE} SET code=?, media=?, user=?, aliasm=?, note='', datetime=?", true, [note_code, new_photo.code, user.name, aliasm, @datetime] )
 end
 
 photo = Media.new( user )
@@ -105,7 +104,7 @@ else
 end
 
 mom_photo = "<img src='#{$PHOTO}/mom.jpg' width='50px' class='img-thumbnail'>"
-if user.mid != nil || user.mom != ''
+unless user.mid.to_s.empty?
 	photo.origin = user.mom
 	photo_code = photo.get_series().first
 	mom_photo = "<img src='photo.cgi?iso=Q&code=#{photo_code}&tn=-tns' width='50px' class='img-thumbnail'>" if photo_code != nil
@@ -113,12 +112,10 @@ end
 
 ####
 puts 'Extract note<br>' if @debug
-daughter_delete = true
-daughter_delete = false if user.mid != nil
-
+daughter_delete = user.mid.to_s.empty? ? true : false
 
 note_html = ''
-r = db.query( "SELECT * FROM #{$TB_NOTE} WHERE user='#{user.name}' ORDER BY datetime DESC;", false )
+r = db.query( "SELECT * FROM #{$TB_NOTE} WHERE user=? ORDER BY datetime DESC;", false, [user.name] )
 r.each do |e|
 	note_date =  "#{e['datetime'].year}-#{e['datetime'].month}-#{e['datetime'].day} #{e['datetime'].hour}:#{e['datetime'].min}"
 	note = e['note'].gsub( "\n", '<br>' )
@@ -135,7 +132,7 @@ r.each do |e|
 			note_html << "<div align='right'>#{note_date}&nbsp;&nbsp;&nbsp;&nbsp;"
 			if daughter_delete
 				note_html << "<input type='checkbox' id='#{e['code']}'>&nbsp;"
-				note_html << "<span onclick=\"deleteNote( '#{e['code']}' )\">#{l['trash']}</span>"
+				note_html << "<span onclick=\"deleteNote( '#{e['code']}' )\">#{l[:trash]}</span>"
 			end
 			note_html << '</div></div></div>'
 			note_html << "<div align='center' class='col-2'>#{profile_photo}<br>#{user.aliasu}</div>"
@@ -147,7 +144,7 @@ r.each do |e|
 			note_html << "#{note_date}&nbsp;&nbsp;&nbsp;&nbsp;"
 			if daughter_delete
 				note_html << "<input type='checkbox' id='#{e['code']}'>&nbsp;"
-				note_html << "<span onclick=\"deleteNote( '#{e['code']}', '#{e['media']}' )\">#{l['trash']}</span>"
+				note_html << "<span onclick=\"deleteNote( '#{e['code']}', '#{e['media']}' )\">#{l[:trash]}</span>"
 			end
 			note_html << '</div>'
 		end
@@ -161,7 +158,7 @@ r.each do |e|
 			note_html << "		<div align='right'>#{note_date}&nbsp;&nbsp;&nbsp;&nbsp;"
 			if user.mid != nil
 				note_html << "	<input type='checkbox' id='#{e['code']}'>&nbsp;"
-				note_html << "	<span onclick=\"deleteNote( '#{e['code']}' )\">#{l['trash']}</span>"
+				note_html << "	<span onclick=\"deleteNote( '#{e['code']}' )\">#{l[:trash]}</span>"
 			end
 			note_html << '</div></div></div>'
 		else
@@ -172,7 +169,7 @@ r.each do |e|
 			note_html << "#{note_date}&nbsp;&nbsp;&nbsp;&nbsp;"
 			if user.mid != nil
 				note_html << "<input type='checkbox' id='#{e['code']}'>&nbsp;"
-				note_html << "<span onclick=\"deleteNote( '#{e['code']}', '#{e['media']}' )\">#{l['trash']}</span>"
+				note_html << "<span onclick=\"deleteNote( '#{e['code']}', '#{e['media']}' )\">#{l[:trash]}</span>"
 			end
 			note_html << '</div>'
 
@@ -196,7 +193,7 @@ html = <<-"HTML"
 				<div class='col-5'>
 					<form method='post' enctype='multipart/form-data' id='note_puf'>
 						<div class="input-group input-group-sm">
-							<label class='input-group-text'>#{l['camera']}</label>
+							<label class='input-group-text'>#{l[:camera]}</label>
 							<input type='file' class='form-control' name='photo' onchange="PhotoUpload()">
 						</div>
 					</form>
@@ -206,7 +203,7 @@ html = <<-"HTML"
 		</div>
 
 		<div class="col-2">
-			<button class='btn btn-sm btn-outline-light' onclick="writeNote()">#{l['pencil']}</button>
+			<button class='btn btn-sm btn-outline-light' onclick="writeNote()">#{l[:pencil]}</button>
 		</div>
 		<hr>
 
@@ -218,15 +215,20 @@ HTML
 
 puts html
 
+#==============================================================================
+# POST PROCESS
+#==============================================================================
+
 
 #==============================================================================
 #FRONT SCRIPT
 #==============================================================================
+if command == 'init'
+	js = <<~JS
 
-js = <<-"JS"
 <script type='text/javascript'>
 
-var PhotoUpload = function(){
+var PhotoUpload = () => {
 	var now = new Date();
     var yyyy = now.getFullYear();
     var mm = now.getMonth() + 1;
@@ -243,7 +245,7 @@ var PhotoUpload = function(){
 	form_data.append( 'alt', 'Photo' );
 	form_data.append( 'secure', '1' );
 
-	$.ajax( "#{script}.cgi",
+	$.ajax( "#{myself}.cgi",
 		{
 			type: 'post',
 			processData: false,
@@ -258,4 +260,8 @@ var PhotoUpload = function(){
 </script>
 JS
 
-puts js
+	puts js
+
+end
+
+puts '(^q^)' if @debug

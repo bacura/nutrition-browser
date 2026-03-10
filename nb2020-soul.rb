@@ -229,7 +229,7 @@ def generate_code( uname, attribute )
   skip = false
   code = nil
 
-  if attribute.to_s == '' || uname.to_s.size < 5
+  if attribute.to_s == '' || uname.to_s.size < 5 
     puts "Code(x_x)Gen Pre"
     exit
   end
