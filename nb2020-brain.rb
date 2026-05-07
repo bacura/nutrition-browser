@@ -1,4 +1,4 @@
-#Nutrition browser 2020 brain 0.6.10 (2026/01/25)
+#Nutrition browser 2020 brain 0.6.11 (2026/03/25)
 
 #==============================================================================
 # LIBRARY
@@ -16,34 +16,9 @@ require 'bigdecimal'
 #==============================================================================
 
 
-#### R用データベース処理
-def mdbr( query, html_opt, debug )
-  begin
-    db = Mysql2::Client.new(:host => "#{$HOST}", :username => "#{$USERR}", :password => "", :database => "#{$DBR}", :encoding => "utf8" )
-    t = query.chop
-    query_ = ''
-    query_ = query if debug
-    if /\;/ =~ t
-        puts "<span class='error'>[mdbr]ERROR!! #{query_}</span><br>"
-        exit( 9 )
-    end
-    res = db.query( query )
-    db.close
-  rescue
-    if html_opt
-      html_init( nil )
-      html_head( nil )
-    end
-      puts "<span class='error'>[mdbr]ERROR!!<br>"
-      puts "#{query_}</span><br>"
-  end
-  return res
-end
-
-
 #### RRトークン発行
-def issue_token()
-  token = SecureRandom.base64(16)
+def issue_token( digit )
+  token = SecureRandom.base64( digit )
 
   return token
 end
@@ -958,3 +933,48 @@ class Koyomi
   end
 end
 
+class Dbr
+  attr_reader :user
+
+  def initialize( user, debug, html )
+    @dbr = Mysql2::Client.new( :host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USERR}", :database => "#{$MYSQL_DBR}", :encoding => "utf8" )
+    @user = user
+    @debug = debug
+    @html = html
+  end
+
+  def qq( query )
+    q = query.gsub( ';', '' ) << ';'
+    return @dbr.query( q )
+  end
+
+  def query( query, barrier, arguments = nil )
+
+    puts "<span class='dbq'>[dbr]#{query},#{arguments}</span><br>" if @debug
+    begin
+      if @user.status != 0 && @user.barrier && barrier
+          puts "<span class='ref_error'>[dbr]Astral user barrier!</span><br>"
+          exit( 9 )
+      end
+
+      t = query.chop
+      if /[\;\$]/ =~ t
+          puts "<span class='error'>[dbr]ERROR!!</span><br>"
+          exit( 9 )
+      end
+
+      if arguments.nil?
+        return @dbr.query( query )
+      else
+        return @dbr.prepare( query ).execute( *arguments )
+      end
+
+    rescue
+      if @html
+        html_init( nil )
+        html_head( nil, 0, nil )
+      end
+        puts "<span class='error'>[dbr]ERROR!!</span><br>"
+    end
+  end
+end

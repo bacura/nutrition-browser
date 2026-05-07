@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul Japanese pack 0.3.6 (2026/03/01)
+#Nutrition browser 2020 soul Japanese pack 0.4.0 (2026/04/19)
 
 #==============================================================================
 # STATIC

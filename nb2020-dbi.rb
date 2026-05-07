@@ -1,10 +1,10 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.8.5 (2026/02/14)
+#nb2020-dbi.rb 0.9.0 (2026/03/15)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
-#https://bacura.jp
-#yossy@bacura.jp
+#https://bacura.jp/
+#info@bacura.jp
 
 ENV['REQUEST_METHOD'] = 'GET'
 ENV['GATEWAY_INTERFACE'] = 'CGI/1.1'
@@ -1151,8 +1151,23 @@ def modj_init()
 	end
 end
 
+###############################################################################
+# RR
+###############################################################################
 
+#### Making module JSON data
+def deta_rr_init()
+	query = "SHOW TABLES LIKE 'results';"
+	res = $DBR.query( query )
+	if res.first
+		puts 'results already exists.'
+	else
+		query = 'CREATE TABLE results ( user VARCHAR(32) NOT NULL, base VARCHAR(64), token VARCHAR(128), date DATETIME, result TEXT );'
+		$DBR.query( query )
 
+		puts 'results table has been created.'
+	end
+end
 
 #==============================================================================
 data_path = 'ds2020'
@@ -1181,13 +1196,30 @@ print 'DB Administrator password？'
 admin_pass = gets.chop
 
 #==============================================================================
-$DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}", :password => "#{admin_pass}", :encoding => "utf8" )
+begin
+	$DBA = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}", :password => "#{admin_pass}", :encoding => "utf8" )
+rescue
+    puts 'D(x_x)BA'
+    exit
+end
 
 db_create_nb()
 db_create_rr()
 
 #==============================================================================
-$DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USER}", :password => "#{$MYSQL_PW}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
+begin
+	$DB = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}", :password => "#{admin_pass}", :database => "#{$MYSQL_DB}", :encoding => "utf8" )
+rescue
+    puts 'D(x_x)B'
+    exit
+end
+
+begin
+	$DBR = Mysql2::Client.new(:host => "#{$MYSQL_HOST}", :username => "#{admin_user}", :password => "#{admin_pass}", :database => "#{$MYSQL_DBR}", :encoding => "utf8" )
+rescue
+    puts 'D(x_x)BR'
+    exit
+end
 
 fcts_init( base_file, sub_files )
 fct_init( base_file, plus_fct )
@@ -1236,6 +1268,10 @@ ref_phys_init( ref_phys )
 ref_eer_init( ref_eer )
 ref_its_init( ref_intake )
 ref_para_init( ref_parallel )
+
+
+deta_rr_init()
+
 
 db_create_nb_user()
 db_create_rr_user()

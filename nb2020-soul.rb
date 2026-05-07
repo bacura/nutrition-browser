@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.13.4 (2026/01/14)
+#Nutrition browser 2020 soul 1.14.0 (2026/03/27)
 
 #==============================================================================
 # LIBRARY
@@ -16,6 +16,7 @@ $GM = '--gm--'
 
 $NBURL = '--myurl--'
 $MYURL = '--myurl--'
+$COOKIE_UID = 'UID2020'
 
 $MYSQL_HOST = 'localhost'
 $MYSQL_DB = 'nb2020'
@@ -88,8 +89,6 @@ $TNS_SIZE = 40
 $PHOTO_SIZE_MAX = 2000
 
 $TOKEN_SIZE = 64 #max 128
-
-$COOKIE_UID = 'UID2020'
 
 $SELECT = { true => 'SELECTED', false => '', 1 => 'SELECTED', 0 => '', '1' => 'SELECTED', '0' => ''}
 $CHECK = { true => 'CHECKED', false => '', 1 => 'CHECKED', 0 => '', '1' => 'CHECKED', '0' => ''}
@@ -568,7 +567,7 @@ class Config
 
   def value( key )
     @elements[@base][key] ||= nil
-    @elements[@base][key]
+    return @elements[@base][key]
   end
 
   def set_value( key, value )
@@ -578,6 +577,19 @@ class Config
 
   def set_hash( hash_o )
     @elements[@base] = hash_o
+  end
+
+  def base_jg()
+    return JSON.generate( @elements[@base] )
+  end
+
+  def base_jp( json )
+    begin
+      @elements[@base] = JSON.parse( json ) unless json.to_s.empty?
+      @val = @elements[@base]  # @val を同期させる
+    rescue JSON::ParserError => e
+      puts "J(x_x)pE: #{e.message}<br>"
+    end
   end
 
   def update()
