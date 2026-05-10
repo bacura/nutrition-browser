@@ -1,11 +1,11 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 pseudo food editer 0.3.2 (2026/03/05)
+#Nutrition browser 2020 pseudo food editer 0.3.3 (2026/05/09)
 
 #==============================================================================
 # STATIC
 #==============================================================================
-@debug = false
+@debug = true
 myself = File.basename( __FILE__ )
 
 #food_status = {1=>'user', 2=>'community',3=>'public', 9=>'original' }
@@ -250,13 +250,16 @@ if command == 'save'
 		food_no_new = prefix + food_base_no
 	end
 
+	# FIX: status をここで定義（generate_food_no の外で使うため）
+	status = 1
+	status = 2 if prefix[0, 1] == 'C'
+	status = 3 if prefix[0, 1] == 'P'
+
 	# 食品番号が変わる場合（プレフィックス変更等）は旧番号を削除してから新番号で登録
 	move_flag = true if food_no_new != food_no && food_no != ''
 
 	puts 'Checking Food number<br>' if @debug
-	# FIX: INSERT/UPDATEの判定・クエリをfood_no_newで統一
 	if db.query( "SELECT FN FROM #{$TB_TAG} WHERE user=? AND FN=?", false, [user.name, food_no_new] )&.first
-		# FIX: カンマ二重（,,）を修正、food_no_newで UPDATE
 		db.query( "UPDATE #{$TB_TAG} SET FG=?,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=? WHERE FN=? AND user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
 	else
 		db.query( "INSERT INTO #{$TB_TAG} SET FG=?,SID=0,name=?,class1=?,class2=?,class3=?,tag1=?,tag2=?,tag3=?,tag4=?,tag5=?,status=?,FN=?,user=?", true, [food_group, food_name, class1, class2, class3, tag1, tag2, tag3, tag4, tag5, status, food_no_new, user.name] )
@@ -274,7 +277,6 @@ if command == 'save'
 		db.query( "INSERT INTO #{$TB_EXT} SET allergen1=0, allergen2=0, color1='0', color2='0', color1h='0', color2h='0', unit=?,FN=?, user=?", true, [unit, food_no_new, user.name] )
 	end
 
-	# FIX: food_noをfood_no_newに更新しておく（削除処理・表示に使われるため）
 	food_no = food_no_new
 	food_weight = 100
 	tag_user = user.name
