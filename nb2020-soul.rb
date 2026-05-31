@@ -1,4 +1,4 @@
-#Nutrition browser 2020 soul 1.14.0 (2026/03/27)
+#Nutrition browser 2020 soul 1.14.1 (2026/05/17)
 
 #==============================================================================
 # LIBRARY
@@ -30,6 +30,9 @@ $SMTP_PORT = --port--
 $SMTP_USER = '--smtp_user--'
 $SMTP_PASS = '--smtp_pass--'
 $FROM_EMAIL = '--smtp_from--'
+
+$FITBIT_AUTH_URI = "#{$MYURL}/fitbit_auth.cgi"
+$FITBIT_REDIRECT_URI = "#{$MYURL}/fitbit_callback.cgi"
 
 $TB_CFG = 'cfg'
 $TB_DIC = 'dic'
@@ -133,7 +136,7 @@ require "#{$SERVER_PATH}/nb2020-local-#{$DEFAULT_LP}"
 #==============================================================================
 #### HTML init
 def html_init( cookie )
-  puts "Content-type: text/html\n"
+  puts "Content-type: text/html; charset=utf-8\n"
   puts "Cache-Control: no-store, no-cache, must-revalidate, max-age=0\n"
   puts "Cache-Control: post-check=0, pre-check=0, false\n"
   puts "Pragma: no-cache\n"
@@ -144,7 +147,7 @@ end
 
 #### HTML init with cache
 def html_init_cache( cookie )
-  puts "Content-type: text/html\n"
+  puts "Content-type: text/html; charset=utf-8\n"
   puts cookie unless cookie == nil
   puts "\n"
 end
@@ -152,7 +155,7 @@ end
 
 #### TEXT init
 def text_init
-  puts "Content-type: text/text\n"
+  puts "Content-type: text/text;  charset=utf-8\n"
   puts "\n"
 end
 
@@ -577,6 +580,7 @@ class Config
 
   def set_hash( hash_o )
     @elements[@base] = hash_o
+    @val = @elements[@base]  # @val を同期させる
   end
 
   def base_jg()

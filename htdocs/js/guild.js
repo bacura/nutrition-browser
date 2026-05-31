@@ -260,7 +260,7 @@ var cmmSaveKoyomi_direct = function( cm_mode, yyyy, mm, dd, tdiv, origin ){
 // Koyomi EX //////////////////////////////////////////////////////////////
 
 // Koyomi EX init
-var initKoyomiex = function(){
+const initKoyomiex = function(){
 	$.post( kp + "koyomiex.cgi", { command:"init" }, function( data ){
 		$( "#L1" ).html( data );
 
@@ -294,6 +294,17 @@ const importkoyomiex = function(){
 	);
 };
 
+// Koyomi EX sync fitbit (test)
+const fitbitKoyomiex = function(){
+	$.post( kp + "koyomiex-fitbit.cgi", { command:"sync" }, function( data ){
+		$( "#L1" ).html( data );
+
+		flashBW();
+		dl1 = true;
+		dline = true;
+		displayBW();
+	});
+};
 
 /////////////////////////////////////////////////////////////////////////////////
 // Koyomi calc //////////////////////////////////////////////////////////////

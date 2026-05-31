@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 cutting board 0.4.2 (2025/12/29)
+#Nutrition browser 2020 cutting board 0.4.3 (2026/5/16)
 
 #==============================================================================
 #STATIC
@@ -315,7 +315,7 @@ if @debug
 end
 
 puts "Loading Config<br>" if @debug
-chomi_pub = chomi_pub.to_s.empty? ? cfg.val['chomi_pub'].to_i : chomi_pub.to_i
+chomi_pub = chomi_pub.to_s.empty? ? cfg.value( 'chomi_pub' ).to_i : chomi_pub.to_i
 
 
 puts "Loading Sum<br>" if @debug
@@ -990,7 +990,7 @@ sum_new.chop!
 db.query( "UPDATE #{$TB_SUM} set code='#{code}', name='#{recipe_name}', sum='#{sum_new}', dish='#{dish_num}', protect='#{protect}' WHERE user='#{user.name}';", true ) unless user.status == 7
 
 puts 'Updating config<br>' if @debug
-cfg.val['chomi_pub'] = chomi_pub
+cfg.set_value( 'chomi_pub', chomi_pub )
 cfg.update()
 
 puts 'Updating history<br>' if @debug

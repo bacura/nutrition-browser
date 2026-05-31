@@ -318,3 +318,16 @@ const crossBond = function(){
 	});
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+// Fitbit(test) ////////////////////////////////////////////////////////////////////////
+
+// Account init
+const initFibit = function( com ){
+	$.post( mp + "gm-fitbit.cgi", { command:com }, function( data ){
+		$( "#L1" ).html( data );
+		
+		flashBW();
+		dl1 = true;
+		displayBW();
+	});
+};

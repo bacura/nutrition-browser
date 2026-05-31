@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi extra 0.2.4 (2026/01/12)
+#Nutrition browser 2020 koyomi extra 0.2.5 (2026/05/28)
 
 
 #==============================================================================
@@ -15,6 +15,7 @@ require '../body'
 #==============================================================================
 @debug = false
 myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
+url_fitbit_sync = 'fitbit_sync.cgi'
 
 #==============================================================================
 #DEFINITION
@@ -40,7 +41,8 @@ def language_pack( language )
 		basic: 	"基本",
 		geo:	"<img src='bootstrap-dist/icons/geo.svg' style='height:2em; width:2em;'>",
 		table:	"<img src='bootstrap-dist/icons/table.svg' style='height:1.5em; width:1.5em;'>",
-		tsv:	"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>"
+		tsv:	"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>",
+		heart:	"<img src='bootstrap-dist/icons/heart-pulse.svg' style='height:2em; width:2em;'>"
 	}
 
 	return l[language]
@@ -190,6 +192,12 @@ weeks = [l[:sun], l[:mon], l[:tue], l[:wed], l[:thu], l[:fri], l[:sat]]
 end
 
 
+fitbit_sync_html = ''
+cfg = Config.new( user, 'fitbit' )
+token = cfg.val
+fitbit_sync_html = "<span onclick=\"modalTip( '#{url_fitbit_sync}' )\">#{l[:heart]}</span>" if token
+
+
 ####
 ####
 puts "HTML10<br>" if @debug
@@ -210,7 +218,8 @@ html[10] = <<~"HTML10"
 		</div>
 		<div align='center' class='col-3 joystic_koyomi' onclick="window.location.href='#day#{date.day}';">#{l[:geo]}</div>
 		<div class='col-1'>
-			<a href='koyomi/koyomiex-txt.cgi?' download='koyomiex-#{user.name}-#{sql_ym}.txt'>#{l[:tsv]}</a>
+			<a href='koyomi/koyomiex-txt.cgi?' download='koyomiex-#{user.name}-#{sql_ym}.txt'>#{l[:tsv]}</a>&nbsp;&nbsp;
+			#{fitbit_sync_html}
 		</div>
 	</div>
 	<div class='row'>
@@ -270,6 +279,15 @@ var updateKoyomiex = ( kex_key, dd ) => {
 	const cell = document.getElementById( kex_key + dd ).value;
 
 	postLayer( '#{myself}', 'update', true, 'L1', { yyyy_mm, dd, kex_key, cell });
+};
+
+// Modal Tip for fitbit sync
+var modalTip = async ( uri ) => {
+    postLayer( uri , 'sync', true, 'modal_tip_body', {});
+
+    const modalElement = document.querySelector( '#modal_tip' );
+    const modal = new bootstrap.Modal( modalElement );
+    modal.show();
 };
 
 </script>

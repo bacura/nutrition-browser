@@ -72,6 +72,7 @@ def language_pack( language )
     condition: '状態管理',
     intake: '食事摂取基準',
     tensei: '転生管理',
+    fitbit: 'FitBitテスト',
     fflow: '食品フロー'
   }
 
@@ -306,6 +307,7 @@ html = <<-"HTML"
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initDic( 'init' )">#{l[:dic]}</button>
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initSlogf( 'init' )">#{l[:slog]}</button>
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initTensei( 'init' )">#{l[:tensei]}</button>
+    <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initFibit( 'init' )">#{l[:fitbit]}</button>
     #{gm_account}
 </nav>
 HTML

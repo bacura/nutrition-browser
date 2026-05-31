@@ -1,4 +1,4 @@
-# Weight loss module for Physique 0.4.1 (2025/12/27)
+# Weight loss module for Physique 0.4.2 (2026/05/28)
 #encoding: utf-8
 
 @period = 96
@@ -11,13 +11,13 @@ def physique_module( cgi, db )
 	puts "LOAD bio config<br>" if @debug
 	res = db.query( "SELECT bio FROM #{$TB_CFG} WHERE user=?", false, [db.user.name] )&.first
 	unless res['bio'].to_s.empty?
-		bio = JSON.parse( res['bio'] )
-		sex = bio['sex'].to_i
-		birth = Time.parse( bio['birth'] )
+		bio		 = JSON.parse( res['bio'] )
+		sex		 = bio['sex'].to_i
+		birth  = Time.parse( bio['birth'] )
 		height = bio['height'].to_f * 100
 		weight = bio['weight'].to_f
-		pgene = bio['pgene'].to_i
-		age = ( Date.today.strftime( "%Y%m%d" ).to_i - birth.strftime( "%Y%m%d" ).to_i ) / 10000
+		pgene	 = bio['pgene'].to_i
+		age		 = ( Date.today.strftime( "%Y%m%d" ).to_i - birth.strftime( "%Y%m%d" ).to_i ) / 10000
 	end
 
 	if height.nil? || weight.nil? || age.nil?
@@ -25,12 +25,11 @@ def physique_module( cgi, db )
 		exit( 0 )
 	end
 
-
 	puts "LOAD config JSON<br>" if @debug
-	cfg_lw = Config.new( db.user, 'weight-loss' )
+	cfg_lw		 = Config.new( db.user, 'weight-loss' )
 	start_date = cgi['start_date']
-	pal = cgi['pal'].to_f
-	eenergy = cgi['eenergy'].to_i
+	pal 			 = cgi['pal'].to_f
+	eenergy 	 = cgi['eenergy'].to_i
 	if pal == 0.0 || eenergy == 0
 		start_date = cfg_lw.value( 'start_date' ).nil? ? $DATE : cfg_lw.value( 'start_date' )
 		pal = cfg_lw.value( 'pal' ).nil? ? 1.5 : cfg_lw.value( 'pal' ).to_f
@@ -84,6 +83,12 @@ def physique_module( cgi, db )
 		####
 
 	when 'raw'
+    # start_dateが空の場合はエラーメッセージを返して終了
+    if start_date.to_s.empty?
+      puts l[:error_no_start]
+      exit
+    end
+
 		puts "SET date<br>" if @debug
 
 		start_date_p = Time.parse( start_date )
@@ -395,6 +400,12 @@ var WeightLossChartDraw = async () => {
 	const pal = document.getElementById( 'pal' ).value;
 	const eenergy = document.getElementById( 'eenergy' ).value;
 
+  // JS側でstart_dateが空の場合はL2にメッセージを表示して終了
+  if ( !startDate ) {
+    document.getElementById( 'L2' ).innerHTML = '#{l[:error_no_start]}';
+    return;
+  }
+
 	try {
     // physique.cgiへのPOSTリクエスト（rawデータ取得）
 		const rawResponse = await fetch( 'physique.cgi', {
@@ -412,6 +423,13 @@ var WeightLossChartDraw = async () => {
 		if ( !rawResponse.ok ) throw new Error( 'Rawデータ取得に失敗' );
 
 		const raw = await rawResponse.text();
+
+    // rawがコロン区切りでない（エラーメッセージ）場合はL2に表示して終了
+    if ( !raw.includes(':') ) {
+      document.getElementById( 'L2' ).innerHTML = raw;
+      return;
+    }
+
 		const columns = raw.split( ':' );
 
 		// C3.jsチャート生成
@@ -529,7 +547,8 @@ def module_lp( language )
 		label_energy:  "エネルギー (kcal)",\
 		empty:  "ごんぶと",\
 		bw_name:  "平均摂取エネルギー",\
-		error_no_set:  "設定から生体情報を設定してください。"
+		error_no_set:  "設定から生体情報を設定してください。",
+		error_no_start: "開始日を設定してください。"
 	}
 
 	return l[language]
