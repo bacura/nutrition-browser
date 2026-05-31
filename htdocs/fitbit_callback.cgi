@@ -24,6 +24,7 @@ require './soul'
 # Main
 #==============================================================================
 user = User.new( @cgi )
+db = Db.new( user, @debug, false )
 
 # エラーチェック
 if @cgi['error'] != ''
@@ -41,10 +42,25 @@ if code.empty?
   exit
 end
 
+
+res = db.query( "SELECT fitbit FROM #{$TB_CFG} WHERE user=?", false, [user.name] )&.first
+unless res['fitbit'].to_s.empty?
+  begin
+    fitbit = JSON.parse( res['fitbit'] )
+  rescue JSON::ParserError => e
+    puts "J(x_x)pE: #{e.message}<br>"
+    exit
+  end     
+
+  client_id = fitbit['client_id'].to_s
+  client_secret = fitbit['client_secret'].to_s
+end
+
+
 begin
   uri = URI.parse( 'https://api.fitbit.com/oauth2/token' )
   req = Net::HTTP::Post.new( uri )
-  req['Authorization'] = "Basic #{Base64.strict_encode64( "#{$FITBIT_CLIENT_ID}:#{$FITBIT_CLIENT_SECRET}" )}"
+  req['Authorization'] = "Basic #{Base64.strict_encode64( "#{client_id}:#{client_secret}" )}"
   req['Content-Type']  = 'application/x-www-form-urlencoded'
   req.set_form_data(
     grant_type:   'authorization_code',
