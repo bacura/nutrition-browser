@@ -1,7 +1,5 @@
-# Weight loss module for Physique (Fitbit test) 0.2.1 (2026/05/27)
+# Weight loss module for Physique (Google Health) 0.0.0 (2026/06/03)
 #encoding: utf-8
-
-@period = 96
 
 @period = 96
 
@@ -224,10 +222,8 @@ def physique_module( cgi, db )
     end
 
     puts "CALC activity energy & sync ienergy<br>" if @debug
-    # 活動エネルギー = Fitbit活動量 + Δエネルギー
-    # 活動量がない日は活動エネルギー・摂取エネルギーともにnil
-    aactivity = []  # 活動エネルギー
-    ienergy   = []  # 摂取エネルギー（活動量ない日はnil）
+    aactivity = []
+    ienergy   = []
     acutual_phase_day   = [0, 0, 0, 0]
     acutual_phase_total = [0, 0, 0, 0]
     start_day_p = Time.parse( start_date )
@@ -293,6 +289,7 @@ def physique_module( cgi, db )
     raw[4] = ienergy.unshift( l[:data_ienergy] ).join( ',' )
     raw[5] = aactivity.unshift( l[:data_aactivity] ).join( ',' )
     raw[6] = ave_energy.join( ',' )
+    raw[7] = eenergy.to_s
     puts raw.join( ':' )
 
     cfg_lw.set_value( 'eenergy',    eenergy )
@@ -356,6 +353,7 @@ var labels = {
   data_aactivity: '#{l[:data_aactivity]}',
   label_weight:   '#{l[:label_weight]}',
   label_energy:   '#{l[:label_energy]}',
+  label_eenergy:  '#{l[:label_eenergy]}',
 };
 
 var WeightLossFitbitChartDraw = async () => {
@@ -391,7 +389,8 @@ var WeightLossFitbitChartDraw = async () => {
       return;
     }
 
-    const columns = raw.split( ':' );
+    const columns    = raw.split( ':' );
+    const eenergyVal = parseInt( columns[7] );
 
     c3.generate({
       bindto: `#physique_${mod}-chart`,
@@ -419,8 +418,8 @@ var WeightLossFitbitChartDraw = async () => {
           [labels.data_predict]:   '#d3d3d3',
           [labels.data_theoletic]: '#228b22',
           [labels.data_d4sw]:      '#dc143c',
-          [labels.data_ienergy]:   '#ffd700',
-          [labels.data_aactivity]: '#1e90ff',
+          [labels.data_ienergy]:   '#FF99FF',
+          [labels.data_aactivity]: '#FFCC00',
         },
         regions: {
           [labels.data_predict]: { start: 0, style: 'dashed' },
@@ -439,6 +438,18 @@ var WeightLossFitbitChartDraw = async () => {
           padding: { top: 400, bottom: 0 },
           label: { text: labels.label_energy, position: 'outer-middle' },
         },
+      },
+      grid: {
+        y: {
+          lines: [
+            { value: eenergyVal, text: labels.label_eenergy, position: 'middle', axis: 'y2', class: 'eenergy-line' }
+          ]
+        }
+      },
+      onrendered: function() {
+        d3.selectAll( '.c3-ygrid-line.eenergy-line line' )
+        .style( 'stroke-dasharray', '6 4' )
+        .style( 'stroke', '#ffffff' );
       },
       legend: { show: true, position: 'bottom' },
       line:   { connectNull: true, step: { type: 'step' }},
@@ -480,10 +491,10 @@ end
 def module_lp( language )
   l = Hash.new
   l['ja'] = {
-    mod_name:       "減量チャート(Fitbitテスト)",
+    mod_name:       "減量チャート-GH",
     male:           "男性",
     female:         "女性",
-    chart_name:     "減量チャート(Fitbitテスト)",
+    chart_name:     "減量チャート-Google Health",
     sex:            "代謝的性別",
     age:            "年齢",
     height:         "身長（cm）",
@@ -497,6 +508,7 @@ def module_lp( language )
     data_d4sw:      "D4安定体重",
     label_weight:   "体重 (kg)",
     label_energy:   "エネルギー (kcal)",
+    label_eenergy:  "摂取予定",
     empty:          "ごんぶと",
     bw_name:        "平均摂取エネルギー",
     error_no_set:   "設定から生体情報を設定してください。",

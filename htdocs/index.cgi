@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-#Nutrition browser 2020 index page 0.5.5 (2026/02/27)
+#Nutrition browser 2020 index page 0.5.7 (2026/06/20)
 
 #==============================================================================
 #LIBRARY
@@ -73,6 +73,7 @@ def language_pack( language )
     intake: '食事摂取基準',
     tensei: '転生管理',
     fitbit: 'FitBitテスト',
+    oauth2: 'OAuth2GH',
     fflow: '食品フロー'
   }
 
@@ -235,9 +236,9 @@ def html_nav( user, l, db )
 
   gm_account = ''
   if user.status == 9
+    gm_account << "<button type='button' class='btn btn-warning btn-sm nav_button master_color' onclick=\"initOAuth2( 'init' )\">#{l[:oauth2]}</button>"
     gm_account << "<button type='button' class='btn btn-warning btn-sm nav_button master_color' onclick=\"initAccount( 'init' )\">#{l[:user]}</button>"
     gm_account << "<button type='button' class='btn btn-warning btn-sm nav_button master_color' onclick=\"initBond( 'init' )\">#{l[:bond]}</button>"
-
   end
 
   ##
@@ -307,7 +308,7 @@ html = <<-"HTML"
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initDic( 'init' )">#{l[:dic]}</button>
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initSlogf( 'init' )">#{l[:slog]}</button>
     <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initTensei( 'init' )">#{l[:tensei]}</button>
-    <button type="button" class="btn btn-warning btn-sm nav_button master_color" onclick="initFibit( 'init' )">#{l[:fitbit]}</button>
+
     #{gm_account}
 </nav>
 HTML

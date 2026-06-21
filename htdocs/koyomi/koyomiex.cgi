@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi extra 0.2.5 (2026/05/28)
+#Nutrition browser 2020 koyomi extra 0.2.6 (2026/06/21)
 
 
 #==============================================================================
@@ -15,7 +15,7 @@ require '../body'
 #==============================================================================
 @debug = false
 myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
-url_fitbit_sync = 'fitbit_sync.cgi'
+url_health_sync = 'health_sync.cgi'
 
 #==============================================================================
 #DEFINITION
@@ -55,8 +55,9 @@ html_init( nil )
 
 user = User.new( @cgi )
 user.debug if @debug
-l = language_pack( user.language)
+l = language_pack( user.language )
 db = Db.new( user, @debug, false )
+dbr = Dbr.new( user, @debug, false )
 
 html = []
 
@@ -192,10 +193,9 @@ weeks = [l[:sun], l[:mon], l[:tue], l[:wed], l[:thu], l[:fri], l[:sat]]
 end
 
 
-fitbit_sync_html = ''
-cfg = Config.new( user, 'fitbit' )
-token = cfg.val
-fitbit_sync_html = "<span onclick=\"modalTip( '#{url_fitbit_sync}' )\">#{l[:heart]}</span>" if token
+health_sync_html = ''
+res = dbr.query( "SELECT result FROM #{$TBR} WHERE base='google_health' AND token='private' AND user=?", false, [dbr.user.name] )&.first
+health_sync_html = "<span onclick=\"modalTip( '#{url_health_sync}' )\">#{l[:heart]}</span>" if res
 
 
 ####
@@ -219,7 +219,7 @@ html[10] = <<~"HTML10"
 		<div align='center' class='col-3 joystic_koyomi' onclick="window.location.href='#day#{date.day}';">#{l[:geo]}</div>
 		<div class='col-1'>
 			<a href='koyomi/koyomiex-txt.cgi?' download='koyomiex-#{user.name}-#{sql_ym}.txt'>#{l[:tsv]}</a>&nbsp;&nbsp;
-			#{fitbit_sync_html}
+			#{health_sync_html}
 		</div>
 	</div>
 	<div class='row'>

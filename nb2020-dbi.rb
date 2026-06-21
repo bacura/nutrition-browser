@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.10.0 (2026/05/24)
+#nb2020-dbi.rb 0.12.0 (2026/06/18)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -661,7 +661,7 @@ def cfg_init()
 	if res.first
 		puts 'cfg table already exists.'
 	else
-		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), media VARCHAR(128), fitbit VARCHAR(128), allergen VARCHAR(3));'
+		query = 'CREATE TABLE cfg (user VARCHAR(32) NOT NULL PRIMARY KEY, cfgj VARCHAR(4096), menul VARCHAR(32), history VARCHAR(128), calcc VARCHAR(64), icalc TINYINT, koyomi VARCHAR(1000), icache TINYINT(1), ifix TINYINT(1), bio VARCHAR(255), media VARCHAR(128), allergen VARCHAR(3));'
 		$DB.query( query )
 		puts 'cfg table has been created.'
 	end
@@ -1168,6 +1168,7 @@ def deta_rr_init()
 		puts 'results table has been created.'
 	end
 end
+
 
 #==============================================================================
 data_path = 'ds2020'

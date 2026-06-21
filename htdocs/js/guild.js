@@ -1,4 +1,4 @@
-//guild.js ver 0.5.3 (2026/01/13)
+//guild.js ver 0.6.3 (2026/06/21)
 
 kp = 'koyomi/'
 
@@ -294,16 +294,12 @@ const importkoyomiex = function(){
 	);
 };
 
-// Koyomi EX sync fitbit (test)
-const fitbitKoyomiex = function(){
-	$.post( kp + "koyomiex-fitbit.cgi", { command:"sync" }, function( data ){
+// Reload Koyomi EX
+const realoadKEX = function(){
+	$.post( kp + "koyomiex.cgi", { command:"init" }, function( data ){
 		$( "#L1" ).html( data );
-
-		flashBW();
-		dl1 = true;
-		dline = true;
-		displayBW();
-	});
+		$( '#modal_tip' ).modal( 'hide' );
+  	});
 };
 
 /////////////////////////////////////////////////////////////////////////////////

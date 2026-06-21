@@ -322,8 +322,8 @@ const crossBond = function(){
 // Fitbit(test) ////////////////////////////////////////////////////////////////////////
 
 // Account init
-const initFibit = function( com ){
-	$.post( mp + "gm-fitbit.cgi", { command:com }, function( data ){
+const initOAuth2 = function( com ){
+	$.post( mp + "gm-oauth2.cgi", { command:com }, function( data ){
 		$( "#L1" ).html( data );
 		
 		flashBW();
