@@ -1,0 +1,96 @@
+##################
+  プライバシーポリシー
+##################
+ばきゅら京都Lab（以下「運営者」）は、「栄養ブラウザ」（以下「本サービス」）において、利用者のプライバシーを尊重し、取得した情報を適切に取り扱います。
+
+1. 取得する情報
+本サービスでは、以下の情報を取得または保存することがあります。
+
+利用者が登録したメールアドレス
+利用者が任意で記録した各種データ（食品、レシピ、体重、食事内容、日記、その他利用者が入力した情報）
+Cookie等を利用したログイン状態の維持に必要な情報
+IPアドレス、ブラウザ情報、アクセス履歴等の利用情報
+Google Analyticsによるアクセス解析情報
+
+2. 利用目的
+取得した情報は、以下の目的で利用します。
+
+本サービスの提供および利用者認証
+利用者データの保存、表示および管理
+サービス改善および不具合調査
+不正利用の防止
+お問い合わせへの対応
+
+3. Cookieについて
+本サービスでは、ログイン状態の維持その他サービス提供のためCookieを利用しています。
+Cookieを無効化した場合、本サービスの一部機能が利用できないことがあります。
+
+4. アクセス解析について
+本サービスでは、サービス改善のためGoogle Analyticsを利用してアクセス解析を行っています。
+
+5. 第三者提供について
+法令に基づく場合を除き、利用者の同意なく取得した情報を第三者に提供することはありません。
+
+6. 利用者データについて
+利用者が登録したデータの所有権は利用者に帰属します。
+ただし、運営者は本サービスの提供、保守、障害対応およびサービス改善のために必要な範囲でこれらのデータを取り扱うことがあります。
+
+7. プライバシーポリシーの変更
+本ポリシーは、必要に応じて予告なく変更することがあります。変更後の内容は、本サービス上に掲載した時点から効力を生じます。
+
+8. お問い合わせ
+本ポリシーに関するお問い合わせは、運営者の定める方法により受け付けます。
+
+制定日：2026年7月1日
+最終更新日：2026年7月1日
+
+ばきゅら京都Lab
+
+
+###################
+  PRIVACY POLICY
+###################
+Bacura KYOTO Lab ("the Operator") respects the privacy of users of Nutrition Browser ("the Service") and handles collected information appropriately.
+
+1. Information We Collect
+The Service may collect or store the following information:
+
+Email addresses registered by users.
+Data voluntarily recorded by users, including food items, recipes, body weight, meal records, journals, and any other information entered by users.
+Information necessary to maintain login sessions using cookies or similar technologies.
+Usage information such as IP addresses, browser information, and access history.
+Website analytics information collected through Google Analytics.
+
+2. Purpose of Use
+Collected information is used for the following purposes:
+
+Providing the Service and authenticating users.
+Storing, displaying, and managing user data.
+Improving the Service and investigating technical issues.
+Preventing unauthorized use.
+Responding to inquiries.
+
+3. Cookies
+The Service uses cookies to maintain login sessions and provide its functionality.
+If cookies are disabled, some features of the Service may not be available.
+
+4. Analytics
+The Service uses Google Analytics to analyze usage and improve the Service.
+
+5. Disclosure to Third Parties
+Except where required by applicable laws and regulations, the Operator will not provide collected information to third parties without the user's consent.
+
+6. User Data
+Ownership of data entered and stored by users remains with the users.
+However, the Operator may process such data to the extent necessary for providing, maintaining, troubleshooting, and improving the Service.
+
+7. Changes to This Privacy Policy
+This Privacy Policy may be updated without prior notice when necessary. Any changes become effective when they are published on the Service.
+
+8. Contact
+Questions or inquiries regarding this Privacy Policy may be submitted through the contact methods designated by the Operator.
+
+Effective Date: July 1, 2026
+Last Updated: July 1, 2026
+
+Bacura KYOTO Lab

@@ -1,0 +1,112 @@
+############
+  利用規定
+############
+本利用規約（以下「本規約」）は、ばきゅら京都Lab（以下「運営者」）が提供する「栄養ブラウザ」（以下「本サービス」）の利用条件を定めるものです。
+
+1. 適用
+利用者は、本規約に同意した上で本サービスを利用するものとします。
+
+2. 本サービスについて
+本サービスは、食品成分の閲覧、栄養計算、記録管理その他の機能を提供します。
+運営者は、本サービスの内容を予告なく変更、中断または終了することがあります。
+
+3. 利用者の責任
+利用者は、自らの責任において本サービスを利用するものとします。
+利用者は、法令または公序良俗に反する行為、本サービスの運営に支障を与える行為その他不適切な行為を行ってはなりません。
+
+4. 登録情報およびデータ
+利用者は、自己の責任において登録情報および入力データを管理するものとします。
+利用者が本サービスに登録したデータの権利は利用者に帰属します。
+運営者は、本サービスの提供、保守、障害対応および機能改善のために必要な範囲で、利用者の登録データを取り扱うことができます。
+
+5. 知的財産権
+本サービスに関するプログラム、画面構成その他の権利は運営者または正当な権利者に帰属します。
+
+6. 禁止事項
+利用者は、以下の行為を行ってはなりません。
+
+本サービスの運営を妨害する行為
+不正アクセスまたはこれを試みる行為
+他の利用者または第三者の権利を侵害する行為
+法令または公序良俗に反する行為
+その他、運営者が不適切と判断する行為
+
+7. 免責事項
+運営者は、本サービスの正確性、完全性、継続的な提供その他一切について保証するものではありません。
+利用者が本サービスを利用したことにより生じた損害について、運営者に故意または重大な過失がある場合を除き、運営者は責任を負わないものとします。
+また、本サービスは医療行為、診断または治療を目的とするものではありません。利用者は自己の判断と責任において本サービスを利用するものとします。
+
+8. 規約の変更
+運営者は、必要に応じて本規約を変更することがあります。
+変更後の規約は、本サービス上に掲載した時点から効力を生じるものとします。
+
+9. 準拠法
+本規約は日本法に準拠し、日本法に従って解釈されるものとします。
+
+10. ソースコードの公開について
+本サービスのソースコードは、GitHub上で公開されています。
+利用者は、公開されているソースコードを各自の責任において利用、改変およびローカル環境で実行することができます。ただし、ソースコードの利用条件については、当該リポジトリに定められたライセンスに従うものとします。
+また、ソースコードが公開されていることは、本サービスの継続的な提供、特定の機能の提供またはサポートを保証するものではありません。
+運営者は、公開されているソースコードおよびそれを利用または改変したことにより生じた損害について、故意または重大な過失がある場合を除き、責任を負わないものとします。
+
+制定日：2026年7月1日
+最終更新日：2026年7月1日
+
+ばきゅら京都Lab
+
+
+####################
+  USAGE REGULATION
+####################
+These Terms of Service ("Terms") govern the use of Nutrition Browser ("the Service"), provided by Bacura KYOTO Lab ("the Operator").
+
+1. Acceptance of Terms
+By using the Service, users agree to be bound by these Terms.
+
+2. About the Service
+The Service provides food composition references, nutritional calculations, record management, and other related features.
+The Operator may modify, suspend, or discontinue the Service or any part of it without prior notice.
+
+3. User Responsibilities
+Users are responsible for their own use of the Service.
+Users must not engage in any unlawful, immoral, or otherwise inappropriate activities, including activities that interfere with the operation of the Service.
+
+4. Registration Information and User Data
+Users are responsible for managing their registration information and any data they enter into the Service.
+Ownership of user-generated data remains with the respective users.
+However, the Operator may process such data to the extent necessary for providing, maintaining, troubleshooting, and improving the Service.
+
+5. Intellectual Property
+All rights related to the Service, including software, user interfaces, and other content, belong to the Operator or their respective rights holders.
+
+6. Prohibited Activities
+Users must not:
+
+Interfere with the operation of the Service.
+Attempt unauthorized access to the Service.
+Infringe upon the rights of other users or third parties.
+Violate applicable laws or public order and morals.
+Engage in any other activities deemed inappropriate by the Operator.
+
+7. Disclaimer
+The Operator makes no warranties regarding the accuracy, completeness, availability, or uninterrupted operation of the Service.
+To the fullest extent permitted by applicable law, the Operator shall not be liable for any damages arising from the use of the Service, except in cases of willful misconduct or gross negligence by the Operator.
+The Service is not intended to provide medical advice, diagnosis, or treatment. Users are solely responsible for their own decisions and use of the Service.
+
+8. Changes to the Terms
+The Operator may revise these Terms when necessary.
+Any changes become effective when they are published on the Service.
+
+9. Governing Law
+These Terms shall be governed by and construed in accordance with the laws of Japan.
+
+10. Source Code Availability
+The source code of the Service is publicly available on GitHub.
+Users may use, modify, and run the published source code in their own environments at their own risk, subject to the license terms specified in the relevant repository.
+The public availability of the source code does not guarantee the continued operation of the Service, the availability of any specific features, or support by the Operator.
+To the fullest extent permitted by applicable law, the Operator shall not be liable for any damages resulting from the use or modification of the published source code, except in cases of willful misconduct or gross negligence by the Operator.
+
+Effective Date: July 1, 2026
+Last Updated: July 1, 2026
+
+Bacura KYOTO Lab
