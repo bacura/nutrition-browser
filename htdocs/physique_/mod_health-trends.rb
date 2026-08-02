@@ -384,9 +384,9 @@ def module_lp( language )
     label_bmi: "BMI",
     label_steps:  "歩数",
     label_sleep:  "睡眠(h)",
-    label_bmi_r: "BMI（率）",
-    label_steps_r:  "歩数（率）",
-    label_sleep_r:  "睡眠（率）",
+    label_bmi_r: "BMI",
+    label_steps_r:  "歩数",
+    label_sleep_r:  "睡眠",
     target_bmi: "目標BMI",
     target_steps:  "目標歩数",
     target_sleep:  "目標睡眠時間(h)"	

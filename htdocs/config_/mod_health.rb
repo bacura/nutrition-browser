@@ -32,6 +32,19 @@ def config_module( cgi, db )
   end
 
   html = <<~HTML
+<ol class="list-group list-group-numbered">
+    <li class="list-group-item">
+      google healthと連携し、以下の情報を取得できるようになります。<br>
+      ・アクティビティとフィットネスに関するデータ（歩数・活動量）<br>
+      ・健康指標と測定データ（体重）<br>
+      ・睡眠データ（睡眠時間）<br>
+      ・プロフィール データ（プロフィール）<br>
+    <li class="list-group-item">取得時からおよそ過去１が月分のデータを取得出来ます。</li>
+    <li class="list-group-item">取得した情報は「こよみの拡張記録」に蓄積されます。</li>
+    <li class="list-group-item">連携を解除しても蓄積された情報は残ります。</li>
+    <li class="list-group-item">蓄積された情報は「設定・こよみ」から削除出来ます。</li>
+  </ul>
+  <br>
       <div class='row'>#{button}</div>
   HTML
 
