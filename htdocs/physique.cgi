@@ -23,21 +23,21 @@ require './body'
 
 #### Menu on line
 def menu( user )
-	mods = Dir.glob( "#{$HTDOCS_PATH}/#{@mod_path}/mod_*" )
-	mods.map! do |x|
-		x = File.basename( x )
-		x = x.sub( 'mod_', '' )
-		x = x.sub( '.rb', '' )
-	end
+    mods = Dir.glob( "#{$HTDOCS_PATH}/#{@mod_path}/mod_*" )
+    mods.map! do |x|
+        x = File.basename( x )
+        x = x.sub( 'mod_', '' )
+        x = x.sub( '.rb', '' )
+    end
 
-	html = ''
-	mods.each.with_index( 1 ) do |e, i|
-		require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{e}.rb"
-		ml = module_lp( user.language )
-		html << "<span class='btn badge rounded-pill ppill' onclick='PhysiqueForm( \"#{e}\" )'>#{ml[:mod_name]}</span>"
-	end
+    html = ''
+    mods.each.with_index( 1 ) do |e, i|
+        require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{e}.rb"
+        ml = module_lp( user.language )
+        html << "<span class='btn badge rounded-pill ppill' onclick='PhysiqueForm( \"#{e}\" )'>#{ml[:mod_name]}</span>"
+    end
 
-	return html
+    return html
 end
 
 #==============================================================================
@@ -51,9 +51,9 @@ mod = @cgi['mod']
 html_init( nil ) if @cgi['step'] != 'json'
 
 if @debug
-	user.debug
-	puts "mod:#{mod}<br>\n"
-	puts "<hr>\n"
+    user.debug
+    puts "mod:#{mod}<br>\n"
+    puts "<hr>\n"
 end
 
 
@@ -61,19 +61,19 @@ end
 html_module = ''
 js_module = ''
 if mod == 'menu'
-	puts 'MENU<br>' if @debug
-	unless user.status == 7
-		html_module = menu( user )
-	else
-		html_module = "<span class='ref_error'>[ginmi]Astral user limit!</span><br>"
-	end
+    puts 'MENU<br>' if @debug
+    unless user.status == 7
+        html_module = menu( user )
+    else
+        html_module = "<span class='ref_error'>[ginmi]Astral user limit!</span><br>"
+    end
 else
-	if mod == ''
-		html_module =  "<div align='center'>Physique assessment tools</div>"
-	else
-		require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{mod}.rb"
-		html_module = physique_module( @cgi, db ) unless user.status == 7
-	end
+    if mod == ''
+        html_module =  "<div align='center'>Physique assessment tools</div>"
+    else
+        require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{mod}.rb"
+        html_module = physique_module( @cgi, db ) unless user.status == 7
+    end
 end
 puts 'HTML<br>' if @debug
 puts html_module
@@ -84,7 +84,7 @@ puts html_module
 #FRONT SCRIPT
 #==============================================================================
 if mod == ''
-	js = <<-"JS"
+    js = <<-"JS"
 <script type='text/javascript'>
 var PhysiqueForm = async ( mod ) => {
 
@@ -149,5 +149,5 @@ var PhysiqueForm = async ( mod ) => {
 </script>
 JS
 
-	puts js 
+    puts js 
 end

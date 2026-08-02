@@ -48,7 +48,7 @@ def language_pack( language )
     pysique: '体格管理',
     momchai: '母子管理',
     note: '<img src=\'bootstrap-dist/icons/chat-left-dots.svg\' style=\'height:1.2em; width:1.2em;\'>&nbsp;雑記',
-    foodrank: '食品栄養ランク',
+    foodrank: '栄養ランク',
     fczl: 'FCZエディタ',
     mjl: 'JSONエディタ',
     medial: 'メディアエディタ',
@@ -72,7 +72,6 @@ def language_pack( language )
     condition: '状態管理',
     intake: '食事摂取基準',
     tensei: '転生管理',
-    fitbit: 'FitBitテスト',
     oauth2: 'OAuth2GH',
     fflow: '食品フロー'
   }
@@ -264,20 +263,21 @@ html = <<-"HTML"
     <button type="button" class="btn btn-outline-secondary btn-sm nav_button" id="category17" onclick="summonL1( 17 )">#{@category[17]}</button>
     <button type="button" class="btn btn-secondary btn-sm nav_button" id="category18" onclick="summonL1( 18 )">#{@category[18]}</button>
     #{special_button}
-    #{his_button}
     <button type='button' class='btn btn-outline-dark btn-sm nav_button' onclick="foodRank()">#{l[:foodrank]}</button>
-    #{confifn_button}
-</nav>
-
-#{fn_button}
-
-<nav class='container-fluid' id='fn_menu' style='display:inline;'>
+    #{his_button}
     #{sum_button}
     #{recipe_button}
     #{menu_button}
     #{mtray_button}
     #{koyomi_button}
     #{note_button}
+    #{confifn_button}
+</nav>
+
+#{fn_button}
+
+<nav class='container-fluid' id='fn_menu' style='display:inline;'>
+
 <!--    <button type="button" class="btn btn-outline-secondary btn-sm nav_button" onclick="bookOpen( 'books/books.html', 1 )">#{l[:book]}</button> -->
 </nav>
 <nav class='container-fluid' id='guild_menu' style='display:none;'>
