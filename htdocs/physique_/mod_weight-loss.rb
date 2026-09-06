@@ -1,4 +1,4 @@
-# Weight loss module for Physique 0.4.2 (2026/05/28)
+# Weight loss module for Physique 0.4.3 (2026/09/06)
 #encoding: utf-8
 
 @period = 96
@@ -376,6 +376,13 @@ end
 def js_chart( mod, l )
 	js = <<-"JS"
 <script type='text/javascript'>
+
+flashBW();
+window.dline = true;
+window.dl1 = true;
+window.dl2 = true;
+window.dl3 = true;
+displayBW();
 
 var mod = '#{mod}';
 var labels = {

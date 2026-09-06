@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 # encoding: utf-8
-# Nutrition Browser 2020 regist 0.1.0 (2026/02/11)
+# Nutrition Browser 2020 regist 0.1.1 (2026/09/06)
 
 #==============================================================================
 # STATIC
@@ -28,7 +28,7 @@ def load_language_pack( language )
   l['ja'] = {
     login:     "ログイン",
     help:      "<img src='bootstrap-dist/icons/question-circle-ndsk.svg' style='height:2em; width:2em;'>",
-    message:   "IDとパスワードは必須です。英数字とアンダーバー(_)のみ使用可能です。ご登録前に利用規約を確認しておいてください。",
+    message:   "IDとパスワードは必須です。英数字とアンダーバー(_)のみ使用可能です。ご登録前に<a href='UsageRegulations.txt' target='rule'>利用規約</a>を確認しておいてください。",
     message_reset:   "<p>IDと登録メールアドレスを入力してください。パスワード再設定用のURLを登録メールアドレス宛に送信します。</p><p>IDがわからない方、もしくはメールアドレスが未登録の方は残念ながら詰です。念のため、管理者にコンタクトをとってみましょう。</p>",
     message_send:   "パスワード再設定用のURLを登録メールアドレス宛に送信しました。そこから新しいパスワードを設定してください。（メールが届かない場合は迷惑メールフォルダも確認してください）",
     message_link_out:   "リンクが無効か期限切れです。もう一度パスワード再設定用のURLを登録メールアドレス宛に送信してください。",
@@ -49,13 +49,13 @@ def load_language_pack( language )
     mail_body4: "なお、このリンクの有効期限は20分です。",
     mail_body5: "また、このメールに返信しても何も起こりません。",
     mail_body6: "〔ばきゅら京都Lab　管理人〕",
-    id_rule:   "ID (8~30文字)",
+    id_rule:   "（8~30文字）",
     id_reset:   "ID",
-    pass_rule: "パスワード (30文字まで)",
-    pw1_reset: "新しいパスワード (30文字まで)",
-    pw2_reset: "新しいパスワード（確認用）",
-    a_rule:    "二つ名 (60文字まで)",
-    mail_rule: "メールアドレス (60文字まで。大文字は小文字に変換されます。)",
+    pass_rule: "（30文字まで）",
+    pw1_reset: "（30文字まで）",
+    pw2_reset: "（確認用）",
+    a_rule:    "（60文字まで）",
+    mail_rule: "（60文字まで。大文字は小文字に変換されます。）",
     mail_reset: "登録メールアドレス",
     submit:    "送信",
     submit_npw:    "再設定",
@@ -71,6 +71,7 @@ def load_language_pack( language )
     language:  "言語",
     regist:    "登録する",
     back:      "変更する",
+    regulations:      "利用規定",
     thanks:    "ご登録ありがとうございました。",
     thanks2:   "して引き続きご利用ください。",
   }
@@ -104,21 +105,49 @@ def render_registration_form( id, mail, pass, msg, aliasu, l )
       <form action="#{@myself}?mode=confirm" method="post" class="form-signin login_form">
         #{msg}
         <p class="msg_small">#{l[:message]}</p>
-        <input type="text" name="id" value="#{id}" maxlength="30" class="form-control login_input" placeholder="#{l[:id_rule]}" required autofocus>
-        <input type="password" name="pass" value="#{pass}" maxlength="30" class="form-control login_input" placeholder="#{l[:pass_rule]}" required>
-        <input type="text" name="aliasu" value="#{aliasu}" maxlength="60" class="form-control login_input" placeholder="#{l[:a_rule]}">
-        <input type="email" name="mail" value="#{mail}" maxlength="60" class="form-control login_input" placeholder="#{l[:mail_rule]}">
-        <select name="language" class="form-select">
-          #{language_options}
-        </select>
+ 
+        <div class="mb-3 row">
+          <label for="id" class="col-sm-3 col-form-label">#{l[:id]}</label>
+          <div class="col-sm-9">
+            <input type="text" name="id" value="#{id}" maxlength="30" class="form-control" placeholder="#{l[:id_rule]}" required autofocus>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="pass" class="col-sm-3 col-form-label">#{l[:pass]}</label>
+          <div class="col-sm-9">
+            <input type="password" name="pass" value="#{pass}" maxlength="30" class="form-control login_input" placeholder="#{l[:pass_rule]}" required>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="aliasu" class="col-sm-3 col-form-label">#{l[:aliase]}</label>
+          <div class="col-sm-9">
+            <input type="text" name="aliasu" value="#{aliasu}" maxlength="60" class="form-control login_input" placeholder="#{l[:a_rule]}">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="mail" class="col-sm-3 col-form-label">#{l[:mail]}</label>
+          <div class="col-sm-9">
+            <input type="email" name="mail" value="#{mail}" maxlength="60" class="form-control login_input" placeholder="#{l[:mail_rule]}">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="language" class="col-sm-3 col-form-label">#{l[:language]}</label>
+          <div class="col-sm-9">
+            <select name="language" class="form-select">
+              #{language_options}
+            </select>
+          </div>
+        </div>
+
         <br>
         <input type="submit" value="#{l[:submit]}" class="btn btn-success btn-block"></input>
       </form>
     </div>
 
-    <hr>
-    <div class="container" id='rule'></div>
-    <script>$( function(){ $( "#rule" ).load( "books/guide/rule.html" );} );</script>
 HTML
 
   puts html_output

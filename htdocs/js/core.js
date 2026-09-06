@@ -1,4 +1,4 @@
-// Nutorition Browser 2020 core.js 0.7.2 (2026/02/21)
+// Nutorition Browser 2020 core.js 0.8.0 (2026/09/07)
 ///////////////////////////////////////////////////////////////////////////////////
 // Global ////////////////////////////////////////////////////////////////////
 dl1 = false;
@@ -240,6 +240,9 @@ const postLayer = async ( script, command, transition, layer, requestData, succe
     }
 };
 
+const postLayerDirect = ( msg ) => {
+	modal_tip_body.innerHTML = msg;
+};
 
 // Get all DOM fields
 const getDOMdata = ( fieldList, prefix ) => {

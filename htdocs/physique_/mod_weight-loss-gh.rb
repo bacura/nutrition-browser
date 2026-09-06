@@ -1,4 +1,4 @@
-# Weight loss module for Physique (Google Health) 0.0.0 (2026/06/03)
+# Weight loss module for Physique (Google Health) 0.0.1 (2026/09/06)
 #encoding: utf-8
 
 @period = 96
@@ -343,6 +343,13 @@ end
 def js_chart( mod, l )
   js = <<-"JS"
 <script type='text/javascript'>
+
+flashBW();
+window.dline = true;
+window.dl1 = true;
+window.dl2 = true;
+window.dl3 = true;
+displayBW();
 
 var mod = '#{mod}';
 var labels = {

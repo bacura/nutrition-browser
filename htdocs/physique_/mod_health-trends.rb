@@ -1,4 +1,4 @@
-# Health trends module for Physique (体重・歩数・睡眠のトレンドチャート) 0.3.0 (2026/07/29)
+# Health trends module for Physique (体重・歩数・睡眠のトレンドチャート) 0.3.1 (2026/09/06)
 #encoding: utf-8
 
 def physique_module( cgi, db )
@@ -40,10 +40,10 @@ def physique_module( cgi, db )
         <div class='col'><h5>#{l[:title]}</h5></div>
       </div>
       <div class='btn-group mb-3' role='group' id='trend-period-group_#{mod}'>
-        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='30'  onclick='HealthTrendsChartDraw("#{mod}", 30)'>#{l[:period_30]}</a>
-        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='90'  onclick='HealthTrendsChartDraw("#{mod}", 90)'>#{l[:period_90]}</a>
-        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='180' onclick='HealthTrendsChartDraw("#{mod}", 180)'>#{l[:period_180]}</a>
-        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='365' onclick='HealthTrendsChartDraw("#{mod}", 365)'>#{l[:period_365]}</a>
+        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='24'  onclick='HealthTrendsChartDraw("#{mod}", 24)'>#{l[:period_30]}</a>
+        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='96'  onclick='HealthTrendsChartDraw("#{mod}", 96)'>#{l[:period_90]}</a>
+        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='288' onclick='HealthTrendsChartDraw("#{mod}", 288)'>#{l[:period_180]}</a>
+        <a href='javascript:void(0)' class='btn btn-sm btn-outline-primary' data-days='576' onclick='HealthTrendsChartDraw("#{mod}", 576)'>#{l[:period_365]}</a>
       </div>
       <div class='row mb-3'>
         <div class='col'>
@@ -72,7 +72,7 @@ def physique_module( cgi, db )
   #============================================================
   when 'raw'
     days_param  = cgi['days'].to_s
-    period_days = %w[30 90 180 365].include?( days_param ) ? days_param.to_i : 90
+    period_days = %w[24 96 288 576].include?( days_param ) ? days_param.to_i : 24
 
     to_date   = Date.today
     from_date = to_date - ( period_days - 1 )
@@ -128,9 +128,9 @@ def physique_module( cgi, db )
       s = ( steps_key  && cell[steps_key].to_s  != '' ) ? cell[steps_key]  : nil
       z = ( sleep_key  && cell[sleep_key].to_s  != '' ) ? cell[sleep_key]  : nil
       trend[:dates]  << date_str
-      trend[:bmi] << ( w.nil? ? nil : ( ( w.to_f / height / height ) / target_bmi ) - 1 )
-      trend[:steps]  << ( s.nil? ? nil : ( s.to_f / target_steps ) - 1 )
-      trend[:sleep]  << ( z.nil? ? nil : ( z.to_f / target_sleep ) - 1 )
+      trend[:bmi] << ( w.nil? ? nil : ( w.to_f / height / height ) - target_bmi )
+      trend[:steps]  << ( s.nil? ? nil : ( s.to_f - target_steps ))
+      trend[:sleep]  << ( z.nil? ? nil : ( z.to_f - target_sleep ))
     end
 
     # 目標値：フォームから送られてきた場合は更新して保存、なければ既存値を維持
@@ -172,12 +172,18 @@ def js_chart( mod, l )
   js = <<-"JS"
 <script type='text/javascript'>
 
+flashBW();
+window.dline = true;
+window.dl1 = true;
+window.dl2 = true;
+displayBW();
+
 if ( typeof window.healthTrendsCharts === 'undefined' ) window.healthTrendsCharts = {};
 if ( typeof window.healthTrendsDays === 'undefined' )   window.healthTrendsDays   = {};
 
 var HT_commonMargin = { top: 20, right: 20, bottom: 30, left: 60 };
 var HT_chartHeight  = 200; // これまで高さ未指定でC3のデフォルト(目安400px前後)だったものを半分に指定
-var HT_yTickFormat  = function( v ) { return v.toFixed( 1 ); };
+var HT_yTickFormat  = function( v ) { return v.toFixed( 0 ); };
 
 // 0が常にy軸の中央に来るよう、データの絶対値最大からmin/maxを対称に算出する。
 // (C3のデフォルト自動スケールはデータの実際のレンジに合わせるだけなので、
@@ -304,7 +310,7 @@ function healthTrendsBuildSplitAreaChart( bindto, baseLabel, dates, values, targ
 }
 
 async function HealthTrendsChartDraw( mod, days ) {
-  days = days || 90;
+  days = days || 24;
   window.healthTrendsDays[mod] = days;
 
   document.querySelectorAll( `#trend-period-group_\${mod} .btn` ).forEach( function( btn ) {
@@ -342,9 +348,9 @@ async function HealthTrendsChartDraw( mod, days ) {
     const targets = raw.targets || {};
 
     window.healthTrendsCharts[mod] = {
-      weight: healthTrendsBuildSplitAreaChart( `#physique_\${mod}-bmi-chart`, '#{l[:label_bmi]}', dates, raw.bmi, 0, '', { positive: '#3498db', negative: '#8e44ad' } ),
-      steps:  healthTrendsBuildChart( `#physique_\${mod}-steps-chart`,  '#{l[:label_steps]}',  dates, raw.steps,  '#3498db', false, 'bar',  0, '', { positive: '#2ecc71', negative: '#e67e22' } ),
-      sleep:  healthTrendsBuildChart( `#physique_\${mod}-sleep-chart`,  '#{l[:label_sleep]}',  dates, raw.sleep,  '#2ecc71', false, 'bar',  0, '', { positive: '#2ecc71', negative: '#e67e22' } ),
+      weight: healthTrendsBuildSplitAreaChart( `#physique_\${mod}-bmi-chart`, '#{l[:label_bmi]}', dates, raw.bmi, 0, '', { positive: '#FF66FF', negative: '#9999FF' } ),
+      steps:  healthTrendsBuildChart( `#physique_\${mod}-steps-chart`,  '#{l[:label_steps]}',  dates, raw.steps,  '#3498db', false, 'bar',  0, '', { positive: '#33CC33', negative: '#CC6600' } ),
+      sleep:  healthTrendsBuildChart( `#physique_\${mod}-sleep-chart`,  '#{l[:label_sleep]}',  dates, raw.sleep,  '#2ecc71', false, 'bar',  0, '', { positive: '#33CC33', negative: '#CC6600' } ),
     };
 
     // NOTE: 3パネル間のカーソル同期(mousemove.sync)は、マウスオーバー時に画面が
@@ -357,10 +363,10 @@ async function HealthTrendsChartDraw( mod, days ) {
   }
 }
 
-HealthTrendsChartDraw( '#{mod}', 90 );
+HealthTrendsChartDraw( '#{mod}', 24 );
 
 function HealthTrendsRedraw( mod ) {
-  HealthTrendsChartDraw( mod, window.healthTrendsDays[mod] || 90 );
+  HealthTrendsChartDraw( mod, window.healthTrendsDays[mod] || 24 );
 }
 
 </script>
@@ -375,18 +381,18 @@ def module_lp( language )
   l['ja'] = {
     mod_name:     "健康トレンド３",
     title:        "健康トレンド３（栄養・運動・休養）",
-    period_30:    "直近30日",
-    period_90:    "直近90日",
-    period_180:   "直近180日",
-    period_365:   "直近1年",
+    period_30:    "1 phase",
+    period_90:    "4 phases",
+    period_180:   "12 phases",
+    period_365:   "24 phases",
 	error_no_height: "身長の情報がありません",
     no_data:      "この期間の記録がありません",
     label_bmi: "BMI",
     label_steps:  "歩数",
     label_sleep:  "睡眠(h)",
-    label_bmi_r: "BMI",
-    label_steps_r:  "歩数",
-    label_sleep_r:  "睡眠",
+    label_bmi_r: "ΔBMI（kg/m^2）",
+    label_steps_r:  "Δ歩数（歩）",
+    label_sleep_r:  "Δ睡眠（時)",
     target_bmi: "目標BMI",
     target_steps:  "目標歩数",
     target_sleep:  "目標睡眠時間(h)"	

@@ -1,4 +1,4 @@
-#Nutrition browser 2020 brain 0.6.12 (2026/05/15)
+#Nutrition browser 2020 brain 0.6.13 (2026/08/30)
 
 #==============================================================================
 # LIBRARY
@@ -147,9 +147,14 @@ def recipe2fns( user, code, rate, unit, ew_mode )
 
     elsif unit == 'kcal'
       rr = $DB.prepare( "SELECT ENERC_KCAL FROM #{$TB_FCZ} WHERE user=? AND base = 'recipe' AND origin=?" ).execute( user.name, code )
-      rate = ( rate / BigDecimal( rr.first['ENERC_KCAL'] ))
-      fws.map! do |x| x * rate if x != '-' && x != '+' end
+      if rr.first
+        rate = ( rate / BigDecimal( rr.first['ENERC_KCAL'] ))
+      else
+        puts "<span class='error'>FCZ load ERROR[#{code}]</span>"
+        rate = 0
+      end
 
+      fws.map! do |x| x * rate if x != '-' && x != '+' end
     else
       fws.map! do |x| x * rate / tw if x != '-' && x != '+' end
 

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi extra 0.2.6 (2026/06/21)
+#Nutrition browser 2020 koyomi extra 0.2.7 (2026/09/06)
 
 
 #==============================================================================
@@ -39,6 +39,7 @@ def language_pack( language )
 		month: 	"月",
 		day: 	"日",
 		basic: 	"基本",
+		connect: 'Google Healthに接続中 <img src="bootstrap-dist/icons/wind.svg" style="height:1.5em; width:1.5em;">',
 		geo:	"<img src='bootstrap-dist/icons/geo.svg' style='height:2em; width:2em;'>",
 		table:	"<img src='bootstrap-dist/icons/table.svg' style='height:1.5em; width:1.5em;'>",
 		tsv:	"<img src='bootstrap-dist/icons/filetype-txt.svg' style='height:2em; width:2em;'>",
@@ -283,6 +284,7 @@ var updateKoyomiex = ( kex_key, dd ) => {
 
 // Modal Tip for fitbit sync
 var modalTip = async ( uri ) => {
+	postLayerDirect( '#{l[:connect]}' );
     postLayer( uri , 'sync', true, 'modal_tip_body', {});
 
     const modalElement = document.querySelector( '#modal_tip' );

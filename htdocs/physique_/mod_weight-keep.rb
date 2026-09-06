@@ -1,4 +1,4 @@
-# Weight keep module for Physique 0.1.1 (2025/07/02)
+# Weight keep module for Physique 0.1.2 (2026/09/03)
 #encoding: utf-8
 
 @debug = false
@@ -217,6 +217,13 @@ end
 def  js_chart( mod, l )
 	js = <<-"JS"
 <script type='text/javascript'>
+
+flashBW();
+window.dline = true;
+window.dl1 = true;
+window.dl2 = true;
+window.dl3 = true;
+displayBW();
 
 var WeightKeepChartDraw = async () => {
 	displayBW();
