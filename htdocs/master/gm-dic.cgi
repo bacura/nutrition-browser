@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser GM food alias dictionary editor 0.5.2 (2025/04/26)
+#Nutrition browser GM food alias dictionary editor 0.5.3 (2026/09/09)
 
 #==============================================================================
 #STATIC
@@ -26,7 +26,7 @@ def language_pack( language )
 		fg: "食品群",
 		fn: "食品",
 		alias: "別名",
-		linkno: "指定食品番号",
+		linkno: "標準食品番号",
 		fg00: "特・その他",
 		fg01: "穀",
 		fg02: "芋",
@@ -125,8 +125,11 @@ when 'new'
 		aliases_list = aliases.split(/[\s、，,]+/).uniq
 		aliases_list.each do |e|
 
-			res = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias='#{e}' AND org_name=? AND FG =?", false, [e, org_name, sg] )&.first
-			db.query( "INSERT INTO #{$TB_DIC} SET alias=?, org_name=?, def_fn=?, FG =?, user=?", true, [e, org_name, fdn, sg] ) unless res
+			# NOTE: alias もプレースホルダ化（旧: alias='#{e}' 直接埋め込みでSQLインジェクションの穴だった）
+			res = db.query( "SELECT * FROM #{$TB_DIC} WHERE alias=? AND org_name=? AND FG =?", false, [e, org_name, sg] )&.first
+			# NOTE: 旧コードは未定義変数 fdn を参照しており NameError で落ちていた（dfn の誤記）。
+			#       さらに user= のプレースホルダに対応する値が渡っていなかったため追加。
+			db.query( "INSERT INTO #{$TB_DIC} SET alias=?, org_name=?, def_fn=?, FG =?, user=?", true, [e, org_name, dfn, sg, user.name] ) unless res
 		end
 	end
 
@@ -137,7 +140,9 @@ when 'update'
 		unless aliases.empty?
 			aliases_list = aliases.split(/[\s、，,]+/).uniq
 			aliases_list.each do |e|
-				db.query( "INSERT INTO #{$TB_DIC} SET alias=?, org_name=?, FG =?, def_fn=?, user=?", true, [org_name, sg, dfn, user.name] )
+				# NOTE: 旧コードはループ変数 e（登録すべきalias本体）を一度もバインドしておらず、
+				#       プレースホルダ5個に対して値4個しか渡していなかった（alias列が常に未設定になるバグ）。
+				db.query( "INSERT INTO #{$TB_DIC} SET alias=?, org_name=?, FG =?, def_fn=?, user=?", true, [e, org_name, sg, dfn, user.name] )
 			end
 		end
 
@@ -154,16 +159,16 @@ list_html << '</div>'
 res = db.query( "SELECT DISTINCT org_name, def_fn FROM #{$TB_DIC} WHERE FG=? ORDER BY org_name ASC", false, [sg] )
 res.each do |e|
 	alias_value = ''
-	def_fn = ''
+	def_fn = e['def_fn'].nil? ? '' : e['def_fn']
 	tags = ''
-	res2 = db.query( "SELECT DISTINCT * from #{$TB_DIC} WHERE org_name=? AND FG=? AND ( def_fn=? OR def_fn='' OR def_fn IS NULL)", false, [e['org_name'], sg, e['def_fn']] )
+	res2 = db.query( "SELECT DISTINCT * from #{$TB_DIC} WHERE org_name=? AND FG=? AND (def_fn=? OR def_fn IS NULL)", false, [e['org_name'], sg, def_fn] )
 	res2.each do |ee|
 		alias_value << "#{ee['alias']},"
 		def_fn = ee['def_fn']
 		tags = ''
-		unless def_fn.empty?
-			rrr = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [def_fn] )
-			tags = bind_tags( rrr ) if rrr.first
+		unless def_fn.to_s.empty?
+			res3 = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [def_fn] )
+			tags = bind_tags( res3 ) if res3.first
 		end
 	end
 	alias_value.chop!

@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 import 0.3.0 (2026/02/04)
+#Nutrition browser 2020 import 0.3.1 (2026/09/10)
 
 #==============================================================================
 #STATIC
@@ -47,12 +47,15 @@ if ARGV[1] == nil
 end
 
 if data_file == nil
-	puts 'Nutrition browser 2020 import 0.0.0 (2024/10/14)'
+	puts 'Nutrition browser 2020 import 0.3.1 (2026/09/10)'
 	puts '[Usage]ruby nb2020-import.rb mode_option data'
 	puts '[Mode option]'
 	puts 'xx -> exchange'
+	puts 'xxgm -> exchange as GM'
 	puts 'ow -> overwrite'
+	puts 'owgm -> overwrite as GM'
 	puts 'ad -> add (default)'
+	puts 'adgm -> add as GM'
 	exit
 end
 
@@ -91,23 +94,27 @@ case txt_class
 when 'dic'
 	#FG org_name alias user def_fn
 	if import_solid[0].size == 5
-		$DB.query( "DELETE FROM #{$TB_DIC};" ) if opt == 'xx'
+		$DB.query( "DELETE FROM #{$TB_DIC};" ) if opt == 'xx' || opt == 'xxgm'
 
 		import_solid.each do |e|
 			print "#{count}\r"
 
 			begin
 				res = $DB.query( "SELECT * FROM #{$TB_DIC} WHERE FG='#{e[0]}' AND org_name='#{e[1]}' AND alias='#{e[2]}';" )
-
 				if res.first
 					if opt == 'ow'
 						$DB.query( "UPDATE #{$TB_DIC} SET user='#{e[3]}', def_fn='#{e[4]}' WHERE FG='#{e[0]}'AND org_name='#{e[1]}' AND alias='#{e[2]}';" )
+					elsif opt == 'owgm'
+						$DB.query( "UPDATE #{$TB_DIC} SET user='#{$GM}', def_fn='#{e[4]}' WHERE FG='#{e[0]}'AND org_name='#{e[1]}' AND alias='#{e[2]}';" )
 					else
 						puts "[SKIP]#{e}"
 					end
 				else
-
-					$DB.query( "INSERT INTO #{$TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{e[3]}', def_fn='#{e[4]}';" )
+					if opt == 'xx' || opt == 'ad'
+						$DB.query( "INSERT INTO #{$TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{e[3]}', def_fn='#{e[4]}';" )
+					elsif opt == 'xxgm' || opt == 'adgm'
+						$DB.query( "INSERT INTO #{$TB_DIC} SET FG='#{e[0]}', org_name='#{e[1]}', alias='#{e[2]}', user='#{$GM}', def_fn='#{e[4]}';" )
+					end
 				end
 				count += 1
 			rescue

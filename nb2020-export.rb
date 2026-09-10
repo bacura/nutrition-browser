@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 export 0.1.4 (2026/02/04)
+#Nutrition browser 2020 export 0.1.5 (2026/09/10)
 
 #==============================================================================
 #STATIC
@@ -58,7 +58,7 @@ when 'dic'
 	export = ''
 	r = $DB.query( "SELECT * FROM #{$TB_DIC} ORDER BY FG, org_name;" )
 	r.each do |e|
-		export << "#{e['FG']}\t#{e['org_name']}\t#{e['alias'].gsub( '<br>', ',' )}\t#{e['user']}\t#{e['def_fn']}\n" unless e['org_name'].empty?
+		export << "#{e['FG']}\t#{e['org_name']}\t#{e['alias'].gsub( /\<br\>$/, '' ).gsub( '<br>', ',' )}\t#{e['user']}\t#{e['def_fn']}\n" unless e['org_name'].empty?
 	end
 	puts "NB2020 [dic] data #{@date}\n"
 	puts export.force_encoding( 'UTF-8' )

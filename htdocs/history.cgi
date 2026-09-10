@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutritoin browser history 0.2.9 (2026/01/14)
+#Nutritoin browser history 0.2.10 (2026/09/10)
 
 #==============================================================================
 # STATIC
@@ -69,8 +69,8 @@ def get_histry( db, l, sub_fg )
 	res = db.query( "SELECT his FROM #{$TB_HIS} WHERE user=?", false, [db.user.name] )&.first
 	t = res['his'].split( "\t" )
 
-	gycv = sub_fg == '6_'
-	sub_fg = '6' if gycv
+	gycv = sub_fg == '06_'
+	sub_fg = '06' if gycv
 
 	if sub_fg == 'all'
 		history = t.first( $ALL_LIMIT )
@@ -78,9 +78,8 @@ def get_histry( db, l, sub_fg )
 			sgh[entry] = entry.include?( '-r-' ) ? 'r' : 'f'
 		end
 	else
-
 		t.each do |entry|
-			next unless ( /[UPC]/ =~ entry && entry[1..2].to_i == sub_fg.to_i ) || entry[0..1].to_i == sub_fg.to_i || entry.include?( '-r-' )
+			next unless ( /[UPC]/ =~ entry && entry[1..2].to_s == sub_fg.to_s ) || entry[0..1].to_s == sub_fg.to_s || entry.include?( '-r-' )
 			sgh[entry] = entry.include?( '-r-' ) ? 'r' : 'f'
 			history << entry
 		end
@@ -92,7 +91,7 @@ def get_histry( db, l, sub_fg )
 			res_tag = db.query( "SELECT * FROM #{$TB_TAG} WHERE FN=?", false, [entry] )&.first
 			next unless res_tag
 
-			if sub_fg == '6'
+			if sub_fg == '06'
 				res2 = db.query( "SELECT gycv FROM #{$TB_EXT} WHERE FN=?", false, [entry] )&.first
 				next if res2 && ( res2['gycv'] == 1 && !gycv ) || ( res2['gycv'] != 1 && gycv )
 			end
@@ -103,6 +102,7 @@ def get_histry( db, l, sub_fg )
 			koyomi_button = "<span onclick=\"addKoyomi( '#{entry}' )\">#{l[:calendar]}</span>" if db.user.status >= 1
 
 			html += "<tr class='fct_value'><td class='link_cursor' onclick=\"detailView_his( '#{entry}' )\">#{tags}</td><td>#{add_button}&nbsp;#{koyomi_button}</td></tr>\n"
+
 		elsif sgh[entry] == 'r' && ( sub_fg == 'R' || sub_fg == 'all' )
 			recipe_res = db.query( "SELECT * FROM #{$TB_RECIPE} WHERE code=?", false, [entry] )&.first
 			next unless recipe_res
@@ -122,16 +122,16 @@ end
 #### Sub group HTML
 def sub_menu( l )
 	html_sub = <<-"HTML_SUB"
-<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '1' )">#{l[:sg1]}</span>
-<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '2' )">#{l[:sg2]}</span>
-<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '3' )">#{l[:sg3]}</span>
-<span class="btn badge rounded-pill bg-danger" onclick="historySub( '4' )">#{l[:sg4]}</span>
-<span class="btn badge rounded-pill bg-warning text-dark" onclick="historySub( '5' )">#{l[:sg5]}</span>
-<span class="btn badge rounded-pill bg-light text-success" onclick="historySub( '6' )">#{l[:sg6]}</span>
-<span class="btn badge rounded-pill bg-success" onclick="historySub( '6_' )">#{l[:sg6]}</span>
-<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '7' )">#{l[:sg7]}</span>
-<span class="btn badge rounded-pill bg-success" onclick="historySub( '8' )">#{l[:sg8]}</span>
-<span class="btn badge rounded-pill bg-success" onclick="historySub( '9' )">#{l[:sg9]}</span>
+<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '01' )">#{l[:sg1]}</span>
+<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '02' )">#{l[:sg2]}</span>
+<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '03' )">#{l[:sg3]}</span>
+<span class="btn badge rounded-pill bg-danger" onclick="historySub( '04' )">#{l[:sg4]}</span>
+<span class="btn badge rounded-pill bg-warning text-dark" onclick="historySub( '05' )">#{l[:sg5]}</span>
+<span class="btn badge rounded-pill bg-light text-success" onclick="historySub( '06' )">#{l[:sg6]}</span>
+<span class="btn badge rounded-pill bg-success" onclick="historySub( '06_' )">#{l[:sg6]}</span>
+<span class="btn badge rounded-pill bg-info text-dark" onclick="historySub( '07' )">#{l[:sg7]}</span>
+<span class="btn badge rounded-pill bg-success" onclick="historySub( '08' )">#{l[:sg8]}</span>
+<span class="btn badge rounded-pill bg-success" onclick="historySub( '09' )">#{l[:sg9]}</span>
 <span class="btn badge rounded-pill bg-danger" onclick="historySub( '10' )">#{l[:sg10]}</span>
 <span class="btn badge rounded-pill bg-danger" onclick="historySub( '11' )">#{l[:sg11]}</span>
 <span class="btn badge rounded-pill bg-danger" onclick="historySub( '12' )">#{l[:sg12]}</span>
@@ -210,8 +210,8 @@ end
 puts 'Group name<br>' if @debug
 sub_title = case sub_fg
 	when '00' then "#{l[:special]}"
-	when '6'  then "#{l[:wvegi]}"
-	when '6_' then "#{l[:gyvegi]}"
+	when '06'  then "#{l[:wvegi]}"
+	when '06_' then "#{l[:gyvegi]}"
 	when 'R'  then "#{l[:recipe]}"
 	else @category[sub_fg.to_i]
 end
