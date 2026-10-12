@@ -2,14 +2,6 @@
 #encoding: utf-8
 #Nutrition browser 2020 nutrition physical tools 0.10 (2025/04/26)
 
-
-#==============================================================================
-#STATIC
-#==============================================================================
-@debug = false
-myself = File.basename( __FILE__ )
-@mod_path = 'physique_'
-
 #==============================================================================
 #LIBRARY
 #==============================================================================
@@ -18,11 +10,37 @@ require './brain'
 require './body'
 
 #==============================================================================
+#STATIC
+#==============================================================================
+@debug = false
+myself = File.basename( __FILE__ )
+@mod_path = 'physique_'
+@url_health_sync = 'health_sync.cgi'
+
+#==============================================================================
 #DEFINITION
 #==============================================================================
 
+# Language pack
+def language_pack( language )
+    l = Hash.new
+
+    #Japanese
+    l['ja'] = {
+        pats:           'Physique assessment tools',
+        error:          'エラー：',
+        failed_form:    'フォームデータ取得失敗',
+        failed_results: '結果データ取得失敗',
+        not_found:      'が見つかりません',
+        connect:        'Google Healthに接続中 <img src="bootstrap-dist/icons/wind.svg" style="height:1.5em; width:1.5em;">',
+        heart:          "<img src='bootstrap-dist/icons/heart-pulse.svg' style='height:1em; width:1em;'>"
+    }
+
+    return l[language]
+end
+
 #### Menu on line
-def menu( user )
+def menu( dbr, l )
     mods = Dir.glob( "#{$HTDOCS_PATH}/#{@mod_path}/mod_*" )
     mods.map! do |x|
         x = File.basename( x )
@@ -33,9 +51,12 @@ def menu( user )
     html = ''
     mods.each.with_index( 1 ) do |e, i|
         require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{e}.rb"
-        ml = module_lp( user.language )
+        ml = module_lp( dbr.user.language )
         html << "<span class='btn badge rounded-pill ppill' onclick='PhysiqueForm( \"#{e}\" )'>#{ml[:mod_name]}</span>"
     end
+
+    res = dbr.query( "SELECT result FROM #{$TBR} WHERE base='google_health' AND token='private' AND user=?", false, [dbr.user.name] )&.first
+    html << "&nbsp;<span onclick=\"modalTip( '#{@url_health_sync}' )\">#{l[:heart]}</span>" if res
 
     return html
 end
@@ -44,7 +65,9 @@ end
 # Main
 #==============================================================================
 user = User.new( @cgi )
+l = language_pack( user.language )
 db = Db.new( user, @debug, false )
+dbr = Dbr.new( user, @debug, false )
 
 #### Getting POST
 mod = @cgi['mod']
@@ -63,13 +86,13 @@ js_module = ''
 if mod == 'menu'
     puts 'MENU<br>' if @debug
     unless user.status == 7
-        html_module = menu( user )
+        html_module = menu( dbr, l )
     else
         html_module = "<span class='ref_error'>[ginmi]Astral user limit!</span><br>"
     end
 else
     if mod == ''
-        html_module =  "<div align='center'>Physique assessment tools</div>"
+        html_module =  "<div align='center'>#{l[:pats]}</div>"
     else
         require "#{$HTDOCS_PATH}/#{@mod_path}/mod_#{mod}.rb"
         html_module = physique_module( @cgi, db ) unless user.status == 7
@@ -91,7 +114,7 @@ var PhysiqueForm = async ( mod ) => {
     // データ描画用のヘルパー関数
     const renderData = ( id, data, hasScripts = false ) => {
         const element = document.getElementById( id );
-        if ( !element ) return console.error( `#${id} が見つかりません` );
+        if ( !element ) return console.error( `#${id} #{l[:not_found]}` );
 
         if ( !hasScripts ) {
             // 純粋HTML（form用）
@@ -123,7 +146,7 @@ var PhysiqueForm = async ( mod ) => {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ mod, step: 'form' }),
         });
-        if ( !formRes.ok ) throw new Error( 'フォームデータ取得失敗' );
+        if ( !formRes.ok ) throw new Error( '#{l[:failed_form]}' );
         const formData = await formRes.text();
         renderData( 'L1', formData, false ); // HTMLのみ
 
@@ -133,7 +156,7 @@ var PhysiqueForm = async ( mod ) => {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ mod, step: 'results' }),
         });
-        if ( !resultsRes.ok ) throw new Error( '結果データ取得失敗' );
+        if ( !resultsRes.ok ) throw new Error( '#{l[:failed_results]}' );
         const resultsData = await resultsRes.text();
         renderData( 'L2', resultsData, true ); // HTML+C3.jsスクリプト
 
@@ -141,9 +164,19 @@ var PhysiqueForm = async ( mod ) => {
         window.dl2 = true;
         displayBW();
     }catch ( error ){
-        console.error('エラー:', error );
+        console.error( '#{l[:error]}', error );
     }
 
+};
+
+// Modal Tip for fitbit sync
+var modalTip = async ( uri ) => {
+    postLayerDirect( '#{l[:connect]}' );
+    postLayer( uri , 'sync', true, 'modal_tip_body', {});
+
+    const modalElement = document.querySelector( '#modal_tip' );
+    const modal = new bootstrap.Modal( modalElement );
+    modal.show();
 };
 
 </script>

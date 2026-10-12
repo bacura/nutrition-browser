@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser GM unit editor 0.12b (2023/07/17)
+#Nutrition browser GM unit editor 0.1.2 (2026/09/15)
 
 #==============================================================================
 #STATIC
@@ -23,18 +23,19 @@ def language_pack( language )
 
 	#Japanese
 	l['ja'] = {
-		'food_no' 	=> "食品番号",\
-		'load' 	=> "読み込み",\
-		'notte' 	=> "注釈",\
-		'save' 	=> "保存",\
-		'all' 	=> "網羅的単位変換",\
-		'from' 	=> "変換元",\
-		'to' 	=> "変換先",\
-		'arrow' 	=> "→",\
-		'exe' 	=> "変換実行",\
-		'unit' 	=> "単位",\
-		'value'	=> "値",\
-		'unit_edit' => "単位エディタ"
+		food_no:	"食品番号",
+		load:		"読み込み",
+		notte:		"注釈",
+		save:		"保存",
+		all:		"網羅的単位変換",
+		from:		"変換元",
+		to:			"変換先",
+		arrow:		"→",
+		exe:		"変換実行",
+		unit:		"単位",
+		value:		"値",
+		note:		"Note",
+		unit_edit:	"単位エディタ"
 	}
 
 	return l[language]
@@ -91,7 +92,7 @@ when 'update'
 	unit = JSON.generate( unith )
 	fn = code.split( ',' )
 	fn.each do |e|
-		db.query( "UPDATE #{$TB_EXT} SET unit='#{unit}' WHERE FN='#{e}';", true ) if /\d\d\d\d\d/ =~ e || /P\d\d\d\d\d/ =~ e
+		db.query( "UPDATE #{$TB_EXT} SET unit=? WHERE FN=?", true, [unit, e] ) if /\d\d\d\d\d/ =~ e || /P\d\d\d\d\d/ =~ e
 	end
 when 'exunit'
 	res = db.query( "SELECT * FROM recipe;", false )
@@ -111,7 +112,7 @@ when 'exunit'
 
 			if ex_flag
 				sum_new = sum_list.join( "\t" )
-				db.query( "UPDATE recipe SET sum='#{sum_new}' WHERE user='#{r['user']}' AND code='#{r['code']}';", true )
+				db.query( "UPDATE recipe SET sum=? WHERE user=? AND code=?", true, [sum_new, r['user'], r['code']] )
 			end
 		end
 	end
@@ -133,7 +134,7 @@ when 'exunit'
 
 			if ex_flag
 				koyomi_new = koyomi_list.join( "\t" )
-				db.query( "UPDATE koyomi SET koyomi='#{koyomi_new}' WHERE user='#{r['user']}' AND tdiv='#{r['tdiv']}' AND date='#{r['date']}';", true )
+				db.query( "UPDATE koyomi SET koyomi=? WHERE user=? AND tdiv=? AND date=?", true, [koyomi_new, r['user'], r['tdiv'], r['date']] )
 			end
 		end
 	end
@@ -144,13 +145,13 @@ uv_set = []
 note = ''
 unless code == ''
 	puts 'Loading unit JSON<br>' if @debug
-	r = db.query( "SELECT name from #{$TB_TAG} WHERE FN='#{code}';", false )
-	food_name = r.first['name']
+	res = db.query( "SELECT name from #{$TB_TAG} WHERE FN=?", false, [code] )&.first
+	food_name = res['name']
 
-	r = db.query( "SELECT unit from #{$TB_EXT} WHERE FN='#{code}';", false )
-	if r.first
-		if r.first['unit'] != nil && r.first['unit'] != ''
-			unitj = JSON.parse( r.first['unit'] )
+	res = db.query( "SELECT unit from #{$TB_EXT} WHERE FN=?", false, [code] )&.first
+	if res
+		if res['unit'].to_s != ''
+			unitj = JSON.parse( res['unit'] )
 			unitj.each do |k, v|
 				if k == 'note'
 					note = v
@@ -182,36 +183,36 @@ puts 'HTML<br>' if @debug
 html = <<-"HTML"
 <div class='container-fluid'>
 	<div class='row'>
-		<div class='col'><h5>#{l['unit_edit']}: #{food_name}</h5></div>
+		<div class='col'><h5>#{l[:unit_edit]}: #{food_name}</h5></div>
 	</div><br>
 
 	<div class='row'>
 		<div class='col-6'>
 			<div class='input-group input-group-sm'>
-				<label class="input-group-text">#{l['food_no']}</label>
+				<label class="input-group-text">#{l[:food_no]}</label>
   				<input type="text" class="form-control" id="food_no" value="#{code}">
-				<button class='btn btn-sm btn-outline-primary' type='button' onclick=\"initUnit()\">#{l['load']}</button>
+				<button class='btn btn-sm btn-outline-primary' type='button' onclick=\"initUnit()\">#{l[:load]}</button>
 			</div>
 		</div>
 	</div><br>
 
 	<div class='row'>
-		<div class='col' align='center'>#{l['unit']}</div>
-		<div class='col' align='center'>#{l['value']}</div>
+		<div class='col' align='center'>#{l[:unit]}</div>
+		<div class='col' align='center'>#{l[:value]}</div>
 		<div class='col-1'></div>
-		<div class='col' align='center'>#{l['unit']}</div>
-		<div class='col' align='center'>#{l['value']}</div>
+		<div class='col' align='center'>#{l[:unit]}</div>
+		<div class='col' align='center'>#{l[:value]}</div>
 	</div>
 	#{unit_html}
 	<br>
 
 	<div class='row'>
-		<div class='col-1'>#{l['note']}</div>
+		<div class='col-1'>#{l[:note]}</div>
 	</div>
 	<div class='row'>
 		<div class='col-10'><input type='text' class='form-control form-control-sm' id='note' value='#{note}'></div>
 		<div class='col-1'></div>
-		<div class='col' align='center'><button class='btn btn-sm btn-outline-danger' type='button' onclick="updateUint()">#{l['save']}</button></div>
+		<div class='col' align='center'><button class='btn btn-sm btn-outline-danger' type='button' onclick="updateUint()">#{l[:save]}</button></div>
 	</div>
 	<br>
 
@@ -219,11 +220,11 @@ html = <<-"HTML"
 <hr>
 
 <div class='row'>
-	<div class='col'>#{l['all']}</div>
-	<div class='col'><input type='text' class='form-control form-control-sm' id='bunit' value='' placeholder='#{l['from']}'></div>
-	<div class='col' align="center">#{l['arrow']}</div>
-	<div class='col'><input type='text' class='form-control form-control-sm' id='aunit' value='' placeholder='#{l['to']}'></div>
-	<div class='col' align='center'><button class='btn btn-sm btn-outline-danger' type='button' onclick="exUnit( '#{code}' )">#{l['exe']}</button></div>
+	<div class='col'>#{l[:all]}</div>
+	<div class='col'><input type='text' class='form-control form-control-sm' id='bunit' value='' placeholder='#{l[:from]}'></div>
+	<div class='col' align="center">#{l[:arrow]}</div>
+	<div class='col'><input type='text' class='form-control form-control-sm' id='aunit' value='' placeholder='#{l[:to]}'></div>
+	<div class='col' align='center'><button class='btn btn-sm btn-outline-danger' type='button' onclick="exUnit( '#{code}' )">#{l[:exe]}</button></div>
 	</div>
 
 HTML

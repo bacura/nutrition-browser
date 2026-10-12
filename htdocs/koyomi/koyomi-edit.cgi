@@ -44,7 +44,6 @@ def language_pack( language )
 		alt:       "キャプション", \
 		return:    "<img src='bootstrap-dist/icons/signpost-r.svg' style='height:2em; width:2em;'>", \
 		visionnerz:"<img src='bootstrap-dist/icons/graph-up.svg' style='height:2em; width:2em;'>", \
-		write:     "<img src='bootstrap-dist/icons/pencil-square.svg' style='height:3em; width:3em;'>", \
 		recipe:    "<img src='bootstrap-dist/icons/card-text.svg' style='height:1.2em; width:1.2em;'>", \
 		camera:    "<img src='bootstrap-dist/icons/camera.svg' style='height:1.2em; width:1.2em;'>", \
 		trashf:    "<img src='bootstrap-dist/icons/trash-fill.svg' style='height:1.2em; width:1.2em;'>", \
@@ -423,11 +422,8 @@ end
 memo_html = ''
 unless freeze_flag
 	memo_html = <<~MEMO1
-	<div class='col-10'>
-		<textarea class='form-control' id='memo' rows='2'>#{koyomi_html[4]}</textarea>
-	</div>
-	<div class='col-1'><br>
-		<span onclick="memoKoyomi( '#{yyyy}', '#{mm}', '#{dd}' )">#{l[:write]}</span>
+	<div class='col'>
+		<textarea class='form-control' id='memo' rows='2' onchange="memoKoyomi( '#{yyyy}', '#{mm}', '#{dd}' )">#{koyomi_html[4]}</textarea>
 	</div>
 MEMO1
 else

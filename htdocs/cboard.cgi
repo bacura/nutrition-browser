@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 cutting board 0.4.3 (2026/5/16)
+#Nutrition browser 2020 cutting board 0.4.4 (2026/09/15)
 
 #==============================================================================
 #STATIC
@@ -496,7 +496,6 @@ when 'weight'
 	uk = BigDecimal( '1' )
 	if unit != 'g'
 		r = db.query( "SELECT unit from #{$TB_EXT} WHERE FN=?", false, [food_list[order_no].fn] )
-		unith = JSON.parse( r.first['unit'] )
 		uk = unith[unit]
 	end
 
@@ -879,8 +878,10 @@ food_list.each do |e|
 		if res
 			unith = JSON.parse( res['unit'] ) unless res['unit'].to_s.empty?
 			unith.each do |k, v|
-				unit_set << k
-				unit_select << $SELECT[k == e.unit] unless k == 'note'
+				unless k == 'note'
+					unit_set << k
+					unit_select << $SELECT[k == e.unit]
+				end
 			end
 		end
 	end

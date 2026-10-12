@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi 0.2.10 (2026/01/11)
+#Nutrition browser 2020 koyomi 0.2.11 (2026/09/13)
 
 
 #==============================================================================
@@ -313,7 +313,7 @@ photo.base = 'koyomi'
 				end
 				freeze_flag = koyomi.freeze_flag( ymd, tdiv )
 			end
-			tmp_html << "<td>#{tmp}</td>"
+			tmp_html << "<td #{onclick}>#{tmp}</td>"
 		end
 	else
 		5.times do tmp_html << "<td #{onclick}>-</td>" end
@@ -322,14 +322,14 @@ photo.base = 'koyomi'
 	style = ''
 	style = 'color:red;' if week_count == 0
 	date_html << "<tr id='day#{day}'>"
-	date_html << "<td align='center' rowspan=2 style='#{style}'><span>#{day}</span> (#{weeks[week_count]})"
+	date_html << "<td align='center' rowspan=2 style='#{style}' #{onclick}><span>#{day}</span> (#{weeks[week_count]})"
 	date_html << "<br><br><input type='checkbox' id='freeze_check#{day}' onChange=\"freezeKoyomi( '#{day}' )\" #{$CHECK[freeze_flag]}>" if koyomi.solid[ymd]
 	date_html << "</td>"
 	date_html << tmp_html
 	date_html << "</tr>"
 
 	date_html << "<tr>"
-	date_html << "<td colspan='5'>#{fct_day_htmls[day]}</td>" if fct_day_htmls[day] != nil
+	date_html << "<td colspan='5' #{onclick}>#{fct_day_htmls[day]}</td>" if fct_day_htmls[day] != nil
 	date_html << "</tr>"
 
 	week_count += 1

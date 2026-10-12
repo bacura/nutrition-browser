@@ -105,7 +105,6 @@ puts 'Load FCT<br>' if @debug
 fct_opt = Hash.new
 res = db.query( "SELECT * FROM #{$TB_FCT} WHERE FN=?", false, [food_no] )&.first
 if res
-p res['SID']
 	sid = res['SID']
 	food_no = res['FN']
 	@fct_item.each do |e| fct_opt[e] = num_opt( res[e], food_weight, frct_mode, @fct_frct[e] ) end
