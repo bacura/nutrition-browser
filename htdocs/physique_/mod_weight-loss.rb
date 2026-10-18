@@ -36,7 +36,6 @@ def physique_module( cgi, db )
 		eenergy = cfg_lw.value( 'eenergy' ).nil? ? calc_energy( weight, height, age, sex, pal ) : cfg_lw.value( 'eenergy' ).to_i
 	end
 
-
 	html_module = ''
 	case cgi['step']
 	when 'form'
@@ -84,6 +83,7 @@ def physique_module( cgi, db )
 
 	when 'raw'
     # start_dateが空の場合はエラーメッセージを返して終了
+
     if start_date.to_s.empty?
       puts l[:error_no_start]
       exit
@@ -94,7 +94,6 @@ def physique_module( cgi, db )
 		start_date_p = Time.parse( start_date )
 		end_date = ( start_date_p + ( @period - 1 ) * 86400 ).strftime( "%Y-%m-%d" )
 		p start_date, end_date if @debug
-
 
 		puts "SET X axis<br>" if @debug
 		x_day = []
@@ -267,6 +266,7 @@ def physique_module( cgi, db )
 			else
 				aenergy[c] = ienergy[c] + denergy[c]
 			end
+
 			acutual_phase_day[phase] += 1
 			acutual_phase_total[phase] += aenergy[c]
 			start_day_p += 86400
@@ -284,6 +284,7 @@ def physique_module( cgi, db )
 		guide[0] = measured[0] || weight
 		@period.times do |c|
 			cenergy = calc_energy( guide[c - 1], height, age, sex, pal )
+			cenergy -= 200 if pgene == 1
 			guide[c] = ( guide[0] - (( cenergy.to_f - eenergy.to_f ) / 7200 * c ))
 		end
 		guide.map! do |x| x.round( 2 ) end
@@ -295,6 +296,7 @@ def physique_module( cgi, db )
 		1.upto( @period - 1 ) do |c|
 			break if start_day_p > today_p
 			cenergy = calc_energy( theoletic[c - 1], height, age, sex, pal )
+			cenergy -= 200 if pgene == 1
 			theoletic[c] = ( theoletic[c - 1] - (( cenergy.to_f - aenergy[c] ) / 7200 ))
 			start_day_p += 86400
 		end

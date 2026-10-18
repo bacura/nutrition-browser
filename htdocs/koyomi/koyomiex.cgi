@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi extra 0.2.7 (2026/09/06)
+#Nutrition browser 2020 koyomi extra 0.2.8 (2026/10/18)
 
 
 #==============================================================================
@@ -16,6 +16,7 @@ require '../body'
 @debug = false
 myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
 url_health_sync = 'health_sync.cgi'
+modalTip_reloadFunc = 'reloadKEX()'
 
 #==============================================================================
 #DEFINITION
@@ -196,7 +197,7 @@ end
 
 health_sync_html = ''
 res = dbr.query( "SELECT result FROM #{$TBR} WHERE base='google_health' AND token='private' AND user=?", false, [dbr.user.name] )&.first
-health_sync_html = "<span onclick=\"modalTip( '#{url_health_sync}' )\">#{l[:heart]}</span>" if res
+health_sync_html = "<span onclick=\"modalTip( '#{url_health_sync}', '#{modalTip_reloadFunc}' )\">#{l[:heart]}</span>" if res
 
 
 ####
@@ -283,9 +284,9 @@ var updateKoyomiex = ( kex_key, dd ) => {
 };
 
 // Modal Tip for fitbit sync
-var modalTip = async ( uri ) => {
+var modalTip = async ( uri, modalTip_reloadFunc ) => {
 	postLayerDirect( '#{l[:connect]}' );
-    postLayer( uri , 'sync', true, 'modal_tip_body', {});
+    postLayer( uri , 'sync', true, 'modal_tip_body', {modalTip_reloadFunc});
 
     const modalElement = document.querySelector( '#modal_tip' );
     const modal = new bootstrap.Modal( modalElement );

@@ -21,7 +21,7 @@ def physique_module( cgi, db )
 			age = ( Date.today.strftime( "%Y%m%d" ).to_i - birth.strftime( "%Y%m%d" ).to_i ) / 10000
 		end
 	end
-
+p pgene
 	if height.nil? || weight.nil? || age.nil?
 		puts l[:error_no_set]
 		exit( 0 )

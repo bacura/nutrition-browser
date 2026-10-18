@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
-#Nutrition browser 2020 health_sync 0.3.1 (2026/07/25)
+#Nutrition browser 2020 health_sync 0.3.2 (2026/10/18)
 
 #==============================================================================
 # LIBRARY
@@ -17,7 +17,6 @@ require './brain'
 #==============================================================================
 @debug = false
 myself = File.basename( __FILE__ )
-koyomiex = $KOYOMI_PATH + "/koyomiex.cgi"
 
 
 #==============================================================================
@@ -206,6 +205,7 @@ user = User.new( @cgi )
 l = language_pack( user.language )
 db   = Db.new( user, false, false )
 dbr  = Dbr.new( user, false, false )
+modalTip_reloadFunc = @cgi['modalTip_reloadFunc']
 
 puts l[:health]
 puts "<hr>"
@@ -366,7 +366,7 @@ begin
 
   puts "<br>"
   puts "<div align='center'>"
-  puts "<button type='button' class='btn btn-info btn-sm nav_button' onclick='realoadKEX()'>#{l[:close]}</button>"
+  puts "<button type='button' class='btn btn-info btn-sm nav_button' onclick='#{modalTip_reloadFunc}'>#{l[:close]}</button>"
   puts "</div>"
 
 rescue => e

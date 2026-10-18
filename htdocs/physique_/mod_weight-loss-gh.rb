@@ -234,6 +234,7 @@ def physique_module( cgi, db )
       delta_e  = denergy[c].to_i
 
       if fitbit_e != nil
+        fitbit_e -= 200 if pgene == 1
         aactivity[c] = fitbit_e + delta_e
         ienergy[c]   = ienergy_raw[c]
         acutual_phase_day[phase]   += 1
@@ -273,7 +274,7 @@ def physique_module( cgi, db )
     1.upto( @period - 1 ) do |c|
       break if start_day_p > today_p
       if aactivity[c] != nil
-        theoletic[c] = ( theoletic[c-1] - (( aactivity[c].to_f - ienergy_raw[c].to_f ) / 7200 ))
+         theoletic[c] = ( theoletic[c-1] - (( aactivity[c].to_f - ienergy_raw[c].to_f ) / 7200 ))
       else
         theoletic[c] = nil
       end

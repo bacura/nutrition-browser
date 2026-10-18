@@ -295,7 +295,7 @@ const importkoyomiex = function(){
 };
 
 // Reload Koyomi EX
-const realoadKEX = function(){
+const reloadKEX = function(){
 	$.post( kp + "koyomiex.cgi", { command:"init" }, function( data ){
 		$( "#L1" ).html( data );
 		$( '#modal_tip' ).modal( 'hide' );

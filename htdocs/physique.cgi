@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 nutrition physical tools 0.10 (2025/04/26)
+#Nutrition browser 2020 nutrition physical tools 0.11 (2026/10/18)
 
 #==============================================================================
 #LIBRARY
@@ -16,6 +16,7 @@ require './body'
 myself = File.basename( __FILE__ )
 @mod_path = 'physique_'
 @url_health_sync = 'health_sync.cgi'
+modalTip_reloadFunc = 'initPhysique()'
 
 #==============================================================================
 #DEFINITION
@@ -40,7 +41,7 @@ def language_pack( language )
 end
 
 #### Menu on line
-def menu( dbr, l )
+def menu( dbr, l, modalTip_reloadFunc )
     mods = Dir.glob( "#{$HTDOCS_PATH}/#{@mod_path}/mod_*" )
     mods.map! do |x|
         x = File.basename( x )
@@ -56,7 +57,7 @@ def menu( dbr, l )
     end
 
     res = dbr.query( "SELECT result FROM #{$TBR} WHERE base='google_health' AND token='private' AND user=?", false, [dbr.user.name] )&.first
-    html << "&nbsp;<span onclick=\"modalTip( '#{@url_health_sync}' )\">#{l[:heart]}</span>" if res
+    html << "&nbsp;<span onclick=\"modalTip( '#{@url_health_sync}', '#{modalTip_reloadFunc}' )\">#{l[:heart]}</span>" if res
 
     return html
 end
@@ -86,7 +87,7 @@ js_module = ''
 if mod == 'menu'
     puts 'MENU<br>' if @debug
     unless user.status == 7
-        html_module = menu( dbr, l )
+        html_module = menu( dbr, l, modalTip_reloadFunc )
     else
         html_module = "<span class='ref_error'>[ginmi]Astral user limit!</span><br>"
     end
@@ -170,9 +171,9 @@ var PhysiqueForm = async ( mod ) => {
 };
 
 // Modal Tip for fitbit sync
-var modalTip = async ( uri ) => {
+var modalTip = async ( uri, modalTip_reloadFunc ) => {
     postLayerDirect( '#{l[:connect]}' );
-    postLayer( uri , 'sync', true, 'modal_tip_body', {});
+    postLayer( uri , 'sync', true, 'modal_tip_body', {modalTip_reloadFunc});
 
     const modalElement = document.querySelector( '#modal_tip' );
     const modal = new bootstrap.Modal( modalElement );
