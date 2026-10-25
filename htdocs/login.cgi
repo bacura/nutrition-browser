@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.2.0 (2026/03/01)
+# Nutrition browser 2020 login 0.3.0 (2026/10/25)
 
 #==============================================================================
 # STATIC
@@ -230,7 +230,9 @@ when 'family'
 
 else
   # ブラウザのcookieをDBと照合
-  browser_uid = @cgi.cookies[$COOKIE_UID]&.first
+  @cookies = CGI::Cookie.parse( ENV.fetch( 'HTTP_COOKIE', '' ))
+  browser_uid = @cookies[$COOKIE_UID]&.first
+
   if browser_uid && !browser_uid.empty?
     res = db.query( "SELECT * FROM #{$TB_USER} WHERE cookie=?", false, [browser_uid] )&.first
     if res

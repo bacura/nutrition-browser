@@ -1,13 +1,13 @@
-#Nutrition browser 2020 soul 1.14.1 (2026/05/17)
+#Nutrition browser 2020 soul 1.15.0 (2026/10/25)
 
 #==============================================================================
 # LIBRARY
 #==============================================================================
-require 'cgi'
+require 'cgi/core'
+require 'cgi/cookie'
 require 'mysql2'
 require 'securerandom'
 require 'json'
-
 
 #==============================================================================
 #STATIC
@@ -119,8 +119,9 @@ $DEBUG = false
 
 $LP = %w[ja en]
 
-uname = @cgi.cookies['NAME']&.first
-uid = @cgi.cookies[$COOKIE_UID]&.first
+@cookies = CGI::Cookie.parse( ENV.fetch( 'HTTP_COOKIE', '' ))
+uname = @cookies['NAME']&.first
+uid   = @cookies[$COOKIE_UID]&.first
 tmp_language = nil
 
 if uname && uid
@@ -452,8 +453,10 @@ class User
   attr_reader :barrier
 
   def initialize( cgi = nil )
-    @name = cgi.nil? ? '+anonymous+' : cgi.cookies['NAME'].first
-    @uid = cgi.nil? ? nil : cgi.cookies[$COOKIE_UID].first
+    cookies = cgi.nil? ? nil : CGI::Cookie.parse( ENV.fetch( 'HTTP_COOKIE', '' ))
+
+    @name = cookies.nil? ? '+anonymous+' : ( cookies['NAME']&.first || '+anonymous+' )
+    @uid  = cookies.nil? ? nil : cookies[$COOKIE_UID]&.first
     @mid = nil
     @pass = nil
     @mail = nil
