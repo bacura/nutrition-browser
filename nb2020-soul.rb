@@ -133,7 +133,6 @@ tmp_language = ENV['HTTP_ACCEPT_LANGUAGE']&.split(',')&.first&.split(';')&.first
 $DEFAULT_LP = $LP.include?( tmp_language ) ? tmp_language : $LP[0]
 
 require "#{$SERVER_PATH}/nb2020-local-#{$DEFAULT_LP}"
-#require "#{$SERVER_PATH}/nb-local-#{$DEFAULT_LP}"
 
 #==============================================================================
 #DEFINITION

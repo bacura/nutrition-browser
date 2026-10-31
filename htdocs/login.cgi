@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.3.0 (2026/10/25)
+# Nutrition browser 2020 login 0.4.0 (2026/11/01)
 
 #==============================================================================
 # STATIC
@@ -11,6 +11,7 @@
 # LIBRARY
 #==============================================================================
 require './soul'
+require './brain'
 require 'bcrypt'
 
 #==============================================================================
@@ -83,24 +84,23 @@ def render_top_login( l )
   render_html( top_login_html )
 end
 
-def validate_user( db, cgi, l )
+def validate_user( db, cgi, smell, l )
   res = db.query( "SELECT user, passh, status, cookie FROM #{$TB_USER} WHERE user=? AND status>'0'", false, [cgi['id']] )&.first
   #for initial empty password
-
   if res
     if res['passh'].empty? && cgi['pass'].empty?
       update_user_data( db, res, cgi )
-
+      smell.record( 'failed-empty' )
     elsif !cgi['pass'].empty? && res['passh'].empty?
       html_init( nil )
       html_head( nil, 0, nil )
       render_top_login( l )
       render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
       html_foot()
-
+      smell.record( 'failed-no-hash' )
     elsif BCrypt::Password.new( res['passh'] ) == cgi['pass']
       update_user_data( db, res, cgi )
-
+      smell.record( 'success' )
     else
       html_init( nil )
       html_head( nil, 0, nil )
@@ -108,13 +108,16 @@ def validate_user( db, cgi, l )
       render_top_login( l )
       render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
       html_foot()
+      smell.record( 'failed' )
     end
+
   else
       html_init( nil )
       html_head( nil, 0, nil )
       render_top_login( l )
       render_login_form( "<p class='msg_small_red'>#{l[:error]}</p>", l )
       html_foot()
+      smell.record( 'failed-no-user' )
   end
 end
 
@@ -201,7 +204,7 @@ end
 #==============================================================================
 # MAIN
 #==============================================================================
-html_init( nil ) if @debug
+text_init() if @debug
 
 get_data = get_data()
 user = User.new( @cgi )
@@ -212,11 +215,12 @@ if l.nil?
   exit
 end
 db = Db.new( user, false, true )
+smell = Smell.new( @cgi, 'login' )
 
 p get_data['mode'] if @debug
 case get_data['mode']
 when 'check'
-  validate_user( db, @cgi, l )
+  validate_user( db, @cgi, smell, l )
 
 when 'logout'
   cookie = "Set-Cookie: NAME=NULL\nSet-Cookie: #{$COOKIE_UID}=NULL\n"

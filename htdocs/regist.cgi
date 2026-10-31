@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 # encoding: utf-8
-# Nutrition Browser 2020 regist 0.1.1 (2026/09/06)
+# Nutrition Browser 2020 regist 0.2.0 (2026/11/01)
 
 #==============================================================================
 # STATIC
@@ -12,6 +12,7 @@
 # LIBRARY
 #==============================================================================
 require './soul'
+require './brain'
 require 'bcrypt'
 require 'net/smtp'
 require 'uri'
@@ -385,6 +386,7 @@ user = User.new( @cgi )
 user.status = 0 unless user.name
 l = load_language_pack( $DEFAULT_LP )
 db = Db.new( user, @debug, false )
+smell = Smell.new( @cgi, 'regist' )
 
 request_data = get_data()
 
@@ -444,12 +446,14 @@ when 'finish'
   db.query( "INSERT INTO #{$TB_CFG} SET user=?, icache=1;", true, [@cgi['id']] )
 
   render_registration_finish( l )
+  smell.record( 'finish' )
 
 when 'reset_form'
   render_reset_form( l[:message_reset], '', '', l )
 
 when 'send_reset_mail'
   render_reset_mail( @cgi, db, l )
+  smell.record( 'reset_mail' )
 
 when 'reset_receive'
   token = ( request_data['token'] || @cgi['token'] || '' ).strip
@@ -463,9 +467,11 @@ when 'reset_receive'
       render_reset_form( "<p class='msg_small_red'>#{l[:message_link_out]}</p>", '', '', l )
     end
   end
+  smell.record( 'reset_receive' )
 
 when 'reset_finish'
   render_reset_finish( @cgi, db, l )
+  smell.record( 'reset_finish' )
 
 else
   render_registration_form( nil, nil, nil, nil, nil, l )

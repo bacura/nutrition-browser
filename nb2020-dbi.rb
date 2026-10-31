@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
-#nb2020-dbi.rb 0.12.0 (2026/06/18)
+#nb2020-dbi.rb 0.12.1 (2026/11/01)
 
 #Bacura KYOTO Lab
 #Saga Ukyo-ku Kyoto, JAPAN
@@ -1176,7 +1176,7 @@ def smell_rr_init()
 	if res.first
 		puts 'smells already exists.'
 	else
-		query = 'CREATE TABLE smells ( user VARCHAR(32) NOT NULL, behavior VARCHAR(32), smell VARCHAR(32), date DATETIME);'
+		query = 'CREATE TABLE smells ( user VARCHAR(32) NOT NULL, base VARCHAR(32), behavior VARCHAR(32), smell VARCHAR(32), date DATETIME);'
 		$DBR.query( query )
 
 		puts 'smells table has been created.'

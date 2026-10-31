@@ -1,4 +1,4 @@
-#Nutrition browser 2020 brain 0.6.13 (2026/08/30)
+#Nutrition browser 2020 brain 0.6.14 (2026/11/01)
 
 #==============================================================================
 # LIBRARY
@@ -10,7 +10,13 @@ require 'bigdecimal'
 #STATIC
 #==============================================================================
 $TBR = 'results'
+$TBS = 'smells'
 
+begin
+  $DBR = Mysql2::Client.new( :host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USERR}", :database => "#{$MYSQL_DBR}", :encoding => "utf8" )
+rescue
+  puts 'D(x_x)BR'
+end
 
 #==============================================================================
 #DEFINITION
@@ -943,7 +949,6 @@ class Dbr
   attr_reader :user
 
   def initialize( user, debug, html )
-    @dbr = Mysql2::Client.new( :host => "#{$MYSQL_HOST}", :username => "#{$MYSQL_USERR}", :database => "#{$MYSQL_DBR}", :encoding => "utf8" )
     @user = user
     @debug = debug
     @html = html
@@ -951,7 +956,7 @@ class Dbr
 
   def qq( query )
     q = query.gsub( ';', '' ) << ';'
-    return @dbr.query( q )
+    return $DBR.query( q )
   end
 
   def query( query, barrier, arguments = nil )
@@ -970,9 +975,9 @@ class Dbr
       end
 
       if arguments.nil?
-        return @dbr.query( query )
+        return $DBR.query( query )
       else
-        return @dbr.prepare( query ).execute( *arguments )
+        return $DBR.prepare( query ).execute( *arguments )
       end
 
     rescue
@@ -982,5 +987,17 @@ class Dbr
       end
         puts "<span class='error'>[dbr]ERROR!!</span><br>"
     end
+  end
+end
+
+class Smell
+  def initialize( cgi, base )
+    @cgi = cgi
+    @base = base
+  end
+
+  def record( behavior )
+    datetime = Time.now.strftime( "%Y-%m-%d %H:%M:%S" )
+    $DBR.prepare( "INSERT INTO #{$TBS} SET user=?, base=?, behavior=?, smell=?, date=?" ).execute( @cgi['id'], @base, behavior, @cgi.remote_addr, datetime )
   end
 end
