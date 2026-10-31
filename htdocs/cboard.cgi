@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 cutting board 0.4.4 (2026/09/15)
+#Nutrition browser 2020 cutting board 0.4.5 (2026/10/31)
 
 #==============================================================================
 #STATIC
@@ -226,44 +226,44 @@ end
 #### Chomi cell
 def chomi_cell( l, code, chomi_selected, chomi_code, chomi_pub, db )
 	puts 'chomi % categoty set<br>' if @debug
-	chomi_html = ''
 	chomim_categoty = []
+	chomi_option_code = ""
 
 	sql_chomi_pub = chomi_pub == 1 ? "OR public='1'" : ''
 	r = db.query( "SELECT code, name FROM #{$TB_RECIPE} WHERE ( user=? #{sql_chomi_pub} ) and role='100' ORDER BY name;", false, [db.user.name] )
 	r.each do |e|
 		a = e['name'].sub( '：', ':' ).split( ':' )
 		chomim_categoty << a[0]
+		chomi_option_code << "<option value=\"#{e['code']}\" #{$SELECT[chomi_code == e['code']]}>#{a[1]}</option>" if chomi_selected == a[0]
 	end
 
 	chomim_categoty.uniq!
 
-	chomi_html << '<div class="input-group input-group-sm">'
-	chomi_html << "<input type=\"hidden\" value=\"#{code}\" id=\"recipe_code\">"
-
 	if chomi_selected != '' && chomi_selected != nil
-		chomi_html << "<button type=\"button\" class=\"btn btn-outline-primary btn-sm\" onclick=\"chomiAdd( '#{code}' )\">#{l[:chomi]}</button>"
+		chomi_button = "<button type=\"button\" class=\"btn btn-outline-primary btn-sm\" onclick=\"chomiAdd( '#{code}' )\">#{l[:chomi]}</button>"
 	else
-		chomi_html << "<button type=\"button\" class=\"btn btn-secondary btn-sm\">#{l[:chomi]}</button>"
+		chomi_button = "<button type=\"button\" class=\"btn btn-secondary btn-sm\">#{l[:chomi]}</button>"
 	end
 
-	chomi_html << "<select class=\"form-select\" id=\"chomi_selected\" onchange=\"chomiSelect()\">"
-	chomi_html << "<option value=\"\">-</option>"
+	chomi_option = "<option value=\"\">-</option>"
 	chomim_categoty.each do |e|
-		chomi_html << "<option value=\"#{e}\" #{$SELECT[chomi_selected == e]}>#{e}</option>"
+		chomi_option << "<option value=\"#{e}\" #{$SELECT[chomi_selected == e]}>#{e}</option>"
 	end
-	chomi_html << "</select>"
 
-	puts 'chomi % code set<br>' if @debug
-	chomi_html << "<select class=\"form-select\" id=\"chomi_code\">"
-	r.each do |e|
-		a = e['name'].sub( '：', ':' ).split( ':' )
-		if chomi_selected == a[0]
-			chomi_html << "<option value=\"#{e['code']}\" #{$SELECT[chomi_code == e['code']]}>#{a[1]}</option>"
-		end
-	end
-	chomi_html << "</select>"
-	chomi_html << "</div>"
+	chomi_html = <<~"CHOMI"
+	<div class="input-group input-group-sm">
+		<input type='hidden' value='#{code}' id='recipe_code'>
+
+		#{chomi_button}
+		<select class='form-select' id='chomi_selected' onchange='chomiSelect()'>
+			#{chomi_option}
+		</select>
+
+		<select class='form-select' id='chomi_code'>
+			#{chomi_option_code}
+		</select>
+	</div>
+CHOMI
 
 	return chomi_html
 end
@@ -494,9 +494,14 @@ when 'weight'
 
 	# 食品ごとの単位読み込み
 	uk = BigDecimal( '1' )
+
 	if unit != 'g'
-		r = db.query( "SELECT unit from #{$TB_EXT} WHERE FN=?", false, [food_list[order_no].fn] )
-		uk = unith[unit]
+		res = db.query( "SELECT unit from #{$TB_EXT} WHERE FN=?", false, [food_list[order_no].fn] )&.first
+		if res
+			unith = JSON.parse( res['unit'] ) unless res['unit'].to_s.empty?
+			uk = unith[unit]
+		end
+
 	end
 
 	# 換算重量の小数点処理
@@ -643,9 +648,9 @@ when 'chomis'
 	chomi_rate = 1.0 if chomi_rate == 0
 
 
-	r = db.query( "SELECT sum from #{$TB_RECIPE} WHERE code=?", false, [chomi_code] )
-	if r.first
-		 r.first['sum'].split( "\t" ).each do |e|
+	res = db.query( "SELECT sum from #{$TB_RECIPE} WHERE code=?", false, [chomi_code] )&.first
+	if res
+		 res['sum'].split( "\t" ).each do |e|
 			t = Sum.new( user )
 			t.load_sum( e )
 			t.weight = ( BigDecimal( t.weight ) * chomi_rate ).round( 1 )
@@ -1122,8 +1127,8 @@ var initCB_SS = ( order, unitv_id, unit_id, food_init_id, food_rr_id, code ) => 
 
 // Foods check process
 var checkCB = ( order, code, check_id ) => {
-	const checked = $( '#' + 'check_id' ).is( ':checked' ) ? 1 : 0;
-	postReqCB( 'check_box', { order, food_check: checked, code });
+	const food_check = document.getElementById( check_id ).checked ? 1 : 0;
+	postLayer( '#{myself}', 'check_box', false, 'L1', { order, food_check, code });
 };
 
 // Switching all check box
@@ -1159,13 +1164,12 @@ var chomiSelect = () => {
 
 // Chomi% add
 var chomiAdd = ( source_code ) => {
-	const code = $( '#recipe_code' ).val();
-	const chomi_selected = $( '#chomi_selected' ).val();
-	const chomi_code = $( '#chomi_code' ).val();
-	postReqCB( 'chomis', { code, chomi_selected, chomi_code }, data => {
-		$( "#L1" ).html( data );
-    	checkCalc( source_code );
-	});
+	const code = document.getElementById( 'recipe_code' ).value;
+	const chomi_selected = document.getElementById( 'chomi_selected' ).value;
+	const chomi_code = document.getElementById( 'chomi_code' ).value;
+
+	postLayer( '#{myself}', 'chomis', true, 'L1', { code, chomi_selected, chomi_code });
+    checkCalc( source_code );
 };
 
 // Chomi% public

@@ -1,4 +1,4 @@
-//guild.js ver 0.6.3 (2026/06/21)
+//guild.js ver 0.6.4 (2026/10/31)
 
 kp = 'koyomi/'
 
@@ -378,6 +378,8 @@ var initPhysique = function(){
 		dl1 = true;
 		displayBW();
 	});
+
+	$( '#modal_tip' ).modal( 'hide' );
 };
 
 

@@ -1155,7 +1155,7 @@ end
 # RR
 ###############################################################################
 
-#### Making module JSON data
+#### Making general JSON data
 def deta_rr_init()
 	query = "SHOW TABLES LIKE 'results';"
 	res = $DBR.query( query )
@@ -1169,6 +1169,19 @@ def deta_rr_init()
 	end
 end
 
+#### Making user smells
+def smell_rr_init()
+	query = "SHOW TABLES LIKE 'smells';"
+	res = $DBR.query( query )
+	if res.first
+		puts 'smells already exists.'
+	else
+		query = 'CREATE TABLE smells ( user VARCHAR(32) NOT NULL, behavior VARCHAR(32), smell VARCHAR(32), date DATETIME);'
+		$DBR.query( query )
+
+		puts 'smells table has been created.'
+	end
+end
 
 #==============================================================================
 data_path = 'ds2020'
@@ -1272,6 +1285,7 @@ ref_para_init( ref_parallel )
 
 
 deta_rr_init()
+smell_rr_init()
 
 
 db_create_nb_user()

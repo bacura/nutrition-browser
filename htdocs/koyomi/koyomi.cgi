@@ -322,7 +322,7 @@ photo.base = 'koyomi'
 	style = ''
 	style = 'color:red;' if week_count == 0
 	date_html << "<tr id='day#{day}'>"
-	date_html << "<td align='center' rowspan=2 style='#{style}' #{onclick}><span>#{day}</span> (#{weeks[week_count]})"
+	date_html << "<td align='center' rowspan=2 style='#{style}'><span>#{day}</span> (#{weeks[week_count]})"
 	date_html << "<br><br><input type='checkbox' id='freeze_check#{day}' onChange=\"freezeKoyomi( '#{day}' )\" #{$CHECK[freeze_flag]}>" if koyomi.solid[ymd]
 	date_html << "</td>"
 	date_html << tmp_html
