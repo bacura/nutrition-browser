@@ -1,12 +1,12 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser koyomi fix fct editer 0.4.1 (2025/12/27)
+#Nutrition browser koyomi fix fct editer 0.4.2 (2026/11/02)
 
 #==============================================================================
 # STATIC
 #==============================================================================
 @debug = false
-myself = File.basename( __FILE__ )
+myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
 
 #==============================================================================
 # LIBRARY
@@ -166,7 +166,7 @@ if command == 'save'
 
 	else
 		fix_code = ''
-		if fix_ref == 1 || fix_his_code != ''
+		if fix_ref == 1 && fix_his_code != ''
 			puts '[Ref mode]' if @debug
 			fix_code = fix_his_code
 		else
@@ -264,9 +264,7 @@ eat_time_html << "<button class='btn btn-info' onclick=\"nowKoyomi( 'hh_mm_fix' 
 eat_time_html << "<input type='time' step='60' id='hh_mm_fix' value='#{hh_mm}' class='form-control' style='min-width:100px;'>"
 eat_time_html << "<select id='meal_time_fix' class='form-select form-select-sm'>"
 meal_time_set.each do |e|
-	s = ''
-	s = 'SELECTED' if meal_time == e
-	eat_time_html << "	<option value='#{e}' #{s}>#{e}</option>"
+	eat_time_html << "	<option value='#{e}' #{$SELECT[meal_time == e]}>#{e}</option>"
 end
 eat_time_html << "</select>"
 eat_time_html << "<label class='input-group-text'>#{l[:min]}</label>"
@@ -522,14 +520,15 @@ var saveKoyomiFix = ( yyyy, mm, dd, tdiv, modifyf, order ) => {
 var selectKoyomiPalette = ( yyyy, mm, dd, tdiv, modifyf ) => {
 	displayVIDEO( modifyf );
 	const palette = $( "#palette" ).val();
-	postReq_kf( 'palette', { yyyy, mm, dd, tdiv, palette, modifyf }, data => { $( "#L3" ).html( data );});
+	postLayer( '#{myself}', 'palette', true, 'L3', { yyyy, mm, dd, tdiv, palette, modifyf });
+
 };
 
 
 var selectKoyomiHis = ( yyyy, mm, dd, tdiv ) => {
-	const fix_his_code = $( "#fix_his_code" ).val();
+	const fix_his_code = document.getElementById( 'fix_his_code' ).value;
 	if( fix_his_code != '' ){
-		postReq_kf( "history", { yyyy, mm, dd, tdiv, fix_his_code }, data => { $( "#L3" ).html( data );});
+		postLayer( '#{myself}', 'history', true, 'L3', { yyyy, mm, dd, tdiv, fix_his_code });
 	}
 };
 

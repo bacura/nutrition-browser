@@ -31,8 +31,7 @@ $SMTP_USER = '--smtp_user--'
 $SMTP_PASS = '--smtp_pass--'
 $FROM_EMAIL = '--smtp_from--'
 
-$FITBIT_AUTH_URI = "#{$MYURL}/fitbit_auth.cgi"
-$FITBIT_REDIRECT_URI = "#{$MYURL}/fitbit_callback.cgi"
+$NAZO_KEY = '--nazo_key--'
 
 $HEALTH_AUTH_URI      = "#{$MYURL}/health_auth.cgi"
 $HEALTH_REDIRECT_URI  = "#{$MYURL}/health_callback.cgi"

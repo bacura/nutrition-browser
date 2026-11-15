@@ -7,6 +7,10 @@
 #==============================================================================
 @debug = false
 @myself = File.basename( __FILE__ )
+ALGORITHM = 'aes-256-gcm'
+IV_LENGTH = 12      # GCM推奨は12バイト
+TAG_LENGTH = 16     # 認証タグは16バイト
+KEY_LENGTH = 32     # AES-256
 
 #==============================================================================
 # LIBRARY
@@ -16,6 +20,8 @@ require './brain'
 require 'bcrypt'
 require 'net/smtp'
 require 'uri'
+require 'openssl'
+require 'base64'
 
 #==============================================================================
 # DEFINITION
@@ -375,6 +381,32 @@ def render_reset_finish( cgi, db, l )
 HTML
 
   puts html_output
+end
+
+# 暗号化 -> Base64文字列を返す（IV + タグ + 暗号文を結合）
+def encrypt( key, plaintext )
+  cipher = OpenSSL::Cipher.new( ALGORITHM ).encrypt
+  cipher.key = key
+  iv = cipher.random_iv  # 12バイトのランダムIV
+  ciphertext = cipher.update( plaintext ) + cipher.final
+  tag = cipher.auth_tag( TAG_LENGTH )
+
+  # [IV(12)][TAG(16)][暗号文] の順で連結
+  Base64.strict_encode64( iv + tag + ciphertext )
+end
+
+# 復号化 -> 平文を返す（改ざんされていればOpenSSL::Cipher::CipherError）
+def decrypt( key, encrypted_b64 )
+  raw = Base64.strict_decode64( encrypted_b64 )
+  iv  = raw.byteslice( 0, IV_LENGTH )
+  tag = raw.byteslice( IV_LENGTH, TAG_LENGTH )
+  ciphertext = raw.byteslice( IV_LENGTH + TAG_LENGTH.. )
+
+  cipher = OpenSSL::Cipher.new( ALGORITHM ).decrypt
+  cipher.key = key
+  cipher.iv = iv
+  cipher.auth_tag = tag
+  cipher.update( ciphertext ) + cipher.final
 end
 
 #==============================================================================
