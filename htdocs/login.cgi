@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 # coding: utf-8
-# Nutrition browser 2020 login 0.4.0 (2026/11/01)
+# Nutrition browser 2020 login 0.4.1 (2026/11/17)
 
 #==============================================================================
 # STATIC
@@ -270,7 +270,8 @@ else
   browser_uid = @cookies[$COOKIE_UID]&.first
 
   if browser_uid && !browser_uid.empty?
-    res = db.query( "SELECT * FROM #{$TB_USER} WHERE cookie=?", false, [browser_uid] )&.first
+    res = db.query( "SELECT * FROM #{$TB_USER} WHERE cookie=? AND status>0", false, [browser_uid] )&.first
+
     if res
       # 一致したらそのままリダイレクト
       html_init( nil )
@@ -279,6 +280,7 @@ else
       exit
     end
   end
+
   # 一致しなければ通常のログインフォーム表示
   html_init( nil)
   html_head( nil, 0, nil )

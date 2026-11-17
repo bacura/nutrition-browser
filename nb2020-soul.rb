@@ -452,10 +452,10 @@ class User
 
   def initialize( cgi = nil )
     cookies = cgi.nil? ? nil : CGI::Cookie.parse( ENV.fetch( 'HTTP_COOKIE', '' ))
-
     @name = cookies.nil? ? '+anonymous+' : ( cookies['NAME']&.first || '+anonymous+' )
     @uid  = cookies.nil? ? nil : cookies[$COOKIE_UID]&.first
     @mid = nil
+
     @pass = nil
     @mail = nil
     @reg_date  = nil
@@ -463,14 +463,12 @@ class User
     @token  = nil
 
     res = $DB.prepare( "SELECT * FROM #{$TB_USER} WHERE user=? AND cookie=? AND status>0" ).execute( @name, @uid )
-
     if res.first
       if res.first['status'].to_i == $ASTRAL
         entity_name = @name.sub( '~', '' )
         @barrier = true
 
         res2 = $DB.prepare( "SELECT * FROM #{$TB_USER} WHERE user=? AND astral=1 AND status>0" ).execute( entity_name )
-
         if res2.first
           @name = entity_name
           @mid = nil

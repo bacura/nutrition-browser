@@ -1,12 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser koyomi fix fct editer 0.4.2 (2026/11/02)
-
-#==============================================================================
-# STATIC
-#==============================================================================
-@debug = false
-myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
+#Nutrition browser koyomi fix fct editer 0.4.4 (2026/11/17)
 
 #==============================================================================
 # LIBRARY
@@ -15,6 +9,11 @@ require '../soul'
 require '../brain'
 require '../body'
 
+#==============================================================================
+# STATIC
+#==============================================================================
+@debug = false
+myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
 
 #==============================================================================
 # LANGUAGE PACK
@@ -534,19 +533,21 @@ var selectKoyomiHis = ( yyyy, mm, dd, tdiv ) => {
 
 
 var checkKyomiAsRef = () => {
-	if( $( "#fix_ref" ).is( ":checked" )){
-		$( "#kffood_weight" ).prop( "disabled", false );
+	if( document.getElementById( "fix_ref" ).checked ){
+		document.getElementById("kffood_weight").disabled = false;
+
 	}else{
-		$( "#kffood_weight" ).prop( "disabled", true );
+		document.getElementById("kffood_weight").disabled = true;
+
 	}
 };
 
 
 var checkKyomiXOR100g = () => {
-	if( $( "#g100_check" ).is( ":checked" )){
-		$( "#kffood_weight" ).prop( "disabled", false );
+	if( document.getElementById( "g100_check" ).checked ){
+		document.getElementById("kffood_weight").disabled = false;
 	}else{
-		$( "#kffood_weight" ).prop( "disabled", true );
+		document.getElementById("kffood_weight").disabled = true;
 	}
 };
 

@@ -1,12 +1,6 @@
 #! /usr/bin/ruby
 #encoding: utf-8
-#Nutrition browser 2020 koyomi editor 0.2.8 (2025/02/25)
-
-#==============================================================================
-# STATIC
-#==============================================================================
-@debug = false
-myself = File.basename( __FILE__ )
+#Nutrition browser 2020 koyomi editor 0.2.9 (2026/11/17)
 
 #==============================================================================
 # LIBRARY
@@ -14,6 +8,13 @@ myself = File.basename( __FILE__ )
 require '../soul'
 require '../brain'
 require '../body'
+
+#==============================================================================
+# STATIC
+#==============================================================================
+@debug = false
+myself = $KOYOMI_PATH + "/" + File.basename( __FILE__ )
+
 
 #==============================================================================
 # DEFINITION
@@ -289,7 +290,6 @@ target_photo = Media.new( user, 'koyomi' )
 	end
 end
 
-
 puts 'Updaing freeze<br>' if @debug
 koyomi_html = []
 if koyomi.solid[ymd]
@@ -369,6 +369,7 @@ if koyomi.solid[ymd]
 end
 
 ####
+
 cmm_html = [ '', '', '', '' ]
 4.times do |tdiv|
 	if freeze_flag
@@ -380,8 +381,8 @@ cmm_html = [ '', '', '', '' ]
 		cmm_html[tdiv] << "<button class='btn btn-sm btn-secondary'>#{l[:copy]}</button>&nbsp;"
 		cmm_html[tdiv] << "<button class='btn btn-sm btn-secondary'>#{l[:move]}</button>&nbsp;"
 	else
-		cmm_html[tdiv] << "<button class='btn btn-sm btn-primary' onclick=\"cmmKoyomi( 'copy', '#{yyyy}', '#{mm}', '#{dd}', #{tdiv} )\">#{l[:copy]}</button>&nbsp;"
-		cmm_html[tdiv] << "<button class='btn btn-sm btn-primary' onclick=\"cmmKoyomi( 'move', '#{yyyy}', '#{mm}', '#{dd}', #{tdiv} )\">#{l[:move]}</button>&nbsp;" unless freeze_flag == 1
+		cmm_html[tdiv] << "<button class='btn btn-sm btn-primary' onclick=\"cmmKoyomi( 'copy', '#{yyyy}', '#{mm}', '#{dd}', '#{tdiv}' )\">#{l[:copy]}</button>&nbsp;"
+		cmm_html[tdiv] << "<button class='btn btn-sm btn-primary' onclick=\"cmmKoyomi( 'move', '#{yyyy}', '#{mm}', '#{dd}', '#{tdiv}' )\">#{l[:move]}</button>&nbsp;" unless freeze_flag
 	end
 end
 
@@ -391,7 +392,7 @@ some_html = [ '', '', '' ]
 unless freeze_flag
 	4.times do |tdiv|
 		some_html[tdiv] = <<~SOME
-		<select class='form-select form-select-sm' id='some#{tdiv}' onchange="koyomiSaveSome( '#{yyyy}', '#{mm}', '#{dd}', #{tdiv}, 'some#{tdiv}' )">
+		<select class='form-select form-select-sm' id='some#{tdiv}' onchange="koyomiSaveSome( '#{yyyy}', '#{mm}', '#{dd}', '#{tdiv}' )">
 			<option value='' selected>#{l[:some]}</option>
 			<option value='?--'>#{@something['?--']}</option>
 			<option value='?-'>#{@something['?-']}</option>
@@ -570,53 +571,38 @@ if command == 'init'
 <script type='text/javascript'>
 
 var base = 'koyomi';
-var layer = '#L2';
-
-var postReq_ke = ( command, data, successCallback ) => {
-	$.post( kp + '#{myself}', { command, ...data })
-		.done( successCallback )
-		.fail(( jqXHR, textStatus, errorThrown ) => {
-			console.error( "Request failed: ", textStatus, errorThrown );
-			alert( "An error occurred. Please try again." );
-		});
-}
 
 // Koyomi delete
 var deleteKoyomi = ( yyyy, mm, dd, tdiv, code, order ) => {
-	postReq_ke( 'delete', { yyyy, mm, dd, tdiv, code, order }, data => {
-		$( layer ).html( data );
-	});
-}
+	postLayer( '#{myself}', 'delete', true, 'L2', { yyyy, mm, dd, tdiv, code, order });
+};
+
 
 // Koyomi memo
-var memoKoyomi = (yyyy, mm, dd) => {
-	const memo = $( "#memo" ).val();
-	postReq_ke( 'memo', { yyyy, mm, dd, memo }, data => {
-		$( layer ).html( data );
-		displayREC();
-	});
-}
+var memoKoyomi = ( yyyy, mm, dd ) => {
+	const memo = document.getElementById( 'memo' ).value;
+	postLayer( '#{myself}', 'memo', true, 'L2', { yyyy, mm, dd, memo });
+};
+
 
 // Koyomi Save Something
-var koyomiSaveSome = ( yyyy, mm, dd, tdiv, id ) => {
-	const some = $(`#${id}`).val();
-	postReq_ke( 'some', { yyyy, mm, dd, tdiv, hh:99, some }, data => {
-		$( layer ).html( data );
-		displayREC();
-	});
+var koyomiSaveSome = ( yyyy, mm, dd, tdiv ) => {
+	const some = document.getElementById( 'some' + tdiv ).value;
+	postLayer( '#{myself}', 'some', true, 'L2', { yyyy, mm, dd, tdiv, hh:99, some });
+	displayREC();
 };
+
 
 // Koyomi clear
 var clearKoyomi = ( yyyy, mm, dd ) => {
-	if( $( '#check_kc' ).is( ":checked" )){
-		postReq_ke( 'clear', { yyyy, mm, dd }, data => {
-			$( layer ).html( data );
-			displayVIDEO( 'Cleared' );
-		});
+	if( document.getElementById( "check_kc" ).checked ){
+		postLayer( '#{myself}', 'clear', true, 'L2', { yyyy, mm, dd });
+		displayVIDEO( 'Cleared' );
 	}else{
 		displayVIDEO( '(>_<)check!' );
 	}
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 var PhotoUpload = ( ymd ) => {
@@ -635,7 +621,7 @@ var PhotoUpload = ( ymd ) => {
 	form_data.append( 'alt', alt );
 	form_data.append( 'secure', '0' );
 
-	$.ajax( "koyomi/koyomi-edit.cgi",
+	$.ajax( '#{myself}',
 		{
 			type: 'post',
 			processData: false,
@@ -647,17 +633,16 @@ var PhotoUpload = ( ymd ) => {
 	);
 }
 
-var photoMove = ( code, zidx ) => {
-	postReq_ke( 'photo_mv', { origin:'#{ymd}-#{tdiv}', yyyy:'#{yyyy}', mm:'#{mm}', dd:'#{dd}', code, zidx, base }, data => {
-		$( layer ).html( data );
-	});
-}
+var photoDel = ( code, zidx ) => {
+	postLayer( '#{myself}', 'photo_mv', true, 'L2', { origin:'#{ymd}-#{tdiv}', yyyy:'#{yyyy}', mm:'#{mm}', dd:'#{dd}', code, zidx, base });
+};
 
 var photoDel = ( code ) => {
-	postReq_ke( 'photo_del', { origin:'#{ymd}-#{tdiv}', yyyy:'#{yyyy}', mm:'#{mm}', dd:'#{dd}', code, base }, data => {
-		$( layer ).html( data );
-	});
-}
+	postLayer( '#{myself}', 'photo_del', true, 'L2', { origin:'#{ymd}-#{tdiv}', yyyy:'#{yyyy}', mm:'#{mm}', dd:'#{dd}', code, base });
+};
+
+
+
 
 </script>
 JS
